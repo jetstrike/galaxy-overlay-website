@@ -1,8 +1,8 @@
-version: 1.0.1
+version: 1.0.2
 files:
-  - url: OnceUponAGalaxyTracker Setup 1.0.1.exe
-    sha512: ukCm6iWxMotA7Ad/1m4nPMfm3ojNuYlYSZvqYQsraEDYwcu0VULvJRHYoYrfY/03OJAPMczrXebFA7UyAkSveA==
-    size: 78921943
-path: OnceUponAGalaxyTracker Setup 1.0.1.exe
-sha512: ukCm6iWxMotA7Ad/1m4nPMfm3ojNuYlYSZvqYQsraEDYwcu0VULvJRHYoYrfY/03OJAPMczrXebFA7UyAkSveA==
-releaseDate: '2026-08-24T10:11:44.354Z'
+  - url: OnceUponAGalaxyTracker Setup 1.0.2.exe
+    sha512: xApzbL643gWGhXB7BykdultGKxAmo9fv/xJJgEdw7ApRW44Efyjqdg1D9C3GyXAOAR3bN0BCbowuFnz54Mmo5A==
+    size: 78921878
+path: OnceUponAGalaxyTracker Setup 1.0.2.exe
+sha512: xApzbL643gWGhXB7BykdultGKxAmo9fv/xJJgEdw7ApRW44Efyjqdg1D9C3GyXAOAR3bN0BCbowuFnz54Mmo5A==
+releaseDate: '2026-08-24T10:14:51.680Z'
