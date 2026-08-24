@@ -34,7 +34,8 @@
                 <div class="feature"><span class="icon">📖</span> Custom Card DB</div>
             </div>
         </div>
-                <div class="hero-visual">
+        
+        <div class="hero-visual">
             <div class="app-mockup">
                 <div class="mockup-header">
                     <div class="dots"><span></span><span></span><span></span></div>
@@ -64,24 +65,22 @@
         </div>
     </section>
 
-    
-
     <footer>
         <p>&copy; 2026 Galaxy Tracker. Not affiliated with Once Upon a Galaxy.</p>
     </footer>
+
     <script>
-        const slides = document.querySelectorAll('.carousel-slide');
-        let currentSlide = 0;
-        
-        setInterval(() => {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }, 3500);
+        document.addEventListener("DOMContentLoaded", () => {
+            const slides = document.querySelectorAll('.carousel-slide');
+            if (slides.length > 0) {
+                let currentSlide = 0;
+                setInterval(() => {
+                    slides[currentSlide].classList.remove('active');
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    slides[currentSlide].classList.add('active');
+                }, 3500);
+            }
+        });
     </script>
 </body>
 </html>
-
-
-
-
