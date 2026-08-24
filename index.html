@@ -36,14 +36,15 @@
         </div>
         <div class="hero-visual">
             <div class="app-mockup"><img src="assets/mockup.jpg" alt="Galaxy Tracker App Screenshot" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div></div>
-                <div class="mockup-body">
-                    <div class="skeleton-row header" style="width: 100%;"></div>
-                    <div class="skeleton-row" style="width: 80%;"></div>
-                    <div class="skeleton-row" style="width: 90%;"></div>
-                    <div class="skeleton-row" style="width: 70%;"></div>
-                    <div class="skeleton-row" style="width: 85%;"></div>
+                                <div class="mockup-body mockup-carousel">
+                    <img src="assets/screen1.png" class="carousel-slide active" alt="Live Companion">
+                    <img src="assets/screen2.png" class="carousel-slide" alt="Analytics">
+                    <img src="assets/screen3.png" class="carousel-slide" alt="Shop Pool">
+                    <img src="assets/screen4.png" class="carousel-slide" alt="Database">
+                    <img src="assets/screen5.png" class="carousel-slide" alt="Radar">
                 </div>
             </div>
+        </div>
         </div>
     </main>
 
@@ -60,23 +61,23 @@
         </div>
     </section>
 
-    <section class="gallery">
-        <h2>App Features in Action</h2>
-        <div class="carousel-container">
-            <div class="carousel-track">
-                <img src="assets/screen1.png" class="gallery-img" alt="Live Match Companion">
-                <img src="assets/screen2.png" class="gallery-img" alt="Performance Analytics">
-                <img src="assets/screen3.png" class="gallery-img" alt="Shop Pool Tracking">
-                <img src="assets/screen4.png" class="gallery-img" alt="Card Database Editor">
-                <img src="assets/screen5.png" class="gallery-img" alt="Opponent Board Radar">
-            </div>
-        </div>
-    </section>
+    
 
     <footer>
         <p>&copy; 2026 Galaxy Tracker. Not affiliated with Once Upon a Galaxy.</p>
     </footer>
+    <script>
+        const slides = document.querySelectorAll('.carousel-slide');
+        let currentSlide = 0;
+        
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 3500);
+    </script>
 </body>
 </html>
+
 
 
