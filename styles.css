@@ -234,52 +234,54 @@ body {
     margin-left: 1rem;
 }
 
-.mockup-body {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+/* Mockup Carousel */
+.mockup-carousel {
+    position: relative;
+    padding: 0 !important;
+    flex-grow: 1;
+    height: 100%;
+    min-height: 250px;
+    overflow: hidden;
+    cursor: pointer;
 }
 
-.skeleton-row {
-    height: 30px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
+.mockup-carousel:hover::after {
+    content: "🔍 Click to Enlarge";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    animation: lightboxFadeIn 0.2s ease forwards;
 }
 
-.skeleton-row.header {
-    height: 40px;
-    margin-bottom: 0.5rem;
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
 }
 
-footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-muted);
-    font-size: 0.875rem;
+.carousel-slide.active {
+    opacity: 1;
 }
-
-/* Responsive */
-@media (max-width: 900px) {
-    .hero {
-        flex-direction: column;
-        text-align: center;
-        padding: 4rem 5%;
-    }
-    
-    .hero-features {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .app-mockup {
-        transform: none;
-    }
-}
-
 
 /* Summary Section */
 .summary-section {
+    position: relative;
+    z-index: 10;
     padding: 6rem 10%;
     background: rgba(0, 0, 0, 0.2);
     border-top: 1px solid var(--glass-border);
@@ -333,37 +335,11 @@ footer {
     font-weight: 700;
 }
 
-
-/* Mockup Carousel */
-.mockup-carousel {
-    position: relative;
-    padding: 0 !important;
-    flex-grow: 1;
-    overflow: hidden;
-}
-
-.carousel-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-
-.carousel-slide.active {
-    opacity: 1;
-}
-
-
 /* Lightbox Styles */
 .lightbox {
     display: none;
     position: fixed;
-    z-index: 9999;
+    z-index: 999999;
     padding: 2rem;
     left: 0;
     top: 0;
@@ -406,27 +382,32 @@ footer {
     cursor: pointer;
 }
 
-.mockup-carousel {
-    cursor: pointer;
-}
-.mockup-carousel:hover::after {
-    content: "🔍 Click to Enlarge";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    pointer-events: none;
-    opacity: 0;
-    animation: lightboxFadeIn 0.2s ease forwards;
-}
-
 @keyframes lightboxFadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 4rem 5%;
+    }
+    
+    .hero-features {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .app-mockup {
+        transform: none;
+    }
 }

@@ -41,7 +41,7 @@
                     <div class="dots"><span></span><span></span><span></span></div>
                     <div class="title">Match Helper - Connected</div>
                 </div>
-                                <div class="mockup-body mockup-carousel">
+                <div class="mockup-body mockup-carousel" id="mockup-carousel">
                     <img src="assets/screen1.png" class="carousel-slide active" alt="Slide 1">
                     <img src="assets/screen2.png" class="carousel-slide" alt="Slide 2">
                     <img src="assets/screen3.png" class="carousel-slide" alt="Slide 3">
@@ -64,7 +64,7 @@
         </div>
     </section>
 
-        <!-- Lightbox Modal -->
+    <!-- Lightbox Modal -->
     <div id="lightbox" class="lightbox">
         <span class="lightbox-close">&times;</span>
         <img class="lightbox-img" id="lightbox-img" src="">
@@ -74,7 +74,7 @@
         <p>&copy; 2026 Galaxy Tracker. Not affiliated with Once Upon a Galaxy.</p>
     </footer>
 
-        <script>
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
             const slides = document.querySelectorAll('.carousel-slide');
             if (slides.length > 0) {
@@ -86,10 +86,9 @@
                 }, 3500);
             }
 
-            // Lightbox functionality
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
-            const carousel = document.querySelector('.mockup-carousel');
+            const carousel = document.getElementById('mockup-carousel');
             const closeBtn = document.querySelector('.lightbox-close');
 
             if (carousel && lightbox) {
@@ -97,16 +96,19 @@
                     const activeSlide = document.querySelector('.carousel-slide.active');
                     if (activeSlide) {
                         lightboxImg.src = activeSlide.src;
+                        lightbox.style.display = 'flex';
                         lightbox.classList.add('active');
                     }
                 });
 
                 closeBtn.addEventListener('click', () => {
+                    lightbox.style.display = 'none';
                     lightbox.classList.remove('active');
                 });
 
                 lightbox.addEventListener('click', (e) => {
                     if (e.target === lightbox) {
+                        lightbox.style.display = 'none';
                         lightbox.classList.remove('active');
                     }
                 });
@@ -115,5 +117,3 @@
     </script>
 </body>
 </html>
-
-
