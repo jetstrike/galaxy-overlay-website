@@ -357,8 +357,8 @@ body {
 }
 
 .lightbox-img {
-    max-width: 95%;
-    max-height: 95%;
+    width: 95vw;
+    height: 95vh;
     border-radius: 8px;
     box-shadow: 0 0 30px rgba(0,0,0,0.8);
     object-fit: contain;
@@ -411,3 +411,4 @@ footer {
         transform: none;
     }
 }
+
