@@ -277,3 +277,112 @@ footer {
     }
 }
 
+
+/* Summary Section */
+.summary-section {
+    padding: 6rem 10%;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.summary-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.summary-content h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: #fff;
+}
+
+.summary-content p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+}
+
+.summary-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.summary-list li {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-main);
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.summary-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent-primary);
+    font-weight: 800;
+}
+
+.highlight {
+    color: var(--accent-secondary);
+    font-weight: 700;
+}
+
+/* Gallery Section */
+.gallery {
+    padding: 6rem 5%;
+    text-align: center;
+}
+
+.gallery h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    color: #fff;
+}
+
+.carousel-container {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 2rem;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 2rem;
+    padding: 0 2rem;
+    width: max-content;
+    margin: 0 auto;
+}
+
+.gallery-img {
+    height: 450px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    cursor: crosshair;
+}
+
+.gallery-img:hover {
+    transform: scale(1.02) translateY(-10px);
+    border-color: var(--accent-primary);
+}
+
+/* Custom Scrollbar for Carousel */
+.carousel-container::-webkit-scrollbar {
+    height: 8px;
+}
+.carousel-container::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.02);
+    border-radius: 10px;
+}
+.carousel-container::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 10px;
+}
