@@ -1,8 +1,8 @@
-version: 1.0.2
+version: 1.0.3
 files:
-  - url: OnceUponAGalaxyTracker Setup 1.0.2.exe
-    sha512: xApzbL643gWGhXB7BykdultGKxAmo9fv/xJJgEdw7ApRW44Efyjqdg1D9C3GyXAOAR3bN0BCbowuFnz54Mmo5A==
-    size: 78921878
-path: OnceUponAGalaxyTracker Setup 1.0.2.exe
-sha512: xApzbL643gWGhXB7BykdultGKxAmo9fv/xJJgEdw7ApRW44Efyjqdg1D9C3GyXAOAR3bN0BCbowuFnz54Mmo5A==
-releaseDate: '2026-08-24T10:14:51.680Z'
+  - url: Galaxy Overlay Setup 1.0.3.exe
+    sha512: 7Wzv1PeK57ZUiStxfUKZBODauszdsyfFGMbO+nhLcTx5c+c9XTMcRsb2aW+hNMT+GFDfz3ekkvdcMDOB+sK9bQ==
+    size: 81028685
+path: Galaxy Overlay Setup 1.0.3.exe
+sha512: 7Wzv1PeK57ZUiStxfUKZBODauszdsyfFGMbO+nhLcTx5c+c9XTMcRsb2aW+hNMT+GFDfz3ekkvdcMDOB+sK9bQ==
+releaseDate: '2026-08-24T10:36:05.341Z'
