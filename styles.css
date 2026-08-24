@@ -1,10 +1,10 @@
 ﻿:root {
-    --bg-color: #080b12;
+    --bg-color: #0c0f14;
     --text-main: #f0f2f5;
     --text-muted: #94a3b8;
     --accent-primary: #6366f1;
     --accent-primary-hover: #4f46e5;
-    --accent-secondary: #ec4899;
+    --accent-secondary: #a855f7;
     --glass-bg: rgba(30, 41, 59, 0.4);
     --glass-border: rgba(255, 255, 255, 0.1);
 }
@@ -276,3 +276,4 @@ footer {
         transform: none;
     }
 }
+
