@@ -1,8 +1,8 @@
-version: 1.0.18
+version: 1.0.19
 files:
-  - url: Galaxy Overlay Setup 1.0.18.exe
-    sha512: e+ZOkrfXXqXCkdMsh+fiHiy0r4oDC7s7LHfvWvDg+1QfjxIIuVhIV6myKSmBOl2hAcKPAFOiEVjXllIcML7t8w==
-    size: 81037034
-path: Galaxy Overlay Setup 1.0.18.exe
-sha512: e+ZOkrfXXqXCkdMsh+fiHiy0r4oDC7s7LHfvWvDg+1QfjxIIuVhIV6myKSmBOl2hAcKPAFOiEVjXllIcML7t8w==
-releaseDate: '2026-08-26T22:42:09.275Z'
+  - url: Galaxy Overlay Setup 1.0.19.exe
+    sha512: Fs/8zEQib1Os3G87ceA/KYWChTgxxx3dfSSuM9+DiFWC92+rYGjJ3ky5VX8ev3EQLyM4HkQ9iGJnTVKdelI5Lw==
+    size: 81037101
+path: Galaxy Overlay Setup 1.0.19.exe
+sha512: Fs/8zEQib1Os3G87ceA/KYWChTgxxx3dfSSuM9+DiFWC92+rYGjJ3ky5VX8ev3EQLyM4HkQ9iGJnTVKdelI5Lw==
+releaseDate: '2026-08-26T23:30:07.636Z'
