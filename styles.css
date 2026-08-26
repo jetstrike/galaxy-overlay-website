@@ -123,6 +123,12 @@ body {
     margin-bottom: 2.5rem;
 }
 
+.hero-actions {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
 .btn {
     display: inline-flex;
     flex-direction: column;
