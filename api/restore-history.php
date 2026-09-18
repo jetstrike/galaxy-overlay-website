@@ -55,7 +55,6 @@ if ($result) {
         }
         
             
-        }
         $matches[] = $row;
     }
 }
