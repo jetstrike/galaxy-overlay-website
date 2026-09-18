@@ -50,11 +50,11 @@ if ($result) {
         if (isset($row['deck_cids'])) {
             $row['deck_cids'] = json_decode($row['deck_cids'], true);
         }
-        if (isset($row['round_boards'])) {
-            $row['round_boards'] = json_decode($row['round_boards'], true);
+        if (isset($row['turns'])) {
+            $row['turns'] = json_decode($row['turns'], true);
         }
-        if (isset($row['final_board'])) {
-            $row['final_board'] = json_decode($row['final_board'], true);
+        
+            
         }
         $matches[] = $row;
     }
