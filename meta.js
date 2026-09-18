@@ -47,7 +47,7 @@ function renderTable() {
             <tr>
                 <td class="captain-name">
                     <span class="rank-number">#${index + 1}</span>
-                    ${c.captain_name}
+                    <a href="captain.html?name=${encodeURIComponent(c.captain_name)}" style="color: inherit; text-decoration: none; font-weight: bold;">${c.captain_name}</a>
                 </td>
                 <td>${c.games_played.toLocaleString()}</td>
                 <td>${c.pick_rate}%</td>
