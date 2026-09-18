@@ -18,12 +18,12 @@ if (!isset($_GET['token']) || $_GET['token'] !== $SECRET_TOKEN) {
     die(json_encode(["error" => "Unauthorized"]));
 }
 
-if (!isset($_GET['player_id'])) {
+if (!isset($_GET['player_hash'])) {
     http_response_code(400);
-    die(json_encode(["error" => "Missing player_id"]));
+    die(json_encode(["error" => "Missing player_hash"]));
 }
 
-$player_id = $_GET['player_id'];
+$player_hash = $_GET['player_hash'];
 
 // 4. Connect to MySQL
 try {
@@ -34,18 +34,27 @@ try {
     die(json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]));
 }
 
-// 5. Fetch all matches for the player
-$stmt = $conn->prepare("SELECT * FROM playfab_matches WHERE player_id = ? ORDER BY date DESC");
-$stmt->bind_param("s", $player_id);
+// 5. Fetch all matches for the player from the old `matches` table
+$stmt = $conn->prepare("SELECT * FROM matches WHERE player_hash = ? ORDER BY created_at DESC");
+$stmt->bind_param("s", $player_hash);
 $stmt->execute();
 $result = $stmt->get_result();
 
 $matches = [];
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        // Decode the turns JSON block
-        if (isset($row['turns'])) {
-            $row['turns'] = json_decode($row['turns'], true);
+        // Decode JSON columns specific to the `matches` table
+        if (isset($row['captain_options'])) {
+            $row['captain_options'] = json_decode($row['captain_options'], true);
+        }
+        if (isset($row['deck_cids'])) {
+            $row['deck_cids'] = json_decode($row['deck_cids'], true);
+        }
+        if (isset($row['round_boards'])) {
+            $row['round_boards'] = json_decode($row['round_boards'], true);
+        }
+        if (isset($row['final_board'])) {
+            $row['final_board'] = json_decode($row['final_board'], true);
         }
         $matches[] = $row;
     }
