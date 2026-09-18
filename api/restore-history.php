@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET");
 header("Content-Type: application/json");
@@ -34,8 +34,8 @@ try {
     die(json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]));
 }
 
-// 5. Fetch all matches for the player from the old `matches` table
-$stmt = $conn->prepare("SELECT * FROM matches WHERE player_hash = ? ORDER BY created_at DESC");
+// 5. Fetch all matches for the player from the new `overlay_matches` table
+$stmt = $conn->prepare("SELECT * FROM overlay_matches WHERE player_hash = ? ORDER BY created_at DESC");
 $stmt->bind_param("s", $player_hash);
 $stmt->execute();
 $result = $stmt->get_result();
