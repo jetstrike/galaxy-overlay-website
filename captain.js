@@ -60,7 +60,7 @@ function renderTable(tbodyId, rows) {
         if (r.avg_placement < 3.0) placementColor = "#4ade80"; // green
         else if (r.avg_placement > 4.5) placementColor = "#f87171"; // red
         
-        const cardName = cardDictionary[r.cid] || `Unknown Card (#${r.cid})`;
+        const cardName = cardDictionary[r.cid] || r.cid;
         
         return `
             <tr>
