@@ -41,10 +41,14 @@ $tableQuery = "
 CREATE TABLE IF NOT EXISTS playfab_matches (
     run_id VARCHAR(64) PRIMARY KEY,
     player_id VARCHAR(64),
+    player_name VARCHAR(64),
     date DATETIME,
+    rules_version VARCHAR(32),
+    source_tag VARCHAR(32),
     placement INT,
     mmr INT,
     captain_cid INT,
+    captain VARCHAR(64),
     rank VARCHAR(32),
     turns LONGTEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -58,7 +62,13 @@ try {
     die(json_encode(["error" => "Failed to create table", "details" => $e->getMessage()]));
 }
 
-$stmt = $conn->prepare("INSERT IGNORE INTO playfab_matches (run_id, player_id, date, placement, mmr, captain_cid, rank, turns) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+// Gracefully add missing columns if the table already existed from before
+try { $conn->query("ALTER TABLE playfab_matches ADD COLUMN player_name VARCHAR(64) AFTER player_id"); } catch (Exception $e) {}
+try { $conn->query("ALTER TABLE playfab_matches ADD COLUMN rules_version VARCHAR(32) AFTER date"); } catch (Exception $e) {}
+try { $conn->query("ALTER TABLE playfab_matches ADD COLUMN source_tag VARCHAR(32) AFTER rules_version"); } catch (Exception $e) {}
+try { $conn->query("ALTER TABLE playfab_matches ADD COLUMN captain VARCHAR(64) AFTER captain_cid"); } catch (Exception $e) {}
+
+$stmt = $conn->prepare("INSERT IGNORE INTO playfab_matches (run_id, player_id, player_name, date, rules_version, source_tag, placement, mmr, captain_cid, captain, rank, turns) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 $inserted = 0;
 $skipped = 0;
@@ -69,6 +79,7 @@ try {
     foreach ($data['matches'] as $match) {
         $run_id = $match['run_id'] ?? null;
         $player_id = $match['player_id'] ?? null;
+        $player_name = $match['player_name'] ?? null;
         
         // Handle dates: parse ISO string and convert to MySQL DATETIME
         $raw_date = $match['date'] ?? null;
@@ -78,9 +89,12 @@ try {
             if ($ts) $date = date('Y-m-d H:i:s', $ts);
         }
 
+        $rules_version = $match['rules_version'] ?? null;
+        $source_tag = $match['source_tag'] ?? null;
         $placement = $match['placement'] ?? null;
         $mmr = $match['mmr'] ?? null;
         $captain_cid = $match['captain_cid'] ?? null;
+        $captain = $match['captain'] ?? null;
         $rank = $match['rank'] ?? null;
         
         $turns = null;
@@ -90,7 +104,7 @@ try {
 
         if (!$run_id) continue;
 
-        $stmt->bind_param("sssiisss", $run_id, $player_id, $date, $placement, $mmr, $captain_cid, $rank, $turns);
+        $stmt->bind_param("ssssssiiisss", $run_id, $player_id, $player_name, $date, $rules_version, $source_tag, $placement, $mmr, $captain_cid, $captain, $rank, $turns);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
