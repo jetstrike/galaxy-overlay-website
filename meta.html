@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meta Insights | Once Upon a Galaxy</title>
-    <meta name="description" content="Live meta insights and statistics for Once Upon a Galaxy. View captain win rates, average placements, and pick rates.">
-    <link rel="stylesheet" href="styles.css?v=1.0.15">
+    <meta name="description" content="Live meta insights and statistics for Once Upon a Galaxy. View captain win rates, deck inclusion rates, and final board stats.">
+    <link rel="stylesheet" href="styles.css?v=1.0.16">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         .meta-dashboard {
@@ -23,6 +23,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         .stats-header h1 {
             font-size: 2.5rem;
@@ -30,6 +32,26 @@
         }
         .stats-header h1 span {
             color: var(--accent-primary);
+        }
+        .controls-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .filter-select {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+        .filter-select option {
+            background: #111;
+            color: #fff;
         }
         .total-matches {
             background: var(--glass-bg);
@@ -51,13 +73,30 @@
             font-weight: 800;
             color: #fff;
         }
-        .table-container {
+        .tables-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        .table-section {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
             backdrop-filter: blur(12px);
             overflow: hidden;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .table-section h2 {
+            padding: 1.5rem;
+            margin: 0;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 1.5rem;
+        }
+        .table-wrapper {
+            overflow-x: auto;
         }
         table {
             width: 100%;
@@ -78,6 +117,7 @@
             cursor: pointer;
             user-select: none;
             transition: color 0.2s;
+            white-space: nowrap;
         }
         th:hover {
             color: #fff;
@@ -89,7 +129,7 @@
             font-size: 1rem;
             font-weight: 600;
         }
-        td.captain-name {
+        td.item-name {
             text-align: left;
             display: flex;
             align-items: center;
@@ -137,36 +177,84 @@
 
     <main class="meta-dashboard">
         <div class="stats-header">
-            <h1>Live <span>Meta</span></h1>
-            <div class="total-matches">
-                <h3>Matches Analyzed</h3>
-                <p id="total-matches-val">...</p>
+            <h1>Live <span>Analytics</span></h1>
+            <div class="controls-group">
+                <select id="mmr-filter" class="filter-select">
+                    <option value="0-99999">All MMR</option>
+                    <option value="0-2500">&lt; 2500 MMR</option>
+                    <option value="2500-3000">2500 - 3000 MMR</option>
+                    <option value="3000-3500">3000 - 3500 MMR</option>
+                    <option value="3500-4000">3500 - 4000 MMR</option>
+                    <option value="4000-99999">&gt; 4000 MMR</option>
+                </select>
+                <div class="total-matches">
+                    <h3>Matches Analyzed</h3>
+                    <p id="total-matches-val">...</p>
+                </div>
             </div>
         </div>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th data-sort="name" style="text-align: left;">Captain</th>
-                        <th data-sort="games">Games Played</th>
-                        <th data-sort="pick_rate">Pick Rate</th>
-                        <th data-sort="win_rate">Win Rate</th>
-                        <th data-sort="top_3_rate">Top 3 Rate</th>
-                        <th data-sort="avg_placement" class="sort-asc">Avg Placement</th>
-                    </tr>
-                </thead>
-                <tbody id="captains-tbody">
-                    <tr>
-                        <td colspan="6">
-                            <div class="loading">
-                                <div class="spinner"></div>
-                                <div>Crunching numbers from the database...</div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="tables-grid">
+            <!-- Captains Table -->
+            <div class="table-section">
+                <h2>Captain Performance</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-table="captains" data-sort="name" style="text-align: left;">Captain</th>
+                                <th data-table="captains" data-sort="total_picks">Games Played</th>
+                                <th data-table="captains" data-sort="pick_rate">Pick Rate</th>
+                                <th data-table="captains" data-sort="win_rate_1st">1st Place Rate</th>
+                                <th data-table="captains" data-sort="win_rate_top3">Top 3 Rate</th>
+                                <th data-table="captains" data-sort="avg_placement" class="sort-asc">Avg Placement</th>
+                            </tr>
+                        </thead>
+                        <tbody id="captains-tbody">
+                            <tr><td colspan="6"><div class="loading"><div class="spinner"></div><div>Crunching numbers from the database...</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Deck Inclusion Table -->
+            <div class="table-section">
+                <h2>Card Inclusion in Decks</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-table="decks" data-sort="name" style="text-align: left;">Card Name</th>
+                                <th data-table="decks" data-sort="total_decks">Decks Used In</th>
+                                <th data-table="decks" data-sort="deck_inclusion_rate" class="sort-desc">Pick Rate</th>
+                                <th data-table="decks" data-sort="deck_win_rate_top3">Top 3 Rate</th>
+                                <th data-table="decks" data-sort="avg_placement">Avg Placement</th>
+                            </tr>
+                        </thead>
+                        <tbody id="decks-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Final Boards Table -->
+            <div class="table-section">
+                <h2>Cards on Final Boards</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-table="final" data-sort="name" style="text-align: left;">Card Name</th>
+                                <th data-table="final" data-sort="final_boards">Final Boards</th>
+                                <th data-table="final" data-sort="final_board_rate" class="sort-desc">Presence Rate</th>
+                                <th data-table="final" data-sort="avg_placement">Avg Placement</th>
+                            </tr>
+                        </thead>
+                        <tbody id="final-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </main>
 
