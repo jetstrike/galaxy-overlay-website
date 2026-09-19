@@ -1,58 +1,112 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meta Insights | Once Upon a Galaxy</title>
-    <meta name="description" content="Live meta insights and statistics for Once Upon a Galaxy. View captain win rates, deck inclusion rates, and final board stats.">
-    <link rel="stylesheet" href="styles.css?v=1.0.16">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Galaxy Tracker - Meta Insights</title>
     <style>
-        .meta-dashboard {
-            padding: 2rem 5%;
-            max-width: 1600px;
-            margin: 0 auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            position: relative;
-            z-index: 10;
+        :root {
+            --bg-main: #0a0a0c;
+            --bg-secondary: #121216;
+            --accent-primary: #8a2be2;
+            --accent-secondary: #ff007f;
+            --text-main: #f0f0f5;
+            --text-muted: #a0a0b0;
+            --glass-bg: rgba(20, 20, 25, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
         }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(255, 0, 127, 0.05) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo span {
+            color: var(--text-main);
+            -webkit-text-fill-color: var(--text-main);
+        }
+
+        .meta-dashboard {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
         .stats-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            margin-bottom: 2rem;
         }
+
         .stats-header h1 {
             font-size: 2.5rem;
-            font-weight: 800;
+            margin: 0;
         }
+        
         .stats-header h1 span {
             color: var(--accent-primary);
         }
+
         .controls-group {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             align-items: center;
         }
+
         .filter-select {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            color: #fff;
-            padding: 0.8rem 1.2rem;
+            color: var(--text-main);
+            padding: 0.8rem 1.5rem;
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: border-color 0.3s;
+        }
+        .filter-select:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .filter-select:focus {
+            border-color: var(--accent-primary);
             outline: none;
         }
         .filter-select option {
             background: #111;
             color: #fff;
         }
+
         .total-matches {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -72,12 +126,9 @@
             font-size: 1.8rem;
             font-weight: 800;
             color: #fff;
+            margin: 0;
         }
-        .tables-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
+
         .table-section {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -88,6 +139,7 @@
             display: flex;
             flex-direction: column;
         }
+
         .table-section h2 {
             padding: 1.5rem;
             margin: 0;
@@ -95,18 +147,22 @@
             border-bottom: 1px solid var(--glass-border);
             font-size: 1.5rem;
         }
+
         .table-wrapper {
             overflow-x: auto;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         th, td {
             padding: 1.2rem;
             text-align: center;
             border-bottom: 1px solid var(--glass-border);
         }
+
         th {
             background: rgba(0,0,0,0.2);
             font-weight: 600;
@@ -119,6 +175,7 @@
             transition: color 0.2s;
             white-space: nowrap;
         }
+
         th:hover {
             color: #fff;
         }
@@ -135,17 +192,20 @@
             align-items: center;
             gap: 12px;
         }
+
         .rank-number {
             color: var(--text-muted);
             font-size: 0.9rem;
             width: 24px;
         }
+
         .loading {
             text-align: center;
             padding: 4rem;
             font-size: 1.2rem;
             color: var(--text-muted);
         }
+
         .spinner {
             display: inline-block;
             width: 40px;
@@ -156,17 +216,13 @@
             animation: spin 1s ease-in-out infinite;
             margin-bottom: 1rem;
         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="background-effects">
-        <div class="glow-orb primary"></div>
-        <div class="glow-orb secondary"></div>
-    </div>
-    
     <nav class="navbar">
         <div class="logo">Galaxy<span>Tracker</span></div>
         <div class="nav-links" style="display: flex; gap: 2rem;">
@@ -179,6 +235,9 @@
         <div class="stats-header">
             <h1>Live <span>Analytics</span></h1>
             <div class="controls-group">
+                <select id="query-filter" class="filter-select">
+                    <option value="captains">Captain Performance</option>
+                </select>
                 <select id="mmr-filter" class="filter-select">
                     <option value="0-99999">All MMR</option>
                     <option value="0-2500">&lt; 2500 MMR</option>
@@ -194,66 +253,17 @@
             </div>
         </div>
 
-        <div class="tables-grid">
-            <!-- Captains Table -->
-            <div class="table-section">
-                <h2>Captain Performance</h2>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-table="captains" data-sort="name" style="text-align: left;">Captain</th>
-                                <th data-table="captains" data-sort="total_picks">Games Played</th>
-                                <th data-table="captains" data-sort="pick_rate">Pick Rate</th>
-                                <th data-table="captains" data-sort="win_rate_1st">1st Place Rate</th>
-                                <th data-table="captains" data-sort="win_rate_top3">Top 3 Rate</th>
-                                <th data-table="captains" data-sort="avg_placement" class="sort-asc">Avg Placement</th>
-                            </tr>
-                        </thead>
-                        <tbody id="captains-tbody">
-                            <tr><td colspan="6"><div class="loading"><div class="spinner"></div><div>Crunching numbers from the database...</div></div></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Deck Inclusion Table -->
-            <div class="table-section">
-                <h2>Card Inclusion in Decks</h2>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-table="decks" data-sort="name" style="text-align: left;">Card Name</th>
-                                <th data-table="decks" data-sort="total_decks">Decks Used In</th>
-                                <th data-table="decks" data-sort="deck_inclusion_rate" class="sort-desc">Pick Rate</th>
-                                <th data-table="decks" data-sort="deck_win_rate_top3">Top 3 Rate</th>
-                                <th data-table="decks" data-sort="avg_placement">Avg Placement</th>
-                            </tr>
-                        </thead>
-                        <tbody id="decks-tbody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Final Boards Table -->
-            <div class="table-section">
-                <h2>Cards on Final Boards</h2>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-table="final" data-sort="name" style="text-align: left;">Card Name</th>
-                                <th data-table="final" data-sort="final_boards">Final Boards</th>
-                                <th data-table="final" data-sort="final_board_rate" class="sort-desc">Presence Rate</th>
-                                <th data-table="final" data-sort="avg_placement">Avg Placement</th>
-                            </tr>
-                        </thead>
-                        <tbody id="final-tbody">
-                        </tbody>
-                    </table>
-                </div>
+        <div class="table-section">
+            <h2 id="dynamic-table-title">Captain Performance</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead id="dynamic-thead">
+                        <!-- Headers generated dynamically -->
+                    </thead>
+                    <tbody id="dynamic-tbody">
+                        <tr><td colspan="10"><div class="loading"><div class="spinner"></div><div>Crunching numbers from the database...</div></div></td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
