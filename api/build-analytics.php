@@ -1,134 +1,105 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-
-set_time_limit(300); // Allow up to 5 minutes for syncing
+// build-analytics.php - Intended to be run via Cron Job
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+header('Content-Type: text/plain');
 
 $host = 'localhost';
 $db = 'u834540789_Galaxy';
 $user = 'u834540789_Tracker';
 $pass = 'Slippery1!1!';
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Connection failed']));
-}
+mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
-// 1. Sync Cards Table
-$cardsJson = file_get_contents('https://guide.galaxy.fun/data/cards.json');
-$cardsData = json_decode($cardsJson, true);
+try {
+    $conn = new mysqli($host, $user, $pass, $db);
+    echo "Connected to database.\n";
 
-if ($cardsData) {
-    $stmt = $conn->prepare("INSERT IGNORE INTO analytics_cards (cid, name, type, tribe, tier) VALUES (?, ?, ?, ?, ?)");
-    foreach ($cardsData as $card) {
-        if (!isset($card['cid'])) continue;
-        $cid = $card['cid'];
-        $name = $card['name'] ?? null;
-        $type = $card['type'] ?? null;
-        $tribe = $card['tribe'] ?? null;
-        $tier = isset($card['tier']) ? intval($card['tier']) : null;
-        $stmt->bind_param("isssi", $cid, $name, $type, $tribe, $tier);
-        $stmt->execute();
-    }
-}
+    $brackets = [
+        [0, 99999],
+        [0, 2500],
+        [2500, 3000],
+        [3000, 3500],
+        [3500, 4000],
+        [4000, 99999]
+    ];
 
-// 2. Sync Overlay Matches
-$overlayResult = $conn->query("
-    SELECT * FROM overlay_matches 
-    WHERE run_id NOT IN (SELECT run_id FROM analytics_matches)
-    LIMIT 1000
-");
+    $queries = ['captains'];
 
-$matchesStmt = $conn->prepare("INSERT INTO analytics_matches (run_id, date, mmr, placement, captain_cid, rank, source, rules_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-$decksStmt = $conn->prepare("INSERT INTO analytics_match_decks (run_id, card_cid) VALUES (?, ?)");
-$turnsStmt = $conn->prepare("INSERT INTO analytics_match_turns (run_id, turn_number, slot_id, card_cid) VALUES (?, ?, ?, ?)");
+    $conn->begin_transaction();
 
-$overlayCount = 0;
-while ($row = $overlayResult->fetch_assoc()) {
-    $source = 'overlay';
-    $mmr = $row['mmr'] ?? $row['mmr_start'] ?? 0;
-    
-    $matchesStmt->bind_param("ssiiisss", 
-        $row['run_id'], $row['date'], $mmr, $row['placement'], 
-        $row['captain_cid'], $row['rank'], $source, $row['rules_version']
-    );
-    $matchesStmt->execute();
+    foreach ($brackets as $b) {
+        $min_mmr = $b[0];
+        $max_mmr = $b[1];
+        $mmr_cond = "mmr >= $min_mmr AND mmr < $max_mmr";
 
-    if (!empty($row['deck_cids'])) {
-        $decks = json_decode($row['deck_cids'], true);
-        if (is_array($decks)) {
-            foreach ($decks as $cid) {
-                $cid = intval($cid);
-                $decksStmt->bind_param("si", $row['run_id'], $cid);
-                $decksStmt->execute();
-            }
-        }
-    }
+        // Get total matches for this bracket
+        $res = $conn->query("SELECT COUNT(*) as total FROM analytics_matches WHERE $mmr_cond");
+        $total_matches = intval($res->fetch_assoc()['total']);
 
-    if (!empty($row['turns'])) {
-        $turns = json_decode($row['turns'], true);
-        if (is_array($turns)) {
-            foreach ($turns as $turn_num => $turn_data) {
-                $turn_int = intval($turn_num);
-                if (isset($turn_data['crew']) && is_array($turn_data['crew'])) {
-                    foreach ($turn_data['crew'] as $slot => $card_data) {
-                        if (isset($card_data['cid'])) {
-                            $cid = intval($card_data['cid']);
-                            $turnsStmt->bind_param("sisi", $row['run_id'], $turn_int, $slot, $cid);
-                            $turnsStmt->execute();
+        foreach ($queries as $qt) {
+            echo "Building $qt for $min_mmr - $max_mmr (Total: $total_matches)... ";
+            
+            $data = [];
+            
+            if ($total_matches > 0) {
+                if ($qt === 'captains') {
+                    $q = "
+                        SELECT 
+                            m.captain_cid,
+                            c.name as captain_name,
+                            COUNT(m.run_id) as total_picks,
+                            (COUNT(m.run_id) / $total_matches) * 100 as pick_rate,
+                            AVG(m.placement) as avg_placement,
+                            AVG(t.final_turn) as avg_turns,
+                            SUM(CASE WHEN m.placement = 1 THEN 1 ELSE 0 END) / COUNT(m.run_id) * 100 as win_rate_1st,
+                            SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(m.run_id) * 100 as win_rate_top3
+                        FROM analytics_matches m
+                        LEFT JOIN analytics_cards c ON m.captain_cid = c.cid
+                        LEFT JOIN (
+                            SELECT run_id, MAX(turn_number) as final_turn 
+                            FROM analytics_match_turns 
+                            GROUP BY run_id
+                        ) t ON m.run_id = t.run_id
+                        WHERE $mmr_cond AND m.captain_cid > 0
+                        GROUP BY m.captain_cid, c.name
+                        ORDER BY total_picks DESC
+                    ";
+                    $res = $conn->query($q);
+                    if ($res) {
+                        while ($row = $res->fetch_assoc()) {
+                            $data[] = $row;
                         }
                     }
                 }
             }
+
+            $data_json = json_encode($data);
+            
+            $stmt = $conn->prepare("
+                INSERT INTO analytics_cache (query_type, min_mmr, max_mmr, total_matches, data_json) 
+                VALUES (?, ?, ?, ?, ?) 
+                ON DUPLICATE KEY UPDATE 
+                total_matches = VALUES(total_matches), 
+                data_json = VALUES(data_json),
+                last_updated = CURRENT_TIMESTAMP
+            ");
+            
+            $stmt->bind_param("siiis", $qt, $min_mmr, $max_mmr, $total_matches, $data_json);
+            $stmt->execute();
+            $stmt->close();
+
+            echo "Done.\n";
         }
     }
-    $overlayCount++;
+
+    $conn->commit();
+    echo "All caches built successfully!\n";
+
+} catch (Throwable $e) {
+    if (isset($conn)) $conn->rollback();
+    echo "Error: " . $e->getMessage() . "\n";
 }
 
-// 3. Sync Playfab Matches
-$playfabResult = $conn->query("
-    SELECT * FROM playfab_matches 
-    WHERE run_id NOT IN (SELECT run_id FROM analytics_matches)
-    LIMIT 1000
-");
-
-$playfabCount = 0;
-while ($row = $playfabResult->fetch_assoc()) {
-    $source = 'playfab';
-    $mmr = $row['mmr'] ?? 0;
-    
-    $matchesStmt->bind_param("ssiiisss", 
-        $row['run_id'], $row['date'], $mmr, $row['placement'], 
-        $row['captain_cid'], $row['rank'], $source, $row['rules_version']
-    );
-    $matchesStmt->execute();
-
-    if (!empty($row['turns'])) {
-        $turns = json_decode($row['turns'], true);
-        if (is_array($turns)) {
-            foreach ($turns as $turn_num => $turn_data) {
-                $turn_int = intval($turn_num);
-                if (isset($turn_data['crew']) && is_array($turn_data['crew'])) {
-                    foreach ($turn_data['crew'] as $slot => $card_data) {
-                        if (isset($card_data['cid'])) {
-                            $cid = intval($card_data['cid']);
-                            $turnsStmt->bind_param("sisi", $row['run_id'], $turn_int, $slot, $cid);
-                            $turnsStmt->execute();
-                        }
-                    }
-                }
-            }
-        }
-    }
-    $playfabCount++;
-}
-
-echo json_encode([
-    'success' => true,
-    'synced_overlay' => $overlayCount,
-    'synced_playfab' => $playfabCount,
-    'message' => 'ETL Sync Complete'
-]);
-
-$conn->close();
+if (isset($conn)) $conn->close();
 ?>

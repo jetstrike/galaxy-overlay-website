@@ -61,6 +61,18 @@ try {
         )
     ");
 
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS analytics_cache (
+            query_type VARCHAR(50),
+            min_mmr INT,
+            max_mmr INT,
+            total_matches INT,
+            data_json LONGTEXT,
+            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (query_type, min_mmr, max_mmr)
+        )
+    ");
+
     $conn->commit();
     echo json_encode(['success' => true, 'message' => 'Analytics tables created successfully.']);
 } catch (Exception $e) {
