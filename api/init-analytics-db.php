@@ -2,20 +2,20 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-\System.Management.Automation.Internal.Host.InternalHost = 'localhost';
-\ = 'u834540789_Galaxy';
-\ = 'u834540789_Tracker';
-\ = 'Slippery1!1!';
+$host = 'localhost';
+$db = 'u834540789_Galaxy';
+$user = 'u834540789_Tracker';
+$pass = 'Slippery1!1!';
 
-\ = new mysqli(\System.Management.Automation.Internal.Host.InternalHost, \, \, \);
-if (\->connect_error) {
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
     die(json_encode(['error' => 'Connection failed']));
 }
 
-\->begin_transaction();
+$conn->begin_transaction();
 
 try {
-    \->query("
+    $conn->query("
         CREATE TABLE IF NOT EXISTS analytics_cards (
             cid INT PRIMARY KEY,
             name VARCHAR(64),
@@ -25,7 +25,7 @@ try {
         )
     ");
 
-    \->query("
+    $conn->query("
         CREATE TABLE IF NOT EXISTS analytics_matches (
             run_id VARCHAR(64) PRIMARY KEY,
             date DATETIME,
@@ -38,7 +38,7 @@ try {
         )
     ");
 
-    \->query("
+    $conn->query("
         CREATE TABLE IF NOT EXISTS analytics_match_decks (
             id INT AUTO_INCREMENT PRIMARY KEY,
             run_id VARCHAR(64),
@@ -48,7 +48,7 @@ try {
         )
     ");
 
-    \->query("
+    $conn->query("
         CREATE TABLE IF NOT EXISTS analytics_match_turns (
             id INT AUTO_INCREMENT PRIMARY KEY,
             run_id VARCHAR(64),
@@ -61,12 +61,12 @@ try {
         )
     ");
 
-    \->commit();
+    $conn->commit();
     echo json_encode(['success' => true, 'message' => 'Analytics tables created successfully.']);
-} catch (Exception \) {
-    \->rollback();
-    echo json_encode(['error' => \->getMessage()]);
+} catch (Exception $e) {
+    $conn->rollback();
+    echo json_encode(['error' => $e->getMessage()]);
 }
 
-\->close();
+$conn->close();
 ?>

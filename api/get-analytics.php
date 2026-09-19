@@ -2,89 +2,89 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-\System.Management.Automation.Internal.Host.InternalHost = 'localhost';
-\ = 'u834540789_Galaxy';
-\ = 'u834540789_Tracker';
-\ = 'Slippery1!1!';
+$host = 'localhost';
+$db = 'u834540789_Galaxy';
+$user = 'u834540789_Tracker';
+$pass = 'Slippery1!1!';
 
-\ = new mysqli(\System.Management.Automation.Internal.Host.InternalHost, \, \, \);
-if (\->connect_error) {
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
     die(json_encode(['error' => 'Connection failed']));
 }
 
-\ = isset(\['min_mmr']) ? intval(\['min_mmr']) : 0;
-\ = isset(\['max_mmr']) ? intval(\['max_mmr']) : 99999;
+$min_mmr = isset($_GET['min_mmr']) ? intval($_GET['min_mmr']) : 0;
+$max_mmr = isset($_GET['max_mmr']) ? intval($_GET['max_mmr']) : 99999;
 
 // Base condition for MMR
-\ = "mmr >= \ AND mmr < \";
+$mmr_cond = "mmr >= $min_mmr AND mmr < $max_mmr";
 
-\ = [];
+$response = [];
 
 // 1. Total records analyzed
-\ = \->query("SELECT COUNT(*) as total FROM analytics_matches WHERE \");
-\['total_matches'] = \->fetch_assoc()['total'];
+$res = $conn->query("SELECT COUNT(*) as total FROM analytics_matches WHERE $mmr_cond");
+$response['total_matches'] = $res->fetch_assoc()['total'];
 
 // Total custom decks (only overlay matches have deck_cids)
-\ = \->query("SELECT COUNT(DISTINCT run_id) as total FROM analytics_match_decks md JOIN analytics_matches m ON md.run_id = m.run_id WHERE \");
-\['total_custom_decks'] = \->fetch_assoc()['total'];
+$res = $conn->query("SELECT COUNT(DISTINCT run_id) as total FROM analytics_match_decks md JOIN analytics_matches m ON md.run_id = m.run_id WHERE $mmr_cond");
+$response['total_custom_decks'] = $res->fetch_assoc()['total'];
 
-if (\['total_matches'] == 0) {
-    echo json_encode(\);
+if ($response['total_matches'] == 0) {
+    echo json_encode($response);
     exit;
 }
 
 // 2. Captain Stats (Pick rate, Average Placement, Win Rate)
 // Win rate is defined as Placement <= 3 (or 1 depending on game, let's provide 1st place and top 3)
-\ = "
+$query = "
     SELECT 
         m.captain_cid,
         c.name as captain_name,
         COUNT(*) as total_picks,
-        (COUNT(*) / {\['total_matches']}) * 100 as pick_rate,
+        (COUNT(*) / {$response['total_matches']}) * 100 as pick_rate,
         AVG(m.placement) as avg_placement,
         SUM(CASE WHEN m.placement = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100 as win_rate_1st,
         SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(*) * 100 as win_rate_top3
     FROM analytics_matches m
     LEFT JOIN analytics_cards c ON m.captain_cid = c.cid
-    WHERE \ AND m.captain_cid > 0
+    WHERE $mmr_cond AND m.captain_cid > 0
     GROUP BY m.captain_cid, c.name
     ORDER BY total_picks DESC
 ";
-\ = \->query(\);
-\['captain_stats'] = \->fetch_all(MYSQLI_ASSOC);
+$res = $conn->query($query);
+$response['captain_stats'] = $res->fetch_all(MYSQLI_ASSOC);
 
 // 3. Card Stats in Decks (Deck inclusion rate, Deck Win Rate)
-if (\['total_custom_decks'] > 0) {
-    \ = "
+if ($response['total_custom_decks'] > 0) {
+    $query = "
         SELECT 
             md.card_cid,
             c.name as card_name,
             COUNT(DISTINCT md.run_id) as total_decks,
-            (COUNT(DISTINCT md.run_id) / {\['total_custom_decks']}) * 100 as deck_inclusion_rate,
+            (COUNT(DISTINCT md.run_id) / {$response['total_custom_decks']}) * 100 as deck_inclusion_rate,
             AVG(m.placement) as avg_placement,
             SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(DISTINCT md.run_id) * 100 as deck_win_rate_top3
         FROM analytics_match_decks md
         JOIN analytics_matches m ON md.run_id = m.run_id
         LEFT JOIN analytics_cards c ON md.card_cid = c.cid
-        WHERE \
+        WHERE $mmr_cond
         GROUP BY md.card_cid, c.name
         HAVING total_decks > 5
         ORDER BY deck_inclusion_rate DESC
         LIMIT 50
     ";
-    \ = \->query(\);
-    \['deck_card_stats'] = \->fetch_all(MYSQLI_ASSOC);
+    $res = $conn->query($query);
+    $response['deck_card_stats'] = $res->fetch_all(MYSQLI_ASSOC);
 } else {
-    \['deck_card_stats'] = [];
+    $response['deck_card_stats'] = [];
 }
 
 // 4. Cards on Final Board Rate (Assuming max turn_number per run is the final board)
-\ = "
+$query = "
     SELECT 
         t.card_cid,
         c.name as card_name,
         COUNT(DISTINCT t.run_id) as final_boards,
-        (COUNT(DISTINCT t.run_id) / {\['total_matches']}) * 100 as final_board_rate,
+        (COUNT(DISTINCT t.run_id) / {$response['total_matches']}) * 100 as final_board_rate,
         AVG(m.placement) as avg_placement
     FROM analytics_match_turns t
     JOIN (
@@ -94,15 +94,15 @@ if (\['total_custom_decks'] > 0) {
     ) max_turns ON t.run_id = max_turns.run_id AND t.turn_number = max_turns.final_turn
     JOIN analytics_matches m ON t.run_id = m.run_id
     LEFT JOIN analytics_cards c ON t.card_cid = c.cid
-    WHERE \
+    WHERE $mmr_cond
     GROUP BY t.card_cid, c.name
     HAVING final_boards > 5
     ORDER BY final_board_rate DESC
     LIMIT 50
 ";
-\ = \->query(\);
-\['final_board_stats'] = \->fetch_all(MYSQLI_ASSOC);
+$res = $conn->query($query);
+$response['final_board_stats'] = $res->fetch_all(MYSQLI_ASSOC);
 
-echo json_encode(\);
-\->close();
+echo json_encode($response);
+$conn->close();
 ?>
