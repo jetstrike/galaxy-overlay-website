@@ -25,7 +25,7 @@ try {
     $row = $res->fetch_assoc();
     $response['total_matches'] = intval($row['total']);
 
-    $res = $conn->query("SELECT COUNT(DISTINCT run_id) as total FROM analytics_match_decks md JOIN analytics_matches m ON md.run_id = m.run_id WHERE $mmr_cond");
+    $res = $conn->query("SELECT COUNT(DISTINCT md.run_id) as total FROM analytics_match_decks md JOIN analytics_matches m ON md.run_id = m.run_id WHERE $mmr_cond");
     $row = $res->fetch_assoc();
     $response['total_custom_decks'] = intval($row['total']);
 
