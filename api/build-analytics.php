@@ -12,6 +12,29 @@ $pass = 'Slippery1!1!';
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
 try {
+    // 1. Trigger the sync to pull in any new matches (up to 500 at a time)
+    echo "Running incremental sync...\n";
+    $sync_url = "https://galaxy-overlay.com/api/sync-analytics-db.php?limit=500";
+    
+    // Create a stream context with a short timeout so we don't hold up the cron if sync hangs
+    $ctx = stream_context_create(array('http'=>
+        array(
+            'timeout' => 20,
+        )
+    ));
+    $sync_result = @file_get_contents($sync_url, false, $ctx);
+    
+    if ($sync_result) {
+        $sync_data = json_decode($sync_result, true);
+        if ($sync_data && isset($sync_data['processed_this_batch'])) {
+            echo "Synced " . $sync_data['processed_this_batch'] . " new matches. Total matches in analytics DB: " . $sync_data['total_analytics_matches'] . "\n\n";
+        } else {
+            echo "Sync response parsing failed or empty.\n\n";
+        }
+    } else {
+        echo "Failed to trigger sync.\n\n";
+    }
+
     $conn = new mysqli($host, $user, $pass, $db);
     echo "Connected to database.\n";
 
