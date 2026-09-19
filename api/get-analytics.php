@@ -7,9 +7,12 @@ $db = 'u834540789_Galaxy';
 $user = 'u834540789_Tracker';
 $pass = 'Slippery1!1!';
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Connection failed']));
+mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
+
+try {
+    $conn = new mysqli($host, $user, $pass, $db);
+} catch (Exception $e) {
+    die(json_encode(['error' => 'Connection failed: ' . $e->getMessage()]));
 }
 
 $min_mmr = isset($_GET['min_mmr']) ? intval($_GET['min_mmr']) : 0;
@@ -22,11 +25,11 @@ $response = [];
 
 // 1. Total records analyzed
 $res = $conn->query("SELECT COUNT(*) as total FROM analytics_matches WHERE $mmr_cond");
-$response['total_matches'] = $res->fetch_assoc()['total'];
+$response['total_matches'] = intval($res->fetch_assoc()['total']);
 
 // Total custom decks (only overlay matches have deck_cids)
 $res = $conn->query("SELECT COUNT(DISTINCT run_id) as total FROM analytics_match_decks md JOIN analytics_matches m ON md.run_id = m.run_id WHERE $mmr_cond");
-$response['total_custom_decks'] = $res->fetch_assoc()['total'];
+$response['total_custom_decks'] = intval($res->fetch_assoc()['total']);
 
 if ($response['total_matches'] == 0) {
     echo json_encode($response);
@@ -34,7 +37,6 @@ if ($response['total_matches'] == 0) {
 }
 
 // 2. Captain Stats (Pick rate, Average Placement, Win Rate)
-// Win rate is defined as Placement <= 3 (or 1 depending on game, let's provide 1st place and top 3)
 $query = "
     SELECT 
         m.captain_cid,
@@ -51,9 +53,16 @@ $query = "
     ORDER BY total_picks DESC
 ";
 $res = $conn->query($query);
-$response['captain_stats'] = $res->fetch_all(MYSQLI_ASSOC);
+$captain_stats = [];
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $captain_stats[] = $row;
+    }
+}
+$response['captain_stats'] = $captain_stats;
 
 // 3. Card Stats in Decks (Deck inclusion rate, Deck Win Rate)
+$deck_card_stats = [];
 if ($response['total_custom_decks'] > 0) {
     $query = "
         SELECT 
@@ -73,12 +82,15 @@ if ($response['total_custom_decks'] > 0) {
         LIMIT 50
     ";
     $res = $conn->query($query);
-    $response['deck_card_stats'] = $res->fetch_all(MYSQLI_ASSOC);
-} else {
-    $response['deck_card_stats'] = [];
+    if ($res) {
+        while ($row = $res->fetch_assoc()) {
+            $deck_card_stats[] = $row;
+        }
+    }
 }
+$response['deck_card_stats'] = $deck_card_stats;
 
-// 4. Cards on Final Board Rate (Assuming max turn_number per run is the final board)
+// 4. Cards on Final Board Rate
 $query = "
     SELECT 
         t.card_cid,
@@ -101,7 +113,13 @@ $query = "
     LIMIT 50
 ";
 $res = $conn->query($query);
-$response['final_board_stats'] = $res->fetch_all(MYSQLI_ASSOC);
+$final_board_stats = [];
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $final_board_stats[] = $row;
+    }
+}
+$response['final_board_stats'] = $final_board_stats;
 
 echo json_encode($response);
 $conn->close();
