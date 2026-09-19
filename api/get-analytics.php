@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
@@ -15,25 +17,23 @@ try {
     $min_mmr = isset($_GET['min_mmr']) ? intval($_GET['min_mmr']) : 0;
     $max_mmr = isset($_GET['max_mmr']) ? intval($_GET['max_mmr']) : 99999;
 
-    // Base condition for MMR
     $mmr_cond = "mmr >= $min_mmr AND mmr < $max_mmr";
 
     $response = [];
 
-    // 1. Total records analyzed
     $res = $conn->query("SELECT COUNT(*) as total FROM analytics_matches WHERE $mmr_cond");
-    $response['total_matches'] = intval($res->fetch_assoc()['total']);
+    $row = $res->fetch_assoc();
+    $response['total_matches'] = intval($row['total']);
 
-    // Total custom decks (only overlay matches have deck_cids)
     $res = $conn->query("SELECT COUNT(DISTINCT run_id) as total FROM analytics_match_decks md JOIN analytics_matches m ON md.run_id = m.run_id WHERE $mmr_cond");
-    $response['total_custom_decks'] = intval($res->fetch_assoc()['total']);
+    $row = $res->fetch_assoc();
+    $response['total_custom_decks'] = intval($row['total']);
 
     if ($response['total_matches'] == 0) {
         echo json_encode($response);
         exit;
     }
 
-    // 2. Captain Stats (Pick rate, Average Placement, Win Rate)
     $query = "
         SELECT 
             m.captain_cid,
@@ -58,7 +58,6 @@ try {
     }
     $response['captain_stats'] = $captain_stats;
 
-    // 3. Card Stats in Decks (Deck inclusion rate, Deck Win Rate)
     $deck_card_stats = [];
     if ($response['total_custom_decks'] > 0) {
         $query = "
@@ -87,7 +86,6 @@ try {
     }
     $response['deck_card_stats'] = $deck_card_stats;
 
-    // 4. Cards on Final Board Rate
     $query = "
         SELECT 
             t.card_cid,
@@ -120,7 +118,7 @@ try {
 
     echo json_encode($response);
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Database exception: ' . $e->getMessage()]);
 }
