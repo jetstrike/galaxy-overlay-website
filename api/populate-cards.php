@@ -11,21 +11,24 @@ if ($conn->connect_error) {
 
 $conn->query("TRUNCATE TABLE analytics_cards");
 
-$cardsJson = file_get_contents('cards.json');
-$cardsData = json_decode($cardsJson, true);
+$cardsJson = file_get_contents(__DIR__ . '/cards.json');
+if ($cardsJson === false) {
+    die("Failed to read cards.json from " . __DIR__ . "\n");
+}
 
+$cardsData = json_decode($cardsJson, true);
 if (!$cardsData) {
-    die("Failed to parse cards.json\n");
+    die("Failed to parse cards.json. JSON Error: " . json_last_error_msg() . "\n");
 }
 
 $stmt = $conn->prepare("INSERT INTO analytics_cards (cid, name, type, tribe, tier) VALUES (?, ?, ?, ?, ?)");
 
 $inserted = 0;
 foreach ($cardsData as $cid => $card) {
-    $c = intval($cid);
-    $name = isset($card['name']) ? $card['name'] : '';
+    $c = intval($card['cid'] ?? 0);
+    if ($c === 0) continue;
     
-    // Corrected to use 'card_type' instead of 'type'
+    $name = isset($card['name']) ? $card['name'] : '';
     $type = isset($card['card_type']) ? strtolower($card['card_type']) : '';
     
     $tribe = '';
