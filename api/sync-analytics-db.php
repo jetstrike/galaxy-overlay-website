@@ -24,7 +24,7 @@ try {
     $conn->begin_transaction();
 
     // 1. Process Playfab Matches
-    $q = "SELECT * FROM playfab_runs WHERE run_id NOT IN (SELECT run_id FROM analytics_matches) LIMIT $limit";
+    $q = "SELECT * FROM playfab_matches WHERE run_id NOT IN (SELECT run_id FROM analytics_matches) LIMIT $limit";
     $res = $conn->query($q);
     if ($res) {
         while ($row = $res->fetch_assoc()) {
