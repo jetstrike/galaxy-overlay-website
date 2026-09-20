@@ -22,7 +22,7 @@ try {
             'timeout' => 20,
         )
     ));
-    $sync_result = @file_get_contents($sync_url, false, $ctx);
+    $ch = curl_init($sync_url); curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); curl_setopt($ch, CURLOPT_TIMEOUT, 20); curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); $sync_result = curl_exec($ch); curl_close($ch);
     
     if ($sync_result) {
         $sync_data = json_decode($sync_result, true);
