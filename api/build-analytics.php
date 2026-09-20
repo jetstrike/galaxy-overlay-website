@@ -14,7 +14,7 @@ mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 try {
     // 1. Trigger the sync to pull in any new matches (up to 500 at a time)
     echo "Running incremental sync...\n";
-    $sync_url = "https://galaxy-overlay.com/api/sync-analytics-db.php?limit=500";
+    $sync_url = "https://galaxy-overlay.com/api/sync-analytics-db.php?limit=2500";
     
     // Create a stream context with a short timeout so we don't hold up the cron if sync hangs
     $ctx = stream_context_create(array('http'=>
@@ -22,7 +22,7 @@ try {
             'timeout' => 20,
         )
     ));
-    $ch = curl_init($sync_url); curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); curl_setopt($ch, CURLOPT_TIMEOUT, 20); curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); $sync_result = curl_exec($ch); curl_close($ch);
+    $ch = curl_init($sync_url); curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); curl_setopt($ch, CURLOPT_TIMEOUT, 60); curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); $sync_result = curl_exec($ch); curl_close($ch);
     
     if ($sync_result) {
         $sync_data = json_decode($sync_result, true);
