@@ -111,7 +111,7 @@ try {
                         ) rc
                         JOIN analytics_matches m ON rc.run_id = m.run_id
                         LEFT JOIN analytics_cards c ON rc.card_cid = c.cid
-                        WHERE $mmr_cond AND c.card_type != 'captain'
+                        WHERE $mmr_cond AND c.type != 'captain'
                         GROUP BY rc.card_cid, c.name
                         ORDER BY games_played DESC
                     ";
