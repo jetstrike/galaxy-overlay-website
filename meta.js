@@ -20,6 +20,8 @@ async function fetchMetaData() {
     // Reset sort when switching queries
     if (currentQuery === 'captains') {
         currentSort = { column: "total_picks", asc: false };
+    } else if (currentQuery === 'cards') {
+        currentSort = { column: "games_played", asc: false };
     }
 
     renderHeaders();
@@ -46,6 +48,14 @@ const tableConfigs = {
         { id: "pick_rate", label: "% Played", align: "center", format: val => parseFloat(val).toFixed(1) + "%" },
         { id: "avg_placement", label: "Avg Placement", align: "center", format: val => parseFloat(val).toFixed(2) },
         { id: "avg_turns", label: "Avg Turns", align: "center", format: val => parseFloat(val).toFixed(1) },
+        { id: "win_rate_1st", label: "1st Place Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" },
+        { id: "win_rate_top3", label: "Top 3 Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" }
+    ],
+    cards: [
+        { id: "card_name", label: "Card", align: "left" },
+        { id: "games_played", label: "Games Played", align: "center" },
+        { id: "avg_turns_on_board", label: "Avg Turns on Board", align: "center", format: val => parseFloat(val).toFixed(1) },
+        { id: "avg_first_appearance", label: "Avg First Appearance", align: "center", format: val => parseFloat(val).toFixed(1) },
         { id: "win_rate_1st", label: "1st Place Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" },
         { id: "win_rate_top3", label: "Top 3 Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" }
     ]
