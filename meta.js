@@ -25,7 +25,7 @@ async function fetchMetaData() {
     renderHeaders();
 
     try {
-        const response = await fetch(`https://galaxy-overlay.com/api/get-analytics.php?query_type=${currentQuery}&min_mmr=${minMmr}&max_mmr=${maxMmr}`);
+        const response = await fetch(`https://galaxy-overlay.com/api/get-analytics.php?query_type=${currentQuery}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`);
         const data = await response.json();
         
         document.getElementById("total-matches-val").textContent = (data.total_matches || 0).toLocaleString();
