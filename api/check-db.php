@@ -6,7 +6,7 @@ $pass = 'Slippery1!1!';
 
 try {
     $conn = new mysqli($host, $user, $pass, $db);
-    $res = $conn->query("DESCRIBE analytics_cards");
+    $res = $conn->query("SELECT query_type, min_mmr, max_mmr, LENGTH(data_json) FROM analytics_cache");
     while ($row = $res->fetch_assoc()) {
         print_r($row);
     }
