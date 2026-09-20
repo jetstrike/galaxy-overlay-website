@@ -6,7 +6,7 @@ $pass = 'Slippery1!1!';
 
 try {
     $conn = new mysqli($host, $user, $pass, $db);
-    $res = $conn->query("SHOW FULL PROCESSLIST");
+    $res = $conn->query("DESCRIBE analytics_cards");
     while ($row = $res->fetch_assoc()) {
         print_r($row);
     }
