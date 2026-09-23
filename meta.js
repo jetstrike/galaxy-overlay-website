@@ -17,6 +17,15 @@ async function fetchMetaData() {
     const loadingHtml = `<tr><td colspan="10"><div class="loading"><div class="spinner"></div><div>Crunching numbers from the database...</div></div></td></tr>`;
     document.getElementById("dynamic-tbody").innerHTML = loadingHtml;
 
+    // Show/hide extra filters based on query
+    if (currentQuery === 'cards') {
+        document.getElementById("rarity-filter").style.display = "inline-block";
+        document.getElementById("collectible-filter").style.display = "inline-block";
+    } else {
+        document.getElementById("rarity-filter").style.display = "none";
+        document.getElementById("collectible-filter").style.display = "none";
+    }
+
     // Reset sort when switching queries
     if (currentQuery === 'captains') {
         currentSort = { column: "total_picks", asc: false };
@@ -102,8 +111,33 @@ function renderTable() {
         return;
     }
 
+    let filteredData = rawData;
+
+    // Apply client-side filters if we are viewing cards
+    if (currentQuery === 'cards') {
+        const rarityFilter = document.getElementById("rarity-filter").value;
+        const colFilter = document.getElementById("collectible-filter").value;
+
+        filteredData = filteredData.filter(item => {
+            if (rarityFilter !== 'all') {
+                if (!item.rarity || item.rarity.toLowerCase() !== rarityFilter) return false;
+            }
+            if (colFilter !== 'all') {
+                const isCollectible = String(item.is_collectible) === '1' || item.is_collectible === true || item.is_collectible === 'true';
+                if (colFilter === 'collectible' && !isCollectible) return false;
+                if (colFilter === 'uncollectible' && isCollectible) return false;
+            }
+            return true;
+        });
+    }
+
+    if (filteredData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${config.length}" style="color: var(--text-muted);">No data matches the selected filters.</td></tr>`;
+        return;
+    }
+
     // Sort data
-    const sortedData = [...rawData].sort((a, b) => {
+    const sortedData = [...filteredData].sort((a, b) => {
         let valA = a[currentSort.column];
         let valB = b[currentSort.column];
         
@@ -144,6 +178,8 @@ function renderTable() {
 
 document.getElementById("mmr-filter").addEventListener("change", fetchMetaData);
 document.getElementById("query-filter").addEventListener("change", fetchMetaData);
+document.getElementById("rarity-filter").addEventListener("change", renderTable);
+document.getElementById("collectible-filter").addEventListener("change", renderTable);
 
 // Auto-refresh every 10 minutes
 setInterval(fetchMetaData, 10 * 60 * 1000);
