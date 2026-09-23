@@ -21,7 +21,7 @@ if (!$cardsData) {
     die("Failed to parse cards.json. JSON Error: " . json_last_error_msg() . "\n");
 }
 
-$stmt = $conn->prepare("INSERT INTO analytics_cards (cid, name, type, tribe, tier) VALUES (?, ?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO analytics_cards (cid, name, type, tribe, tier, rarity, is_collectible) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 $inserted = 0;
 foreach ($cardsData as $cid => $card) {
@@ -40,7 +40,10 @@ foreach ($cardsData as $cid => $card) {
     
     $tier = isset($card['tier']) ? intval($card['tier']) : 0;
     
-    $stmt->bind_param("isssi", $c, $name, $type, $tribe, $tier);
+    $rarity = isset($card['rarity']) ? strtolower($card['rarity']) : '';
+    $is_collectible = isset($card['is_collectible']) && $card['is_collectible'] ? 1 : 0;
+    
+    $stmt->bind_param("isssisi", $c, $name, $type, $tribe, $tier, $rarity, $is_collectible);
     $stmt->execute();
     if ($stmt->affected_rows > 0) {
         $inserted++;
