@@ -146,6 +146,27 @@
             background: rgba(255,255,255,0.05);
             border-bottom: 1px solid var(--glass-border);
             font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: background 0.3s, border-color 0.3s;
+            display: none;
+        }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .table-wrapper {
@@ -268,7 +289,10 @@
         </div>
 
         <div class="table-section">
-            <h2 id="dynamic-table-title">Captain Performance</h2>
+            <h2 id="dynamic-table-title-container">
+                <button id="back-btn" class="back-btn">← Back</button>
+                <span id="dynamic-table-title">Captain Performance</span>
+            </h2>
             <div class="table-wrapper">
                 <table>
                     <thead id="dynamic-thead">

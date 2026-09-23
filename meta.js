@@ -2,6 +2,10 @@ let rawData = {};
 let currentQuery = "captains";
 let currentSort = { column: "total_picks", asc: false };
 
+let isDrilldown = false;
+let drilldownType = null;
+let drilldownValue = null;
+
 async function fetchMetaData() {
     const filter = document.getElementById("mmr-filter").value.split("-");
     const minMmr = filter[0];
@@ -11,14 +15,28 @@ async function fetchMetaData() {
     
     // Update title
     const select = document.getElementById("query-filter");
-    document.getElementById("dynamic-table-title").textContent = select.options[select.selectedIndex].text;
+    let titleText = select.options[select.selectedIndex].text;
+    
+    if (isDrilldown) {
+        if (drilldownType === 'captain') {
+            titleText = `Cards played with ${drilldownValue}`;
+        } else {
+            titleText = `Captains that played ${drilldownValue}`;
+        }
+        document.getElementById("back-btn").style.display = "inline-block";
+        document.getElementById("query-filter").style.display = "none";
+    } else {
+        document.getElementById("back-btn").style.display = "none";
+        document.getElementById("query-filter").style.display = "inline-block";
+    }
+    document.getElementById("dynamic-table-title").textContent = titleText;
     
     // Show loading states
     const loadingHtml = `<tr><td colspan="10"><div class="loading"><div class="spinner"></div><div>Crunching numbers from the database...</div></div></td></tr>`;
     document.getElementById("dynamic-tbody").innerHTML = loadingHtml;
 
     // Show/hide extra filters based on query
-    if (currentQuery === 'cards') {
+    if (currentQuery === 'cards' || (isDrilldown && drilldownType === 'captain')) {
         document.getElementById("rarity-filter").style.display = "inline-block";
         document.getElementById("collectible-filter").style.display = "inline-block";
     } else {
@@ -27,7 +45,9 @@ async function fetchMetaData() {
     }
 
     // Reset sort when switching queries
-    if (currentQuery === 'captains') {
+    if (isDrilldown) {
+        currentSort = { column: "games_played", asc: false };
+    } else if (currentQuery === 'captains') {
         currentSort = { column: "total_picks", asc: false };
     } else if (currentQuery === 'cards') {
         currentSort = { column: "games_played", asc: false };
@@ -36,7 +56,16 @@ async function fetchMetaData() {
     renderHeaders();
 
     try {
-        const response = await fetch(`https://galaxy-overlay.com/api/get-analytics.php?query_type=${currentQuery}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`);
+        let url = `https://galaxy-overlay.com/api/get-analytics.php?query_type=${currentQuery}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`;
+        if (isDrilldown) {
+            if (drilldownType === 'captain') {
+                url = `https://galaxy-overlay.com/api/get-captain-drilldown.php?captain_name=${encodeURIComponent(drilldownValue)}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`;
+            } else {
+                url = `https://galaxy-overlay.com/api/get-card-drilldown.php?card_name=${encodeURIComponent(drilldownValue)}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`;
+            }
+        }
+        
+        const response = await fetch(url);
         const data = await response.json();
         
         document.getElementById("total-matches-val").textContent = (data.total_matches || 0).toLocaleString();
@@ -67,12 +96,27 @@ const tableConfigs = {
         { id: "avg_first_appearance", label: "Avg First Appearance", align: "center", format: val => parseFloat(val).toFixed(1) },
         { id: "win_rate_1st", label: "1st Place Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" },
         { id: "win_rate_top3", label: "Top 3 Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" }
+    ],
+    'drilldown-captain': [
+        { id: "card_name", label: "Card", align: "left" },
+        { id: "games_played", label: "Games Played", align: "center" },
+        { id: "win_rate_top3", label: "Top 3 Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" }
+    ],
+    'drilldown-card': [
+        { id: "captain_name", label: "Captain", align: "left" },
+        { id: "games_played", label: "Games Played", align: "center" },
+        { id: "avg_placement", label: "Avg Placement", align: "center", format: val => parseFloat(val).toFixed(2) },
+        { id: "win_rate_top3", label: "Top 3 Rate", align: "center", format: val => parseFloat(val).toFixed(1) + "%" }
     ]
 };
 
 function renderHeaders() {
     const thead = document.getElementById("dynamic-thead");
-    const config = tableConfigs[currentQuery];
+    let configKey = currentQuery;
+    if (isDrilldown) {
+        configKey = drilldownType === 'captain' ? 'drilldown-captain' : 'drilldown-card';
+    }
+    const config = tableConfigs[configKey];
     
     let html = "<tr>";
     for (const col of config) {
@@ -104,7 +148,11 @@ function renderHeaders() {
 
 function renderTable() {
     const tbody = document.getElementById("dynamic-tbody");
-    const config = tableConfigs[currentQuery];
+    let configKey = currentQuery;
+    if (isDrilldown) {
+        configKey = drilldownType === 'captain' ? 'drilldown-captain' : 'drilldown-card';
+    }
+    const config = tableConfigs[configKey];
     
     if (rawData.length === 0) {
         tbody.innerHTML = `<tr><td colspan="${config.length}" style="color: var(--text-muted);">No data available for this selection.</td></tr>`;
@@ -114,7 +162,7 @@ function renderTable() {
     let filteredData = rawData;
 
     // Apply client-side filters if we are viewing cards
-    if (currentQuery === 'cards') {
+    if (currentQuery === 'cards' || (isDrilldown && drilldownType === 'captain')) {
         const rarityFilter = document.getElementById("rarity-filter").value;
         const colFilter = document.getElementById("collectible-filter").value;
 
@@ -165,7 +213,8 @@ function renderTable() {
             if (val === null || val === undefined) val = "-";
             
             if (col.align === "left") {
-                html += `<td class="item-name"><span class="rank-number">#${index + 1}</span> <span>${val}</span></td>`;
+                let clickableName = `<span style="cursor: pointer; color: var(--accent-primary); font-weight: bold;" onclick="triggerDrilldown('${col.id === 'captain_name' ? 'captain' : 'card'}', '${val.replace(/'/g, "\'")}')">${val}</span>`;
+                html += `<td class="item-name"><span class="rank-number">#${index + 1}</span> ${clickableName}</td>`;
             } else {
                 html += `<td>${val}</td>`;
             }
@@ -186,3 +235,18 @@ setInterval(fetchMetaData, 10 * 60 * 1000);
 
 // Initial Load
 fetchMetaData();
+
+
+window.triggerDrilldown = function(type, value) {
+    isDrilldown = true;
+    drilldownType = type;
+    drilldownValue = value;
+    fetchMetaData();
+};
+
+document.getElementById("back-btn").addEventListener("click", () => {
+    isDrilldown = false;
+    drilldownType = null;
+    drilldownValue = null;
+    fetchMetaData();
+});
