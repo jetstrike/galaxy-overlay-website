@@ -99,6 +99,8 @@ try {
                         SELECT
                             rc.card_cid,
                             c.name as card_name,
+                            c.rarity,
+                            c.is_collectible,
                             COUNT(rc.run_id) as games_played,
                             AVG(rc.turns_on_board) as avg_turns_on_board,
                             AVG(rc.first_appearance) as avg_first_appearance,
@@ -112,7 +114,7 @@ try {
                         JOIN analytics_matches m ON rc.run_id = m.run_id
                         LEFT JOIN analytics_cards c ON rc.card_cid = c.cid
                         WHERE $mmr_cond AND c.type != 'captain'
-                        GROUP BY rc.card_cid, c.name
+                        GROUP BY rc.card_cid, c.name, c.rarity, c.is_collectible
                         ORDER BY games_played DESC
                     ";
                     $res = $conn->query($q);
