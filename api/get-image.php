@@ -5,13 +5,21 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 try {
-    $key = isset($_GET['key']) ? preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['key']) : '';
-    if (!$key) {
-        http_response_code(400);
-        die('Missing key');
+    // Allow filename like "aladdin__default__300.webp"
+    $file = isset($_GET['file']) ? preg_replace('/[^a-zA-Z0-9_\.]/', '', $_GET['file']) : '';
+    
+    // Backwards compatibility for the old 'key' parameter (e.g. key=skin_mercury_m_1000 -> skin_mercury_m_1000__default__300.webp)
+    if (!$file && isset($_GET['key'])) {
+        $key = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['key']);
+        $file = "{$key}__default__300.webp";
     }
 
-    $remote_url = "https://static.galaxy.fun/cards/{$key}__default__300.webp";
+    if (!$file) {
+        http_response_code(400);
+        die('Missing file parameter');
+    }
+
+    $remote_url = "https://static.galaxy.fun/cards/{$file}";
 
     if (!function_exists('curl_init')) {
         die('cURL is not installed!');
@@ -35,7 +43,7 @@ try {
         if (!is_dir($cache_dir)) {
             @mkdir($cache_dir, 0777, true);
         }
-        $local_path = $cache_dir . '/' . $key . '.webp';
+        $local_path = $cache_dir . '/' . $file;
         @file_put_contents($local_path, $image_data);
         
         header('Content-Type: image/webp');
