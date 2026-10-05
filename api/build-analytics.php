@@ -49,7 +49,8 @@ try {
 
     $queries = ['captains', 'cards'];
 
-    $conn->begin_transaction();
+    set_time_limit(0);
+    ignore_user_abort(true);
 
     foreach ($brackets as $b) {
         $min_mmr = $b[0];
@@ -145,7 +146,7 @@ try {
         }
     }
 
-    $conn->commit();
+    
     echo "All caches built successfully!\n";
 
 } catch (Throwable $e) {
