@@ -1,5 +1,4 @@
 <?php
-// build-analytics.php - Intended to be run via Cron Job
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('Content-Type: text/plain');
@@ -12,32 +11,8 @@ $pass = 'Slippery1!1!';
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
 try {
-    // 1. Trigger the sync to pull in any new matches (up to 500 at a time)
-    echo "Running incremental sync...\n";
-    $sync_url = "https://galaxy-overlay.com/api/sync-analytics-db.php?limit=2500";
-    
-    // Create a stream context with a short timeout so we don't hold up the cron if sync hangs
-    $ctx = stream_context_create(array('http'=>
-        array(
-            'timeout' => 20,
-        )
-    ));
-    $ch = curl_init($sync_url); curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); curl_setopt($ch, CURLOPT_TIMEOUT, 60); curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); $sync_result = curl_exec($ch); curl_close($ch);
-    
-    if ($sync_result) {
-        $sync_data = json_decode($sync_result, true);
-        if ($sync_data && isset($sync_data['processed_this_batch'])) {
-            echo "Synced " . $sync_data['processed_this_batch'] . " new matches. Total matches in analytics DB: " . $sync_data['total_analytics_matches'] . "\n\n";
-        } else {
-            echo "Sync response parsing failed or empty.\n\n";
-        }
-    } else {
-        echo "Failed to trigger sync.\n\n";
-    }
-
     $conn = new mysqli($host, $user, $pass, $db);
-    echo "Connected to database.\n";
-
+    
     $brackets = [
         [0, 99999],
         [0, 2500],
@@ -46,24 +21,45 @@ try {
         [3500, 4000],
         [4000, 99999]
     ];
-
-    $queries = ['captains', 'cards'];
-
-    set_time_limit(0);
-    ignore_user_abort(true);
-
-    foreach ($brackets as $b) {
+    
+    $b_idx = isset($_GET['bracket']) ? intval($_GET['bracket']) : -1;
+    
+    if ($b_idx === -1) {
+        // Trigger sync
+        $sync_url = "https://galaxy-overlay.com/api/sync-analytics-db.php?limit=2500";
+        $ctx = stream_context_create(['http' => ['timeout' => 20]]);
+        $ch = curl_init($sync_url); curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); curl_setopt($ch, CURLOPT_TIMEOUT, 60); curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); $sync_result = curl_exec($ch); curl_close($ch);
+        echo "Sync complete.\n";
+        
+        // Output JS to redirect through all brackets
+        echo "<html><body><script>";
+        echo "let brackets = [0,1,2,3,4,5];";
+        echo "async function run() {";
+        echo "  for(let i=0; i<brackets.length; i++) {";
+        echo "    document.body.innerHTML += 'Running bracket '+i+'...<br>';";
+        echo "    let res = await fetch('?bracket='+i);";
+        echo "    let text = await res.text();";
+        echo "    document.body.innerHTML += text + '<br>';";
+        echo "  }";
+        echo "  document.body.innerHTML += 'ALL DONE!';";
+        echo "}";
+        echo "run();";
+        echo "</script></body></html>";
+        exit;
+    }
+    
+    if ($b_idx >= 0 && $b_idx < count($brackets)) {
+        $b = $brackets[$b_idx];
         $min_mmr = $b[0];
         $max_mmr = $b[1];
         $mmr_cond = "mmr >= $min_mmr AND mmr < $max_mmr";
-
-        // Get total matches for this bracket
+        
         $res = $conn->query("SELECT COUNT(*) as total FROM analytics_matches WHERE $mmr_cond");
         $total_matches = intval($res->fetch_assoc()['total']);
-
+        
+        $queries = ['captains', 'cards'];
+        
         foreach ($queries as $qt) {
-            echo "Building $qt for $min_mmr - $max_mmr (Total: $total_matches)... ";
-            
             $data = [];
             
             if ($total_matches > 0) {
@@ -141,19 +137,12 @@ try {
             $stmt->bind_param("siiis", $qt, $min_mmr, $max_mmr, $total_matches, $data_json);
             $stmt->execute();
             $stmt->close();
-
-            echo "Done.\n";
         }
+        echo "Bracket $b_idx done.";
     }
-
-    
-    echo "All caches built successfully!\n";
-
 } catch (Throwable $e) {
     if (isset($conn)) $conn->rollback();
     echo "Error: " . $e->getMessage() . "\n";
 }
-
 if (isset($conn)) $conn->close();
 ?>
-// cache bust 2
