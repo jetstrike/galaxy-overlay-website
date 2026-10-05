@@ -66,8 +66,6 @@ async function buildTierList() {
 
 function calculateTiers(data, type) {
     // Determine the stat to grade on
-    // For captains: avg_placement (lower is better)
-    // For cards: win_rate_top3 (higher is better)
     const isLowerBetter = type === 'captains';
     const statKey = type === 'captains' ? 'avg_placement' : 'win_rate_top3';
 
@@ -135,15 +133,16 @@ function renderTiers(tiers, type) {
             const cardKey = cidToKey[cid];
             let imgHtml = '';
             if (cardKey) {
-                const imgSrc = "https://galaxy-overlay.com/api/get-image.php?file=__default__120.webp";
-                imgHtml = <img src="" class="tier-item-img" alt="" onerror="this.style.display='none'" />;
+                const imgSrc = `https://galaxy-overlay.com/api/get-image.php?file=${cardKey}__default__120.webp`;
+                imgHtml = `<img src="${imgSrc}" class="tier-item-img" alt="${name}" onerror="this.style.display='none'" />`;
             }
             let val = parseFloat(item[statKey]).toFixed(2);
             if (type !== 'captains') val += '%';
             
             html += `
                 <div class="tier-item" title="${name} - ${val}">
-                    ${imgHtml}`n                    <div class="item-name">${name}</div>
+                    ${imgHtml}
+                    <div class="item-name">${name}</div>
                     <div class="item-stat">${statLabel}: ${val}</div>
                 </div>
             `;
@@ -177,4 +176,3 @@ document.getElementById("query-filter").addEventListener("change", buildTierList
 
 // Initial Load
 buildTierList();
-
