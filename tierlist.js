@@ -47,7 +47,7 @@ async function buildTierList() {
         const totalMatches = json.total_matches || 1;
         const validData = data.filter(item => {
             const picks = parseInt(item.total_picks || item.games_played);
-            return picks >= Math.max(10, totalMatches * 0.003); 
+            return picks >= Math.max(5, totalMatches * 0.001); 
         });
 
         if (validData.length === 0) {
@@ -77,7 +77,7 @@ function calculateTiers(data, type) {
     const avgSquareDiff = squareDiffs.reduce((a, b) => a + b, 0) / squareDiffs.length;
     const stdDev = Math.sqrt(avgSquareDiff);
 
-    const tiers = { S: [], A: [], B: [], C: [], D: [] };
+    const tiers = { S: [], A: [], B: [], C: [], D: [], F: [] };
 
     data.forEach(item => {
         const val = parseFloat(item[statKey]);
@@ -86,13 +86,13 @@ function calculateTiers(data, type) {
             zScore = -zScore; // Flip it so positive zScore is always "good"
         }
 
-        if (zScore >= 1.0) {
+        if (zScore >= 1.2) {
             tiers.S.push(item);
-        } else if (zScore >= 0.3) {
+        } else if (zScore >= 0.5) {
             tiers.A.push(item);
-        } else if (zScore >= -0.3) {
+        } else if (zScore >= -0.2) {
             tiers.B.push(item);
-        } else if (zScore >= -1.0) {
+        } else if (zScore >= -0.8) {
             tiers.C.push(item);
         } else {
             tiers.D.push(item);
@@ -117,7 +117,7 @@ function renderTiers(tiers, type) {
     const statLabel = type === 'captains' ? 'Avg Place' : 'Top 3 %';
     let html = '';
 
-    const tierLabels = ['S', 'A', 'B', 'C', 'D'];
+    const tierLabels = ['S', 'A', 'B', 'C', 'D', 'F'];
     
     tierLabels.forEach(label => {
         const items = tiers[label];
@@ -176,4 +176,6 @@ document.getElementById("query-filter").addEventListener("change", buildTierList
 
 // Initial Load
 buildTierList();
+
+
 
