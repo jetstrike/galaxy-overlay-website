@@ -1,6 +1,25 @@
 let currentData = [];
 
+let cidToKey = {};
+
+async function fetchCards() {
+    if (Object.keys(cidToKey).length > 0) return;
+    try {
+        const response = await fetch('https://galaxy-overlay.com/api/cards.json');
+        const cardsData = await response.json();
+        for (const key in cardsData) {
+            const card = cardsData[key];
+            if (card && card.cid) {
+                cidToKey[card.cid] = card.card_key || key;
+            }
+        }
+    } catch (err) {
+        console.error('Failed to load cards.json', err);
+    }
+}
+
 async function buildTierList() {
+    await fetchCards();
     const filter = document.getElementById("mmr-filter").value.split("-");
     const minMmr = filter[0];
     const maxMmr = filter[1];
@@ -112,12 +131,19 @@ function renderTiers(tiers, type) {
             
         items.forEach(item => {
             const name = item.captain_name || item.card_name;
+            const cid = item.captain_cid || item.card_cid;
+            const cardKey = cidToKey[cid];
+            let imgHtml = '';
+            if (cardKey) {
+                const imgSrc = "https://galaxy-overlay.com/api/get-image.php?file=__default__120.webp";
+                imgHtml = <img src="" class="tier-item-img" alt="" onerror="this.style.display='none'" />;
+            }
             let val = parseFloat(item[statKey]).toFixed(2);
             if (type !== 'captains') val += '%';
             
             html += `
                 <div class="tier-item" title="${name} - ${val}">
-                    <div class="item-name">${name}</div>
+                    ${imgHtml}`n                    <div class="item-name">${name}</div>
                     <div class="item-stat">${statLabel}: ${val}</div>
                 </div>
             `;
@@ -151,3 +177,4 @@ document.getElementById("query-filter").addEventListener("change", buildTierList
 
 // Initial Load
 buildTierList();
+
