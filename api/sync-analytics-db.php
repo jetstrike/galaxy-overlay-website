@@ -24,11 +24,12 @@ try {
     $conn->begin_transaction();
 
     // 1. Process Playfab Matches
-    $q = "SELECT * FROM playfab_matches WHERE run_id NOT IN (SELECT run_id FROM analytics_matches) LIMIT $limit";
+    $q = "SELECT * FROM playfab_matches WHERE CONCAT(run_id, '_', placement) NOT IN (SELECT run_id FROM analytics_matches) LIMIT $limit";
     $res = $conn->query($q);
     if ($res) {
         while ($row = $res->fetch_assoc()) {
             $run_id = $row['run_id'];
+            $player_run_id = $run_id . '_' . $row['placement'];
             $date = $row['date'];
             $mmr = $row['mmr'];
             $placement = $row['placement'];
@@ -37,7 +38,7 @@ try {
             $source = 'playfab';
             $rules_version = $row['rules_version'];
             
-            $stmt_match->bind_param("ssiiisss", $run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
+            $stmt_match->bind_param("ssiiisss", $player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
             $stmt_match->execute();
             
             $turns = json_decode($row['turns'], true);
@@ -51,7 +52,7 @@ try {
                             if (isset($unit['cid'])) {
                                 $cid = intval($unit['cid']);
                                 $deck_cids[$cid] = true;
-                                $stmt_turn->bind_param("sisi", $run_id, $turnNum, $slot, $cid);
+                                $stmt_turn->bind_param("sisi", $player_run_id, $turnNum, $slot, $cid);
                                 $stmt_turn->execute();
                             }
                         }
@@ -60,7 +61,7 @@ try {
             }
             
             foreach(array_keys($deck_cids) as $cid) {
-                $stmt_deck->bind_param("si", $run_id, $cid);
+                $stmt_deck->bind_param("si", $player_run_id, $cid);
                 $stmt_deck->execute();
             }
             
@@ -71,11 +72,12 @@ try {
     // 2. Process Overlay Matches (if still under limit)
     if ($processed < $limit) {
         $rem_limit = $limit - $processed;
-        $q = "SELECT * FROM overlay_matches WHERE run_id NOT IN (SELECT run_id FROM analytics_matches) LIMIT $rem_limit";
+        $q = "SELECT * FROM overlay_matches WHERE CONCAT(run_id, '_', placement) NOT IN (SELECT run_id FROM analytics_matches) LIMIT $rem_limit";
         $res = $conn->query($q);
         if ($res) {
             while ($row = $res->fetch_assoc()) {
                 $run_id = $row['run_id'];
+            $player_run_id = $run_id . '_' . $row['placement'];
                 $date = $row['date'];
                 $mmr = $row['mmr_start']; // Overlay matches have mmr_start
                 if ($mmr === null) $mmr = $row['mmr'];
@@ -85,7 +87,7 @@ try {
                 $source = 'overlay';
                 $rules_version = $row['rules_version'];
                 
-                $stmt_match->bind_param("ssiiisss", $run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
+                $stmt_match->bind_param("ssiiisss", $player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
                 $stmt_match->execute();
                 
                 $deck_cids = [];
@@ -110,7 +112,7 @@ try {
                                     if (empty($row['deck_cids'])) {
                                         $deck_cids[$cid] = true;
                                     }
-                                    $stmt_turn->bind_param("sisi", $run_id, $turnNum, $slot, $cid);
+                                    $stmt_turn->bind_param("sisi", $player_run_id, $turnNum, $slot, $cid);
                                     $stmt_turn->execute();
                                 }
                             }
@@ -119,7 +121,7 @@ try {
                 }
                 
                 foreach(array_keys($deck_cids) as $cid) {
-                    $stmt_deck->bind_param("si", $run_id, $cid);
+                    $stmt_deck->bind_param("si", $player_run_id, $cid);
                     $stmt_deck->execute();
                 }
                 
@@ -150,3 +152,4 @@ if (isset($stmt_deck)) $stmt_deck->close();
 if (isset($stmt_turn)) $stmt_turn->close();
 if (isset($conn)) $conn->close();
 ?>
+
