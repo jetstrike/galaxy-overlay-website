@@ -47,7 +47,7 @@ async function buildTierList() {
         const totalMatches = json.total_matches || 1;
         const validData = data.filter(item => {
             const picks = parseInt(item.total_picks || item.games_played);
-            return picks >= 50 && (picks / totalMatches) > 0.005; 
+            return picks >= Math.max(10, totalMatches * 0.003); 
         });
 
         if (validData.length === 0) {
@@ -86,13 +86,13 @@ function calculateTiers(data, type) {
             zScore = -zScore; // Flip it so positive zScore is always "good"
         }
 
-        if (zScore >= 1.2) {
+        if (zScore >= 1.0) {
             tiers.S.push(item);
-        } else if (zScore >= 0.4) {
+        } else if (zScore >= 0.3) {
             tiers.A.push(item);
-        } else if (zScore >= -0.4) {
+        } else if (zScore >= -0.3) {
             tiers.B.push(item);
-        } else if (zScore >= -1.2) {
+        } else if (zScore >= -1.0) {
             tiers.C.push(item);
         } else {
             tiers.D.push(item);
@@ -176,3 +176,4 @@ document.getElementById("query-filter").addEventListener("change", buildTierList
 
 // Initial Load
 buildTierList();
+
