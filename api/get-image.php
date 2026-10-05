@@ -1,5 +1,8 @@
 <?php
 // get-image.php - Caches images from static.galaxy.fun
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 $key = isset($_GET['key']) ? preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['key']) : '';
 if (!$key) {
@@ -10,13 +13,14 @@ if (!$key) {
 // Define paths
 $cache_dir = __DIR__ . '/../assets/cards';
 if (!is_dir($cache_dir)) {
-    mkdir($cache_dir, 0777, true);
+    if (!@mkdir($cache_dir, 0777, true)) {
+        die("Failed to create directory");
+    }
 }
 
 $filename = $key . '.webp';
 $local_path = $cache_dir . '/' . $filename;
 
-// If we already have it cached, just serve it
 if (file_exists($local_path)) {
     header('Content-Type: image/webp');
     header('Cache-Control: public, max-age=86400');
@@ -24,7 +28,6 @@ if (file_exists($local_path)) {
     exit;
 }
 
-// Otherwise, fetch it from the official CDN
 $remote_url = "https://static.galaxy.fun/cards/{$key}__default__300.webp";
 
 $ch = curl_init($remote_url);
@@ -36,12 +39,18 @@ $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($http_code == 200 && $image_data) {
-    file_put_contents($local_path, $image_data);
+    if (@file_put_contents($local_path, $image_data) === false) {
+        // Fallback to serving the image directly if we can't save it
+        header('Content-Type: image/webp');
+        header('Cache-Control: public, max-age=86400');
+        echo $image_data;
+        exit;
+    }
     header('Content-Type: image/webp');
     header('Cache-Control: public, max-age=86400');
     echo $image_data;
 } else {
     http_response_code(404);
-    die('Image not found on remote server.');
+    die("Image not found on remote server. URL: " . $remote_url);
 }
 ?>
