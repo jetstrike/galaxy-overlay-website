@@ -1,9 +1,9 @@
 <?php
 $c = new mysqli('localhost', 'u834540789_Tracker', 'Slippery1!1!', 'u834540789_Galaxy');
-$r = $c->query("SHOW INDEXES FROM analytics_match_turns");
+$r = $c->query("SHOW COLUMNS FROM analytics_matches");
 $out = [];
 while($row = $r->fetch_assoc()) {
-    $out[] = $row['Key_name'];
+    $out[] = $row['Field'];
 }
 echo json_encode($out);
 ?>
