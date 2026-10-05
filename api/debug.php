@@ -7,5 +7,5 @@ $conn = new mysqli($host, $user, $pass, $db);
 $conn->query("TRUNCATE TABLE analytics_matches");
 $conn->query("TRUNCATE TABLE analytics_match_decks");
 $conn->query("TRUNCATE TABLE analytics_match_turns");
-echo "Truncated!";
+echo "Truncated V2!";
 ?>
