@@ -64,9 +64,17 @@ async function buildTierList() {
 
         // Filter out low sample size items (e.g. less than 1% pick rate or < 50 games)
         const totalMatches = json.total_matches || 1;
-        const validData = data.filter(item => {
+        
+        const validData = [];
+        const unrankedData = [];
+        
+        data.forEach(item => {
             const picks = parseInt(item.total_picks || item.games_played);
-            return picks >= Math.max(5, totalMatches * 0.001); 
+            if (picks >= Math.max(5, totalMatches * 0.001)) {
+                validData.push(item);
+            } else {
+                unrankedData.push(item);
+            }
         });
 
         if (validData.length === 0) {
@@ -75,6 +83,8 @@ async function buildTierList() {
         }
 
         const tiers = calculateTiers(validData, queryType);
+        tiers['Unranked'] = unrankedData;
+        
         renderTiers(tiers, queryType);
 
     } catch (error) {
@@ -136,7 +146,7 @@ function renderTiers(tiers, type) {
     const statLabel = type === 'captains' ? 'Avg Place' : 'Top 3 %';
     let html = '';
 
-    const tierLabels = ['S', 'A', 'B', 'C', 'D', 'F'];
+    const tierLabels = ['S', 'A', 'B', 'C', 'D', 'F', 'Unranked'];
     
     tierLabels.forEach(label => {
         const items = tiers[label];
