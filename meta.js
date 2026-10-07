@@ -83,7 +83,7 @@ async function fetchMetaData() {
             }
         }
         
-        if (season !== 'all') url += &season=;
+        if (season !== 'all') url += `&season=${season}`;
         const response = await fetch(url);
         const data = await response.json();
         

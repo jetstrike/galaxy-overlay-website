@@ -52,7 +52,7 @@ async function buildTierList() {
 
     try {
         let url = `https://galaxy-overlay.com/api/get-analytics.php?query_type=${queryType}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`;
-        if (season !== 'all') url += &season=;
+        if (season !== 'all') url += `&season=${season}`;
         const response = await fetch(url);
         const json = await response.json();
         
