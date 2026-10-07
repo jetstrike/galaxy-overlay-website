@@ -18,12 +18,30 @@ async function fetchCards() {
     }
 }
 
+async function fetchSeasons() {
+    try {
+        const res = await fetch('https://galaxy-overlay.com/api/get-seasons.php');
+        const seasons = await res.json();
+        const select = document.getElementById('season-filter');
+        select.innerHTML = '<option value="all">All Seasons</option>';
+        seasons.forEach(s => {
+            if (s !== 'all') {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.textContent = 'Season ' + s;
+                select.appendChild(opt);
+            }
+        });
+    } catch (e) { console.error('Failed to load seasons', e); }
+}
+
 async function buildTierList() {
     await fetchCards();
     const filter = document.getElementById("mmr-filter").value.split("-");
     const minMmr = filter[0];
     const maxMmr = filter[1];
     const queryType = document.getElementById("query-filter").value;
+    const season = document.getElementById("season-filter").value;
 
     const select = document.getElementById("mmr-filter");
     const mmrText = select.options[select.selectedIndex].text;
@@ -172,10 +190,12 @@ document.getElementById("export-btn").addEventListener("click", () => {
 });
 
 document.getElementById("mmr-filter").addEventListener("change", buildTierList);
+document.getElementById("season-filter").addEventListener("change", buildTierList);
 document.getElementById("query-filter").addEventListener("change", buildTierList);
 
 // Initial Load
 buildTierList();
+
 
 
 

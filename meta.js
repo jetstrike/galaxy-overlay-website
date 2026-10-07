@@ -6,10 +6,28 @@ let isDrilldown = false;
 let drilldownType = null;
 let drilldownValue = null;
 
+async function fetchSeasons() {
+    try {
+        const res = await fetch('https://galaxy-overlay.com/api/get-seasons.php');
+        const seasons = await res.json();
+        const select = document.getElementById('season-filter');
+        select.innerHTML = '<option value="all">All Seasons</option>';
+        seasons.forEach(s => {
+            if (s !== 'all') {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.textContent = 'Season ' + s;
+                select.appendChild(opt);
+            }
+        });
+    } catch (e) { console.error('Failed to load seasons', e); }
+}
+
 async function fetchMetaData() {
     const filter = document.getElementById("mmr-filter").value.split("-");
     const minMmr = filter[0];
     const maxMmr = filter[1];
+    const season = document.getElementById('season-filter').value;
     
     currentQuery = document.getElementById("query-filter").value;
     
@@ -225,6 +243,7 @@ function renderTable() {
     tbody.innerHTML = html;
 }
 
+document.getElementById("season-filter").addEventListener("change", fetchMetaData);
 document.getElementById("mmr-filter").addEventListener("change", fetchMetaData);
 document.getElementById("query-filter").addEventListener("change", fetchMetaData);
 document.getElementById("rarity-filter").addEventListener("change", renderTable);
@@ -234,7 +253,7 @@ document.getElementById("collectible-filter").addEventListener("change", renderT
 setInterval(fetchMetaData, 10 * 60 * 1000);
 
 // Initial Load
-fetchMetaData();
+fetchSeasons().then(fetchMetaData);
 
 
 window.triggerDrilldown = function(type, value) {
@@ -250,3 +269,4 @@ document.getElementById("back-btn").addEventListener("click", () => {
     drilldownValue = null;
     fetchMetaData();
 });
+
