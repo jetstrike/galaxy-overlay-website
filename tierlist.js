@@ -51,7 +51,7 @@ async function buildTierList() {
     document.getElementById("tierlist-content").innerHTML = `<div class="loading"><div class="spinner"></div><div>Crunching numbers from the database...</div></div>`;
 
     try {
-        const url = `https://galaxy-overlay.com/api/get-analytics.php?query_type=${queryType}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`;
+        let url = `https://galaxy-overlay.com/api/get-analytics.php?query_type=${queryType}&min_mmr=${minMmr}&max_mmr=${maxMmr}&_t=${Date.now()}`;
         const response = await fetch(url);
         const json = await response.json();
         
@@ -195,6 +195,7 @@ document.getElementById("query-filter").addEventListener("change", buildTierList
 
 // Initial Load
 fetchSeasons().then(buildTierList);
+
 
 
 
