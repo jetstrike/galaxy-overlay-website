@@ -194,7 +194,8 @@ document.getElementById("season-filter").addEventListener("change", buildTierLis
 document.getElementById("query-filter").addEventListener("change", buildTierList);
 
 // Initial Load
-buildTierList();
+fetchSeasons().then(buildTierList);
+
 
 
 
