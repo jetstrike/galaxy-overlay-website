@@ -8,7 +8,7 @@ let drilldownValue = null;
 
 async function fetchSeasons() {
     try {
-        const res = await fetch('https://galaxy-overlay.com/api/get-seasons.php');
+        const res = await fetch('https://galaxy-overlay.com/api/get-seasons.php?_t=' + Date.now());
         const seasons = await res.json();
         const select = document.getElementById('season-filter');
         select.innerHTML = '<option value="all">All Seasons</option>';
@@ -269,4 +269,5 @@ document.getElementById("back-btn").addEventListener("click", () => {
     drilldownValue = null;
     fetchMetaData();
 });
+
 
