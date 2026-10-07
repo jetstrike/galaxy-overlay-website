@@ -152,8 +152,12 @@ function renderTiers(tiers, type) {
         const items = tiers[label];
         if (items.length === 0) return; // Skip empty tiers if any
 
+        let labelTitle = "";
+        if (label === 'Unranked') {
+            labelTitle = `title="Captains with fewer than 5 games played are excluded from the main tier list due to low sample size."`;
+        }
         html += `<div class="tier-row">
-            <div class="tier-label tier-${label}">${label}</div>
+            <div class="tier-label tier-${label}" ${labelTitle}>${label}</div>
             <div class="tier-items">`;
             
         items.forEach(item => {
@@ -167,12 +171,20 @@ function renderTiers(tiers, type) {
             }
             let val = parseFloat(item[statKey]).toFixed(2);
             if (type !== 'captains') val += '%';
+            const picks = item.total_picks || item.games_played;
+            
+            let statDisplay = `${statLabel}: ${val}`;
+            let titleStr = `${name} - ${val}`;
+            if (label === 'Unranked') {
+                statDisplay = `Picks: ${picks}`;
+                titleStr = `${name} - Unranked due to low sample size (<5 games)`;
+            }
             
             html += `
-                <div class="tier-item" title="${name} - ${val}">
+                <div class="tier-item" title="${titleStr}">
                     ${imgHtml}
                     <div class="item-name">${name}</div>
-                    <div class="item-stat">${statLabel}: ${val}</div>
+                    <div class="item-stat">${statDisplay}</div>
                 </div>
             `;
         });
