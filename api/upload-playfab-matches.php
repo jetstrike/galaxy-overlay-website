@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS playfab_matches (
     mmr INT,
     captain_cid INT,
     captain VARCHAR(64),
-    rank VARCHAR(32),
+    `rank` VARCHAR(32),
     turns LONGTEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -69,7 +69,7 @@ try { $conn->query("ALTER TABLE playfab_matches ADD COLUMN rules_version VARCHAR
 try { $conn->query("ALTER TABLE playfab_matches ADD COLUMN source_tag VARCHAR(32) AFTER rules_version"); } catch (Exception $e) {}
 try { $conn->query("ALTER TABLE playfab_matches ADD COLUMN captain VARCHAR(64) AFTER captain_cid"); } catch (Exception $e) {}
 
-$stmt = $conn->prepare("INSERT INTO playfab_matches (run_id, player_id, player_name, date, rules_version, source_tag, placement, mmr, captain_cid, captain, rank, turns) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE rules_version = VALUES(rules_version), source_tag = VALUES(source_tag), captain = VALUES(captain), rank = VALUES(rank)");
+$stmt = $conn->prepare("INSERT INTO playfab_matches (run_id, player_id, player_name, date, rules_version, source_tag, placement, mmr, captain_cid, captain, `rank`, turns) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE rules_version = VALUES(rules_version), source_tag = VALUES(source_tag), captain = VALUES(captain), `rank` = VALUES(`rank`)");
 
 $inserted = 0;
 $skipped = 0;

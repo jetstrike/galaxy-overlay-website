@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS overlay_matches (
     captain_cid INT,
     captain VARCHAR(64),
     captain_options LONGTEXT,
-    rank VARCHAR(32),
+    `rank` VARCHAR(32),
     deck_cids LONGTEXT,
     turns LONGTEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -69,7 +69,7 @@ try {
     die(json_encode(["error" => "Failed to create table", "details" => $e->getMessage()]));
 }
 
-$stmt = $conn->prepare("INSERT IGNORE INTO overlay_matches (run_id, player_id, player_name, player_hash, date, rules_version, source_tag, placement, mmr, mmr_start, mmr_end, mmr_delta, captain_cid, captain, captain_options, rank, deck_cids, turns) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT IGNORE INTO overlay_matches (run_id, player_id, player_name, player_hash, date, rules_version, source_tag, placement, mmr, mmr_start, mmr_end, mmr_delta, captain_cid, captain, captain_options, `rank`, deck_cids, turns) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 $inserted = 0;
 $skipped = 0;
