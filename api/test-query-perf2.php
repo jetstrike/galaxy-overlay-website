@@ -1,10 +1,11 @@
 <?php
+require_once __DIR__ . '/db.php';
 $db_host = 'localhost';
 $db_user = 'u834540789_Tracker';
 $db_pass = 'Slippery1!1!'; 
 $db_name = 'u834540789_Galaxy';
 
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+$conn = get_db_connection();
 if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
 
 $start = microtime(true);

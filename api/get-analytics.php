@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('Access-Control-Allow-Origin: *');
@@ -12,7 +13,7 @@ $pass = 'Slippery1!1!';
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
 try {
-    $conn = new mysqli($host, $user, $pass, $db);
+    $conn = get_db_connection();
 
     $min_mmr = isset($_GET['min_mmr']) ? intval($_GET['min_mmr']) : 0;
     $max_mmr = isset($_GET['max_mmr']) ? intval($_GET['max_mmr']) : 99999;

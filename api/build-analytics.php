@@ -11,7 +11,7 @@ $pass = 'Slippery1!1!';
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
 try {
-    $conn = new mysqli($host, $user, $pass, $db);
+    $conn = get_db_connection();
     
     $brackets = [
         [0, 99999], [0, 2500], [2500, 3000], [3000, 3500], [3500, 4000], [4000, 99999]

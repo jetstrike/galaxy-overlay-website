@@ -1,9 +1,10 @@
 <?php
+require_once __DIR__ . '/db.php';
 $host = 'localhost';
 $db = 'u834540789_Galaxy';
 $user = 'u834540789_Tracker';
 $pass = 'Slippery1!1!';
-$conn = new mysqli($host, $user, $pass, $db);
+$conn = get_db_connection();
 $deleted_turns = 0;
 while(true) {
     $conn->query("DELETE FROM analytics_match_turns LIMIT 5000");

@@ -1,9 +1,10 @@
 <?php
+require_once __DIR__ . '/db.php';
 $host = 'localhost';
 $db = 'u834540789_Galaxy';
 $user = 'u834540789_Tracker';
 $pass = 'Slippery1!1!';
-$conn = new mysqli($host, $user, $pass, $db);
+$conn = get_db_connection();
 
 $min_mmr = 0;
 $max_mmr = 99999;

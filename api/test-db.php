@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 $host = 'localhost';
 $db = 'u834540789_Galaxy';
 $user = 'u834540789_Tracker';

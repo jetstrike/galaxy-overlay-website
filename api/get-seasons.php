@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('Access-Control-Allow-Origin: *');
@@ -12,7 +13,7 @@ $pass = 'Slippery1!1!';
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
 try {
-    $conn = new mysqli($host, $user, $pass, $db);
+    $conn = get_db_connection();
     $res = $conn->query("SELECT DISTINCT season FROM analytics_cache ORDER BY season DESC");
     $seasons = [];
     while ($row = $res->fetch_assoc()) {

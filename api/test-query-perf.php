@@ -6,7 +6,7 @@ $db_user = 'u148286987_galaxy_overlay';
 $db_pass = 'Y0d@zM1n3cr@ft!'; // From alter-schema.php
 $db_name = 'u148286987_galaxy_overlay';
 
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+$conn = get_db_connection();
 if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
 
 $start = microtime(true);

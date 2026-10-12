@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET");
 header("Content-Type: application/json");
@@ -21,7 +22,7 @@ if (!isset($_GET['token']) || $_GET['token'] !== $SECRET_TOKEN) {
 // 4. Connect to MySQL
 try {
     mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $conn = get_db_connection();
 } catch (Exception $e) {
     http_response_code(500);
     die(json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]));
