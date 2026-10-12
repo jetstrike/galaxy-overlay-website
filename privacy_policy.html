@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - OUAG Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background-color: #fafafa;
+        }
+        .container {
+            background: #fff;
+            padding: 36px 32px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        h1 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; }
+        h2 { color: #334155; margin-top: 24px; }
+        p, li { color: #475569; }
+        .last-updated { font-size: 0.9em; color: #64748b; margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy for OUAG Tracker</h1>
+        <div class="last-updated">Last updated: October 2026</div>
+
+        <p><strong>OUAG Tracker</strong> ("we", "our", or "the app") is a companion tool developed for players of <em>Once Upon A Galaxy</em>. We respect your privacy and are committed to protecting your personal information. This Privacy Policy outlines our data handling practices.</p>
+
+        <h2>1. Information We Collect</h2>
+        <p>OUAG Tracker is designed to operate primarily on-device. We do not collect or request personally identifiable information such as your name, email, phone number, passwords, contacts, or financial details.</p>
+
+        <h2>2. In-Game & Match Data</h2>
+        <p>The app processes local game log data produced by <em>Once Upon A Galaxy</em> to calculate roll odds, track decks, and display live match statistics on your screen. This includes:</p>
+        <ul>
+            <li>In-game captain selections and deck card lists</li>
+            <li>Match outcomes (placement, round count, and public MMR)</li>
+            <li>In-game opponent public display names and public ratings</li>
+        </ul>
+        <p>Match summaries may be submitted to our community database API to aggregate global captain win-rates and placement statistics. No personal identifiers or sensitive device telemetry are linked to these submissions.</p>
+
+        <h2>3. Permissions Used</h2>
+        <ul>
+            <li><strong>Display Over Other Apps (SYSTEM_ALERT_WINDOW):</strong> Required exclusively to display the floating HUD companion over the game while you play.</li>
+            <li><strong>Foreground Service:</strong> Required to keep the live floating HUD active and responsive during gameplay.</li>
+            <li><strong>Shizuku Privileged Access:</strong> An optional system service used on Android 14+ to read local game logs directly from the device's storage without requiring root access.</li>
+        </ul>
+
+        <h2>4. Third-Party Services & Advertising</h2>
+        <p>OUAG Tracker contains <strong>no advertisements</strong> and does not integrate third-party ad networks or user tracking SDKs.</p>
+
+        <h2>5. Data Security</h2>
+        <p>All communication with our community tracker API is encrypted in transit using industry-standard HTTPS / TLS encryption.</p>
+
+        <h2>6. Data Deletion Requests</h2>
+        <p>If you have any questions about this Privacy Policy or wish to request the deletion of any submitted game match records, please contact us at: <code>jetstrike.dev@gmail.com</code> (or open an issue on our GitHub project page).</p>
+    </div>
+</body>
+</html>
