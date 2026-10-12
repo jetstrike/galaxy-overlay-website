@@ -5,11 +5,6 @@ error_reporting(E_ALL);
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-$host = 'localhost';
-$db = 'u834540789_Galaxy';
-$user = 'u834540789_Tracker';
-$pass = 'Slippery1!1!';
-
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
 try {
@@ -17,6 +12,7 @@ try {
 
     $min_mmr = isset($_GET['min_mmr']) ? intval($_GET['min_mmr']) : 0;
     $max_mmr = isset($_GET['max_mmr']) ? intval($_GET['max_mmr']) : 99999;
+    $season = isset($_GET['season']) ? preg_replace('/[^0-9a-zA-Z-]/', '', $_GET['season']) : 'all';
     
     if (!isset($_GET['card_name'])) {
         http_response_code(400);
@@ -31,31 +27,45 @@ try {
     $stmt->execute();
     $res = $stmt->get_result();
     if ($row = $res->fetch_assoc()) {
-        $card_cid = $row['cid'];
+        $card_cid = intval($row['cid']);
     } else {
         http_response_code(404);
         die(json_encode(['error' => 'Card not found']));
     }
     $stmt->close();
 
+    // Optional season filter
+    $season_sql = "";
+    $params = [$card_cid, $min_mmr, $max_mmr];
+    $types = "iii";
+    if ($season !== 'all' && $season !== '') {
+        $season_sql = " AND DATE_FORMAT(m.date, '%Y-%m') = ? ";
+        $params[] = $season;
+        $types .= "s";
+    }
+
     // 2. Query Captain Performance for this Card
     $q = "
         SELECT 
             m.captain_cid,
             c.name as captain_name,
-            COUNT(DISTINCT m.run_id) as games_played,
-            SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(DISTINCT m.run_id) * 100 as win_rate_top3,
+            COUNT(m.run_id) as games_played,
+            SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(m.run_id) * 100 as win_rate_top3,
             AVG(m.placement) as avg_placement
-        FROM analytics_match_turns rc
+        FROM (
+            SELECT DISTINCT run_id
+            FROM analytics_match_turns
+            WHERE card_cid = ?
+        ) rc
         JOIN analytics_matches m ON rc.run_id = m.run_id
         LEFT JOIN analytics_cards c ON m.captain_cid = c.cid
-        WHERE rc.card_cid = ? AND m.mmr >= ? AND m.mmr < ? AND m.captain_cid > 0
+        WHERE m.mmr >= ? AND m.mmr < ? AND m.captain_cid > 0 $season_sql
         GROUP BY m.captain_cid, c.name
         ORDER BY games_played DESC
     ";
     
     $stmt = $conn->prepare($q);
-    $stmt->bind_param("iii", $card_cid, $min_mmr, $max_mmr);
+    $stmt->bind_param($types, ...$params);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -68,18 +78,31 @@ try {
         $row['avg_placement'] = floatval($row['avg_placement']);
         $data[] = $row;
     }
+    $stmt->close();
     
     // Get total matches for this card in this MMR bracket
-    $stmt2 = $conn->prepare("SELECT COUNT(DISTINCT rc.run_id) as total FROM analytics_match_turns rc JOIN analytics_matches m ON rc.run_id = m.run_id WHERE rc.card_cid = ? AND m.mmr >= ? AND m.mmr < ?");
-    $stmt2->bind_param("iii", $card_cid, $min_mmr, $max_mmr);
+    $q2 = "
+        SELECT COUNT(rc.run_id) as total 
+        FROM (
+            SELECT DISTINCT run_id 
+            FROM analytics_match_turns 
+            WHERE card_cid = ?
+        ) rc 
+        JOIN analytics_matches m ON rc.run_id = m.run_id 
+        WHERE m.mmr >= ? AND m.mmr < ? $season_sql
+    ";
+    $stmt2 = $conn->prepare($q2);
+    $stmt2->bind_param($types, ...$params);
     $stmt2->execute();
     $res2 = $stmt2->get_result();
     $total_matches = intval($res2->fetch_assoc()['total']);
+    $stmt2->close();
     
     echo json_encode([
         'card_name' => $card_name,
         'min_mmr' => $min_mmr,
         'max_mmr' => $max_mmr,
+        'season' => $season,
         'total_matches' => $total_matches,
         'data' => $data
     ]);

@@ -232,7 +232,9 @@ function renderTable() {
             if (val === null || val === undefined) val = "-";
             
             if (col.align === "left") {
-                let clickableName = `<span style="cursor: pointer; color: var(--accent-primary); font-weight: bold;" onclick="triggerDrilldown('${col.id === 'captain_name' ? 'captain' : 'card'}', '${val.replace(/'/g, "\'")}')">${val}</span>`;
+                const itemType = col.id === 'captain_name' ? 'captain' : 'card';
+                const safeVal = String(val).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                let clickableName = `<span class="drilldown-link" style="cursor: pointer; color: var(--accent-primary); font-weight: bold;" data-type="${itemType}" data-name="${safeVal}">${val}</span>`;
                 html += `<td class="item-name"><span class="rank-number">#${index + 1}</span> ${clickableName}</td>`;
             } else {
                 html += `<td>${val}</td>`;
@@ -274,3 +276,13 @@ document.getElementById("back-btn").addEventListener("click", () => {
 
 
 
+
+// Event delegation for drilldown clicks
+document.getElementById("dynamic-tbody").addEventListener("click", (e) => {
+    const link = e.target.closest(".drilldown-link");
+    if (link) {
+        const type = link.getAttribute("data-type");
+        const val = link.getAttribute("data-name");
+        triggerDrilldown(type, val);
+    }
+});
