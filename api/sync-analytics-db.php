@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/db.php';
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0);
+error_reporting(E_ALL & ~E_DEPRECATED);
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
@@ -95,7 +95,7 @@ try {
                 }
             }
 
-            $turns = json_decode($row['turns'], true);
+            $turns = !empty($row['turns']) ? json_decode($row['turns'], true) : null;
             if (is_array($turns)) {
                 foreach ($turns as $turnNumStr => $tData) {
                     $turnNum = intval($turnNumStr);
@@ -151,7 +151,7 @@ try {
                 
                 $matches_data[] = [$player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version];
                 
-                $turns = json_decode($row['turns'], true);
+                $turns = !empty($row['turns']) ? json_decode($row['turns'], true) : null;
                 $deck_cids = [];
                 
                 if (is_array($turns)) {
