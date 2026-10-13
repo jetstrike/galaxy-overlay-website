@@ -10,7 +10,8 @@ mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 try {
     $conn = get_db_connection();
 
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 500;
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 200;
+    if ($limit > 1000) $limit = 1000;
     $processed = 0;
 
     // Load captain name to cid map for fallback resolution
@@ -36,19 +37,20 @@ try {
 
     $conn->begin_transaction();
 
-    // 1. Process Playfab Matches
-    $q = "SELECT p.* FROM playfab_matches p 
-          LEFT JOIN analytics_matches a ON (a.run_id = CONCAT(p.run_id, '_', p.placement) OR a.run_id = p.run_id) 
-          WHERE a.run_id IS NULL AND p.placement IS NOT NULL 
-          LIMIT $limit";
-    $res = $conn->query($q);
+    // 1. Process Overlay Matches (Tracker app matches)
+    $q_overlay = "SELECT o.* FROM overlay_matches o 
+                  LEFT JOIN analytics_matches a ON a.run_id = CONCAT(o.run_id, '_', o.placement) 
+                  WHERE a.run_id IS NULL AND o.placement IS NOT NULL 
+                  ORDER BY o.date DESC 
+                  LIMIT $limit";
+    $res = $conn->query($q_overlay);
     if ($res) {
         while ($row = $res->fetch_assoc()) {
             $run_id = $row['run_id'];
             $placement = intval($row['placement']);
             $player_run_id = $run_id . '_' . $placement;
             $date = !empty($row['date']) ? $row['date'] : (!empty($row['created_at']) ? $row['created_at'] : date('Y-m-d H:i:s'));
-            $mmr = isset($row['mmr']) ? intval($row['mmr']) : 0;
+            $mmr = isset($row['mmr_start']) && $row['mmr_start'] !== null ? intval($row['mmr_start']) : (isset($row['mmr']) ? intval($row['mmr']) : 0);
             $captain_cid = isset($row['captain_cid']) ? intval($row['captain_cid']) : 0;
             if ($captain_cid === 0 && !empty($row['captain'])) {
                 $capKey = $row['captain'];
@@ -57,15 +59,24 @@ try {
                 }
             }
             $rank = isset($row['rank']) ? $row['rank'] : '';
-            $source = 'playfab';
+            $source = 'overlay';
             $rules_version = isset($row['rules_version']) ? $row['rules_version'] : '';
             
             $stmt_match->bind_param("ssiiisss", $player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
             $stmt_match->execute();
             
-            $turns = json_decode($row['turns'], true);
             $deck_cids = [];
-            
+            if (!empty($row['deck_cids'])) {
+                $decoded_decks = json_decode($row['deck_cids'], true);
+                if (is_array($decoded_decks)) {
+                    foreach ($decoded_decks as $cid) {
+                        $cid = intval($cid);
+                        if ($cid > 0) $deck_cids[$cid] = true;
+                    }
+                }
+            }
+
+            $turns = json_decode($row['turns'], true);
             if (is_array($turns)) {
                 foreach ($turns as $turnNumStr => $tData) {
                     $turnNum = intval($turnNumStr);
@@ -74,7 +85,9 @@ try {
                             if (isset($unit['cid'])) {
                                 $cid = intval($unit['cid']);
                                 if ($cid > 0) {
-                                    $deck_cids[$cid] = true;
+                                    if (empty($row['deck_cids'])) {
+                                        $deck_cids[$cid] = true;
+                                    }
                                     $stmt_turn->bind_param("sisi", $player_run_id, $turnNum, $slot, $cid);
                                     $stmt_turn->execute();
                                 }
@@ -93,21 +106,22 @@ try {
         }
     }
 
-    // 2. Process Overlay Matches (if still under limit)
+    // 2. Process Playfab Matches (if limit not reached)
     if ($processed < $limit) {
         $rem_limit = $limit - $processed;
-        $q = "SELECT o.* FROM overlay_matches o 
-              LEFT JOIN analytics_matches a ON (a.run_id = CONCAT(o.run_id, '_', o.placement) OR a.run_id = o.run_id) 
-              WHERE a.run_id IS NULL AND o.placement IS NOT NULL 
-              LIMIT $rem_limit";
-        $res = $conn->query($q);
+        $q_playfab = "SELECT p.* FROM playfab_matches p 
+                      LEFT JOIN analytics_matches a ON a.run_id = CONCAT(p.run_id, '_', p.placement) 
+                      WHERE a.run_id IS NULL AND p.placement IS NOT NULL 
+                      ORDER BY p.date DESC 
+                      LIMIT $rem_limit";
+        $res = $conn->query($q_playfab);
         if ($res) {
             while ($row = $res->fetch_assoc()) {
                 $run_id = $row['run_id'];
                 $placement = intval($row['placement']);
                 $player_run_id = $run_id . '_' . $placement;
                 $date = !empty($row['date']) ? $row['date'] : (!empty($row['created_at']) ? $row['created_at'] : date('Y-m-d H:i:s'));
-                $mmr = isset($row['mmr_start']) && $row['mmr_start'] !== null ? intval($row['mmr_start']) : (isset($row['mmr']) ? intval($row['mmr']) : 0);
+                $mmr = isset($row['mmr']) ? intval($row['mmr']) : 0;
                 $captain_cid = isset($row['captain_cid']) ? intval($row['captain_cid']) : 0;
                 if ($captain_cid === 0 && !empty($row['captain'])) {
                     $capKey = $row['captain'];
@@ -116,24 +130,15 @@ try {
                     }
                 }
                 $rank = isset($row['rank']) ? $row['rank'] : '';
-                $source = 'overlay';
+                $source = 'playfab';
                 $rules_version = isset($row['rules_version']) ? $row['rules_version'] : '';
                 
                 $stmt_match->bind_param("ssiiisss", $player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
                 $stmt_match->execute();
                 
-                $deck_cids = [];
-                if (!empty($row['deck_cids'])) {
-                    $decoded_decks = json_decode($row['deck_cids'], true);
-                    if (is_array($decoded_decks)) {
-                        foreach ($decoded_decks as $cid) {
-                            $cid = intval($cid);
-                            if ($cid > 0) $deck_cids[$cid] = true;
-                        }
-                    }
-                }
-
                 $turns = json_decode($row['turns'], true);
+                $deck_cids = [];
+                
                 if (is_array($turns)) {
                     foreach ($turns as $turnNumStr => $tData) {
                         $turnNum = intval($turnNumStr);
@@ -142,9 +147,7 @@ try {
                                 if (isset($unit['cid'])) {
                                     $cid = intval($unit['cid']);
                                     if ($cid > 0) {
-                                        if (empty($row['deck_cids'])) {
-                                            $deck_cids[$cid] = true;
-                                        }
+                                        $deck_cids[$cid] = true;
                                         $stmt_turn->bind_param("sisi", $player_run_id, $turnNum, $slot, $cid);
                                         $stmt_turn->execute();
                                     }
