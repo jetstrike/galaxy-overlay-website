@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 try {
     $conn = get_db_connection();
     $start = microtime(true);
-    $q = "SELECT o.run_id, o.placement, o.date FROM overlay_matches o LEFT JOIN analytics_matches a ON a.run_id = CONCAT(o.run_id, '_', o.placement) WHERE a.run_id IS NULL AND o.placement IS NOT NULL LIMIT 5";
+    $q = "SELECT p.run_id, p.placement FROM playfab_matches p LEFT JOIN analytics_matches a ON a.run_id = CONCAT(p.run_id, '_', p.placement) WHERE p.created_at >= NOW() - INTERVAL 3 DAY AND a.run_id IS NULL AND p.placement IS NOT NULL LIMIT 5";
     $res = $conn->query($q);
     $rows = [];
     while($r = $res->fetch_assoc()) $rows[] = $r;
