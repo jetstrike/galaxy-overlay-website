@@ -7,12 +7,34 @@ header('Content-Type: application/json');
 
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
+/**
+ * High-performance bulk insert helper to prevent network roundtrip lag on TiDB Cloud
+ */
+function bulk_insert($conn, $table, $columns, $rows) {
+    if (empty($rows)) return;
+    $colList = implode(', ', array_map(function($c) { return "`$c`"; }, $columns));
+    $chunks = array_chunk($rows, 300);
+    foreach ($chunks as $chunk) {
+        $valClauses = [];
+        foreach ($chunk as $row) {
+            $escaped = array_map(function($v) use ($conn) {
+                if ($v === null) return 'NULL';
+                if (is_int($v) || is_float($v)) return $v;
+                return "'" . $conn->real_escape_string($v) . "'";
+            }, $row);
+            $valClauses[] = '(' . implode(', ', $escaped) . ')';
+        }
+        $sql = "INSERT IGNORE INTO `$table` ($colList) VALUES " . implode(', ', $valClauses);
+        $conn->query($sql);
+    }
+}
+
 try {
     $conn = get_db_connection();
 
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 200;
-    if ($limit > 1000) $limit = 1000;
-    $processed = 0;
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 100;
+    if ($limit > 500) $limit = 500;
+    if ($limit < 1) $limit = 100;
 
     // Load captain name to cid map for fallback resolution
     $captain_name_map = [];
@@ -31,17 +53,15 @@ try {
         }
     }
 
-    $stmt_match = $conn->prepare("INSERT IGNORE INTO analytics_matches (`run_id`, `date`, `mmr`, `placement`, `captain_cid`, `rank`, `source`, `rules_version`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt_deck = $conn->prepare("INSERT IGNORE INTO analytics_match_decks (run_id, card_cid) VALUES (?, ?)");
-    $stmt_turn = $conn->prepare("INSERT IGNORE INTO analytics_match_turns (run_id, turn_number, slot_id, card_cid) VALUES (?, ?, ?, ?)");
+    $matches_data = [];
+    $decks_data = [];
+    $turns_data = [];
+    $processed = 0;
 
-    $conn->begin_transaction();
-
-    // 1. Process Overlay Matches (Tracker app matches)
+    // 1. Ingest from overlay_matches (Tracker app live matches)
     $q_overlay = "SELECT o.* FROM overlay_matches o 
                   LEFT JOIN analytics_matches a ON a.run_id = CONCAT(o.run_id, '_', o.placement) 
                   WHERE a.run_id IS NULL AND o.placement IS NOT NULL 
-                  ORDER BY o.date DESC 
                   LIMIT $limit";
     $res = $conn->query($q_overlay);
     if ($res) {
@@ -62,8 +82,7 @@ try {
             $source = 'overlay';
             $rules_version = isset($row['rules_version']) ? $row['rules_version'] : '';
             
-            $stmt_match->bind_param("ssiiisss", $player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
-            $stmt_match->execute();
+            $matches_data[] = [$player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version];
             
             $deck_cids = [];
             if (!empty($row['deck_cids'])) {
@@ -88,8 +107,7 @@ try {
                                     if (empty($row['deck_cids'])) {
                                         $deck_cids[$cid] = true;
                                     }
-                                    $stmt_turn->bind_param("sisi", $player_run_id, $turnNum, $slot, $cid);
-                                    $stmt_turn->execute();
+                                    $turns_data[] = [$player_run_id, $turnNum, (string)$slot, $cid];
                                 }
                             }
                         }
@@ -98,21 +116,19 @@ try {
             }
             
             foreach(array_keys($deck_cids) as $cid) {
-                $stmt_deck->bind_param("si", $player_run_id, $cid);
-                $stmt_deck->execute();
+                $decks_data[] = [$player_run_id, $cid];
             }
             
             $processed++;
         }
     }
 
-    // 2. Process Playfab Matches (if limit not reached)
+    // 2. Ingest from playfab_matches (if limit remaining)
     if ($processed < $limit) {
         $rem_limit = $limit - $processed;
         $q_playfab = "SELECT p.* FROM playfab_matches p 
                       LEFT JOIN analytics_matches a ON a.run_id = CONCAT(p.run_id, '_', p.placement) 
                       WHERE a.run_id IS NULL AND p.placement IS NOT NULL 
-                      ORDER BY p.date DESC 
                       LIMIT $rem_limit";
         $res = $conn->query($q_playfab);
         if ($res) {
@@ -133,8 +149,7 @@ try {
                 $source = 'playfab';
                 $rules_version = isset($row['rules_version']) ? $row['rules_version'] : '';
                 
-                $stmt_match->bind_param("ssiiisss", $player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version);
-                $stmt_match->execute();
+                $matches_data[] = [$player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version];
                 
                 $turns = json_decode($row['turns'], true);
                 $deck_cids = [];
@@ -148,8 +163,7 @@ try {
                                     $cid = intval($unit['cid']);
                                     if ($cid > 0) {
                                         $deck_cids[$cid] = true;
-                                        $stmt_turn->bind_param("sisi", $player_run_id, $turnNum, $slot, $cid);
-                                        $stmt_turn->execute();
+                                        $turns_data[] = [$player_run_id, $turnNum, (string)$slot, $cid];
                                     }
                                 }
                             }
@@ -158,8 +172,7 @@ try {
                 }
                 
                 foreach(array_keys($deck_cids) as $cid) {
-                    $stmt_deck->bind_param("si", $player_run_id, $cid);
-                    $stmt_deck->execute();
+                    $decks_data[] = [$player_run_id, $cid];
                 }
                 
                 $processed++;
@@ -167,7 +180,16 @@ try {
         }
     }
 
-    $conn->commit();
+    // 3. Execute bulk batch inserts in single transaction
+    if ($processed > 0) {
+        $conn->begin_transaction();
+        
+        bulk_insert($conn, 'analytics_matches', ['run_id', 'date', 'mmr', 'placement', 'captain_cid', 'rank', 'source', 'rules_version'], $matches_data);
+        bulk_insert($conn, 'analytics_match_decks', ['run_id', 'card_cid'], $decks_data);
+        bulk_insert($conn, 'analytics_match_turns', ['run_id', 'turn_number', 'slot_id', 'card_cid'], $turns_data);
+        
+        $conn->commit();
+    }
     
     $res = $conn->query("SELECT COUNT(*) as c FROM analytics_matches");
     $total_now = $res->fetch_assoc()['c'];
@@ -179,13 +201,12 @@ try {
     ]);
 
 } catch (Throwable $e) {
-    if (isset($conn)) $conn->rollback();
+    if (isset($conn)) {
+        try { $conn->rollback(); } catch (Throwable $ignore) {}
+    }
     http_response_code(500);
     echo json_encode(['error' => 'Database exception: ' . $e->getMessage()]);
 }
 
-if (isset($stmt_match)) $stmt_match->close();
-if (isset($stmt_deck)) $stmt_deck->close();
-if (isset($stmt_turn)) $stmt_turn->close();
 if (isset($conn)) $conn->close();
 ?>
