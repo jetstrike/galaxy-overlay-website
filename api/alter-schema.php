@@ -23,6 +23,30 @@ try {
     } catch (Throwable $e) {
         echo "idx_mmr_date: " . $e->getMessage() . "\n";
     }
+
+    // 3. Ensure index on overlay_matches (created_at)
+    try {
+        $conn->query("ALTER TABLE overlay_matches ADD INDEX idx_overlay_created (created_at)");
+        echo "Added idx_overlay_created to overlay_matches.\n";
+    } catch (Throwable $e) {
+        echo "idx_overlay_created: " . $e->getMessage() . "\n";
+    }
+
+    // 4. Ensure index on playfab_matches (created_at)
+    try {
+        $conn->query("ALTER TABLE playfab_matches ADD INDEX idx_playfab_created (created_at)");
+        echo "Added idx_playfab_created to playfab_matches.\n";
+    } catch (Throwable $e) {
+        echo "idx_playfab_created: " . $e->getMessage() . "\n";
+    }
+
+    // 5. Ensure index on analytics_match_turns (run_id)
+    try {
+        $conn->query("ALTER TABLE analytics_match_turns ADD INDEX idx_turns_run (run_id)");
+        echo "Added idx_turns_run to analytics_match_turns.\n";
+    } catch (Throwable $e) {
+        echo "idx_turns_run: " . $e->getMessage() . "\n";
+    }
     
     echo "Schema update completed.\n";
 } catch (Throwable $e) {
