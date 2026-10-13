@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android Setup Guide | Once Upon a Galaxy Overlay</title>
+    <meta name="description" content="Complete step-by-step onboarding guide for Once Upon A Galaxy Overlay on Android. Easy one-time setup with Shizuku, zero root required.">
+    <link rel="canonical" href="https://galaxy-overlay.com/guide.html">
+    <link rel="stylesheet" href="styles.css?v=1.0.16">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --guide-accent: #6366f1;
+            --guide-accent-hover: #4f46e5;
+            --guide-accent-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+            --guide-card-bg: rgba(19, 27, 46, 0.7);
+            --guide-card-hover: rgba(24, 34, 58, 0.85);
+            --guide-callout-bg: rgba(20, 34, 61, 0.6);
+            --guide-border: rgba(255, 255, 255, 0.08);
+            --guide-border-glow: rgba(99, 102, 241, 0.35);
+            --guide-text-bright: #ffffff;
+            --guide-text-main: #f1f5f9;
+            --guide-text-muted: #94a3b8;
+            --guide-text-sub: #cbd5e1;
+            --guide-success: #10b981;
+            --guide-warning: #f59e0b;
+        }
+
+        /* Guide Layout Container */
+        .guide-container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 5rem 1.25rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Hero Header */
+        .guide-header {
+            text-align: center;
+            padding: 2.5rem 0 2rem 0;
+        }
+
+        .guide-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 1.25rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .guide-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #818cf8;
+            box-shadow: 0 0 10px #818cf8;
+        }
+
+        .guide-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
+            color: var(--guide-text-bright);
+        }
+
+        .guide-title span {
+            background: var(--guide-accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .guide-subtitle {
+            font-size: 1.15rem;
+            color: var(--guide-text-muted);
+            max-width: 620px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Callout Box */
+        .guide-callout {
+            background: var(--guide-callout-bg);
+            border-left: 4px solid #6366f1;
+            border-radius: 12px;
+            padding: 1.35rem 1.6rem;
+            margin: 2rem 0 2.5rem 0;
+            border-top: 1px solid var(--guide-border);
+            border-right: 1px solid var(--guide-border);
+            border-bottom: 1px solid var(--guide-border);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .guide-callout-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #818cf8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-callout p {
+            color: var(--guide-text-sub);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .guide-callout strong {
+            color: var(--guide-text-bright);
+        }
+
+        /* Section Headings */
+        .section-header {
+            margin: 3rem 0 1.25rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--guide-border);
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--guide-text-bright);
+            letter-spacing: -0.02em;
+        }
+
+        .section-tag {
+            font-size: 0.8rem;
+            color: var(--guide-text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Downloads Grid */
+        .downloads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .download-card {
+            background: var(--guide-card-bg);
+            border: 1px solid var(--guide-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--guide-accent-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .download-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--guide-border-glow);
+            background: var(--guide-card-hover);
+            box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.25);
+        }
+
+        .download-card:hover::before {
+            opacity: 1;
+        }
+
+        .download-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #a855f7;
+            margin-bottom: 0.4rem;
+        }
+
+        .download-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--guide-text-bright);
+            margin-bottom: 0.4rem;
+        }
+
+        .download-card p {
+            font-size: 0.92rem;
+            color: var(--guide-text-muted);
+            line-height: 1.55;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .guide-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .guide-btn-primary {
+            background: var(--guide-accent-gradient);
+            color: #ffffff;
+            box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.4);
+        }
+
+        .guide-btn-primary:hover {
+            box-shadow: 0 12px 25px -4px rgba(99, 102, 241, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .guide-btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--guide-text-sub);
+            border: 1px solid var(--guide-border);
+        }
+
+        .guide-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Step-by-Step List */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.15rem;
+            margin: 1.5rem 0;
+        }
+
+        .step-card {
+            background: var(--guide-card-bg);
+            border: 1px solid var(--guide-border);
+            border-radius: 14px;
+            padding: 1.4rem 1.5rem 1.4rem 4.5rem;
+            position: relative;
+            backdrop-filter: blur(16px);
+            transition: border-color 0.25s ease, background 0.25s ease;
+        }
+
+        .step-card:hover {
+            border-color: var(--guide-border-glow);
+            background: var(--guide-card-hover);
+        }
+
+        .step-number {
+            position: absolute;
+            top: 1.35rem;
+            left: 1.35rem;
+            width: 2.3rem;
+            height: 2.3rem;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1.5px solid #6366f1;
+            color: #a5b4fc;
+            font-size: 1.05rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+        }
+
+        .step-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--guide-text-bright);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-card p {
+            font-size: 0.95rem;
+            color: var(--guide-text-sub);
+            line-height: 1.6;
+            margin-bottom: 0.6rem;
+        }
+
+        .step-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-card strong {
+            color: var(--guide-text-bright);
+        }
+
+        .step-card ul {
+            margin: 0.6rem 0 0.6rem 1.25rem;
+            color: var(--guide-text-sub);
+            font-size: 0.93rem;
+        }
+
+        .step-card ul li {
+            margin-bottom: 0.35rem;
+            line-height: 1.55;
+        }
+
+        .step-tip {
+            background: rgba(30, 41, 59, 0.55);
+            border: 1px dashed rgba(99, 102, 241, 0.35);
+            border-radius: 8px;
+            padding: 0.65rem 0.9rem;
+            margin-top: 0.75rem;
+            font-size: 0.88rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-tip::before {
+            content: '💡';
+            font-size: 0.95rem;
+        }
+
+        /* Future Routine Cards */
+        .routine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .routine-card {
+            background: var(--guide-card-bg);
+            border: 1px solid var(--guide-border);
+            border-radius: 12px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            backdrop-filter: blur(14px);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .routine-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--guide-border-glow);
+        }
+
+        .routine-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #818cf8;
+            margin-bottom: 0.35rem;
+        }
+
+        .routine-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--guide-text-bright);
+        }
+
+        /* FAQ Section */
+        .faq-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin: 1.5rem 0;
+        }
+
+        .faq-card {
+            background: var(--guide-card-bg);
+            border: 1px solid var(--guide-border);
+            border-radius: 12px;
+            padding: 1.3rem 1.5rem;
+            backdrop-filter: blur(14px);
+            transition: border-color 0.2s ease;
+        }
+
+        .faq-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .faq-question {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--guide-text-bright);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .faq-question::before {
+            content: 'Q';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+            font-size: 0.75rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .faq-answer {
+            font-size: 0.94rem;
+            color: var(--guide-text-sub);
+            line-height: 1.6;
+            padding-left: 2rem;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 680px) {
+            .guide-title {
+                font-size: 2rem;
+            }
+            .step-card {
+                padding-left: 3.6rem;
+                padding-right: 1.1rem;
+            }
+            .step-number {
+                left: 1rem;
+                top: 1.2rem;
+                width: 1.9rem;
+                height: 1.9rem;
+                font-size: 0.9rem;
+            }
+            .downloads-grid {
+                grid-template-columns: 1fr;
+            }
+            .routine-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Glow Effects -->
+    <div class="background-effects">
+        <div class="glow-orb primary"></div>
+        <div class="glow-orb secondary"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">Galaxy<span>Tracker</span></a>
+        <div class="nav-links" style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+            <a href="index.html" style="color: var(--text-main); text-decoration: none; font-weight: 600;">Home</a>
+            <a href="meta.html" style="color: var(--text-main); text-decoration: none; font-weight: 600;">Meta Insights</a>
+            <a href="tierlist.html" style="color: var(--text-main); text-decoration: none; font-weight: 600;">Auto Tier List</a>
+            <a href="guide.html" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">Setup Guide</a>
+        </div>
+    </nav>
+
+    <!-- Main Guide Container -->
+    <main class="guide-container">
+
+        <!-- Hero Header -->
+        <header class="guide-header">
+            <div class="guide-badge">Android Companion Onboarding</div>
+            <h1 class="guide-title">Galaxy Overlay <span>Setup Guide</span></h1>
+            <p class="guide-subtitle">Complete step-by-step instructions for Once Upon A Galaxy players on Android</p>
+        </header>
+
+        <!-- Reason / Security Callout -->
+        <aside class="guide-callout" role="note" aria-label="Setup Requirement Information">
+            <div class="guide-callout-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Why is this setup required?
+            </div>
+            <p>
+                This setup (Developer Options and Wireless Debugging via Shizuku) is <strong>specifically required to allow Galaxy Overlay to read Once Upon A Galaxy's live log files</strong>. 
+                Modern Android security strictly isolates each game inside a private sandbox. Shizuku creates an authorized on-device bridge that enables real-time odds tracking with <strong>zero root, no PC connection after initial setup, and complete local privacy</strong>.
+            </p>
+        </aside>
+
+        <!-- 1. Required Downloads -->
+        <section aria-labelledby="sec-downloads">
+            <div class="section-header">
+                <h2 id="sec-downloads" class="section-title">1. Required Downloads</h2>
+                <span class="section-tag">Step 1 of 4</span>
+            </div>
+            <div class="downloads-grid">
+                <div class="download-card">
+                    <div>
+                        <span class="download-badge">Main Application</span>
+                        <h3>Galaxy Overlay</h3>
+                        <p>The companion app featuring the floating HUD, live roll odds, shop tracking, and opponent radar.</p>
+                    </div>
+                    <div class="btn-stack">
+                        <a class="guide-btn guide-btn-primary" href="https://play.google.com/apps/testing/com.dmills.ouagtracker" target="_blank" rel="noopener">
+                            Join Closed Testing (Web)
+                        </a>
+                        <a class="guide-btn guide-btn-secondary" href="https://play.google.com/store/apps/details?id=com.dmills.ouagtracker" target="_blank" rel="noopener">
+                            Google Play Store Page
+                        </a>
+                    </div>
+                </div>
+
+                <div class="download-card">
+                    <div>
+                        <span class="download-badge">System Bridge</span>
+                        <h3>Shizuku</h3>
+                        <p>The open-source privileged API bridge that grants Galaxy Overlay permission to read game logs.</p>
+                    </div>
+                    <div class="btn-stack">
+                        <a class="guide-btn guide-btn-primary" href="https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api" target="_blank" rel="noopener">
+                            Download on Google Play
+                        </a>
+                        <a class="guide-btn guide-btn-secondary" href="https://shizuku.rikka.app/" target="_blank" rel="noopener">
+                            Official Website
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. First-Time Setup -->
+        <section aria-labelledby="sec-pairing">
+            <div class="section-header">
+                <h2 id="sec-pairing" class="section-title">2. First-Time Setup (One-Time Pairing)</h2>
+                <span class="section-tag">~3 Minutes • One-Time Only</span>
+            </div>
+            <p style="color: var(--guide-text-muted); font-size: 0.95rem; margin-bottom: 1.25rem;">
+                Pairing only needs to be completed once. Future launches take less than 15 seconds.
+            </p>
+
+            <div class="steps-container">
+                <article class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Enable Developer Options</h3>
+                    <p>Open your phone's <strong>Settings</strong> app &gt; <strong>About phone</strong>.</p>
+                    <p>Scroll down to find <strong>Build number</strong> and tap it <strong>7 times consecutively</strong>. Enter your device lock screen PIN/password if prompted.</p>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Enable Wireless Debugging</h3>
+                    <p>Make sure your phone is currently connected to <strong>Wi-Fi</strong>.</p>
+                    <p>Go to <strong>Settings</strong> &gt; <strong>System</strong> &gt; <strong>Developer options</strong>.</p>
+                    <p>Scroll down to the <em>Debugging</em> section and toggle <strong>Wireless debugging</strong> to <strong>ON</strong>. Check <em>Always allow on this network</em> and tap <strong>Allow</strong>.</p>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Pair Shizuku</h3>
+                    <p>Open the <strong>Shizuku</strong> app and scroll down to the <strong>Start via Wireless Debugging</strong> section.</p>
+                    <ul>
+                        <li>Tap <strong>Pairing</strong>, then verify Shizuku notifications are enabled.</li>
+                        <li>Tap <strong>Developer options</strong> to return to the Wireless Debugging settings screen.</li>
+                        <li>Tap the text <strong>Wireless debugging</strong> to open its full details, then tap <strong>Pair device with pairing code</strong>.</li>
+                        <li>A 6-digit code will appear on screen. Pull down your notification shade, tap <strong>Enter pairing code</strong> on the Shizuku notification, enter the 6 digits, and submit.</li>
+                    </ul>
+                    <div class="step-tip">
+                        You will see a notification confirming <em>Pairing successful</em>.
+                    </div>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Start Shizuku Service</h3>
+                    <p>Switch back to the <strong>Shizuku</strong> app.</p>
+                    <p>Under <strong>Start via Wireless Debugging</strong>, tap the <strong>Start</strong> button. A terminal window will execute for ~2 seconds, and the main screen will display <strong>Shizuku is running</strong> with a green indicator.</p>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-number">5</div>
+                    <h3>Launch Galaxy Overlay &amp; Authorize</h3>
+                    <p>Open <strong>Galaxy Overlay</strong> from your app drawer or home screen.</p>
+                    <ul>
+                        <li>If prompted, grant the <strong>Display over other apps</strong> permission so the floating HUD can render over the game.</li>
+                        <li>When Shizuku prompts <em>Allow Galaxy Overlay to access Shizuku?</em>, tap <strong>Allow all the time</strong>.</li>
+                        <li>The compact overlay HUD pill will appear on your screen.</li>
+                    </ul>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-number">6</div>
+                    <h3>Launch Once Upon A Galaxy</h3>
+                    <p>Open <strong>Once Upon A Galaxy</strong>. Tap the floating overlay pill anytime during a match to expand into the full companion HUD and view live stats, shop odds, and opponent boards.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 3. Future Sessions Routine -->
+        <section aria-labelledby="sec-routine">
+            <div class="section-header">
+                <h2 id="sec-routine" class="section-title">3. Future Sessions Routine</h2>
+                <span class="section-tag">&lt; 15 Seconds</span>
+            </div>
+            <p style="color: var(--guide-text-muted); font-size: 0.95rem; margin-bottom: 1.25rem;">
+                You do not need to repeat the pairing process on future sessions. Simply follow this quick routine:
+            </p>
+
+            <div class="routine-grid">
+                <div class="routine-card">
+                    <div class="routine-badge">Step 1</div>
+                    <div class="routine-title">Connect to Wi-Fi</div>
+                </div>
+                <div class="routine-card">
+                    <div class="routine-badge">Step 2</div>
+                    <div class="routine-title">Open Shizuku &amp; Tap Start</div>
+                </div>
+                <div class="routine-card">
+                    <div class="routine-badge">Step 3</div>
+                    <div class="routine-title">Open Galaxy Overlay</div>
+                </div>
+                <div class="routine-card">
+                    <div class="routine-badge">Step 4</div>
+                    <div class="routine-title">Play Galaxy!</div>
+                </div>
+            </div>
+
+            <div class="step-tip" style="margin-top: 1rem; border-radius: 12px; padding: 0.9rem 1.1rem;">
+                Quick Settings Shortcut: You can add the <strong>Wireless Debugging</strong> tile to your Android Quick Settings panel (swipe down twice &gt; tap the pencil edit icon). That way you can toggle it on with a single tap before opening Shizuku.
+            </div>
+        </section>
+
+        <!-- 4. Frequently Asked Questions -->
+        <section aria-labelledby="sec-faq">
+            <div class="section-header">
+                <h2 id="sec-faq" class="section-title">4. Frequently Asked Questions</h2>
+                <span class="section-tag">Troubleshooting</span>
+            </div>
+
+            <div class="faq-grid">
+                <article class="faq-card">
+                    <h3 class="faq-question">Shizuku says "Wireless debugging is not connected"</h3>
+                    <div class="faq-answer">
+                        Ensure your device is connected to an active Wi-Fi network. Android disables Wireless Debugging whenever Wi-Fi disconnects. Reconnect to Wi-Fi, toggle Wireless Debugging back on in Developer Options, and tap Start in Shizuku.
+                    </div>
+                </article>
+
+                <article class="faq-card">
+                    <h3 class="faq-question">Shizuku says "Authorized applications: 0"</h3>
+                    <div class="faq-answer">
+                        Open Galaxy Overlay; it requests permission automatically on startup. If you missed the prompt, open Shizuku &gt; tap <strong>Authorized applications</strong> &gt; toggle <strong>Galaxy Overlay</strong> to ON.
+                    </div>
+                </article>
+
+                <article class="faq-card">
+                    <h3 class="faq-question">The floating HUD does not appear over the game</h3>
+                    <div class="faq-answer">
+                        Go to your phone's <strong>Settings</strong> &gt; <strong>Apps</strong> &gt; <strong>Galaxy Overlay</strong> &gt; <strong>Display over other apps</strong> and verify the toggle is enabled.
+                    </div>
+                </article>
+
+                <article class="faq-card">
+                    <h3 class="faq-question">Do I have to pair every time I restart my phone?</h3>
+                    <div class="faq-answer">
+                        No. Pairing is a one-time process. After restarting your phone, just connect to Wi-Fi, ensure Wireless Debugging is enabled, and tap Start in Shizuku.
+                    </div>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Galaxy Tracker. Not affiliated with Once Upon a Galaxy. &bull; <a href="guide.html" style="color: inherit; text-decoration: underline;">Setup Guide</a> &bull; <a href="privacy_policy.html" style="color: inherit; text-decoration: underline;">Privacy Policy</a></p>
+    </footer>
+
+</body>
+</html>
