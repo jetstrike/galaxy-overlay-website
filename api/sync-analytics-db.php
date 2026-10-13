@@ -13,7 +13,7 @@ mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 function bulk_insert($conn, $table, $columns, $rows) {
     if (empty($rows)) return;
     $colList = implode(', ', array_map(function($c) { return "`$c`"; }, $columns));
-    $chunks = array_chunk($rows, 150);
+    $chunks = array_chunk($rows, 200);
     foreach ($chunks as $chunk) {
         $valClauses = [];
         foreach ($chunk as $row) {
@@ -32,14 +32,14 @@ function bulk_insert($conn, $table, $columns, $rows) {
 try {
     $conn = get_db_connection();
 
-    // Increase query memory quota on TiDB Serverless if allowed
-    try {
-        $conn->query("SET tidb_mem_quota_query = 2147483648");
-    } catch (Throwable $e) {}
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 100;
+    if ($limit > 250) $limit = 250;
+    if ($limit < 1) $limit = 100;
+    $is_full = isset($_GET['full']) && $_GET['full'] == '1';
 
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 50;
-    if ($limit > 100) $limit = 100;
-    if ($limit < 1) $limit = 50;
+    // Scoped window for auto-sync: last 7 days unless full backfill is requested
+    $date_filter_overlay = $is_full ? "1=1" : "o.created_at >= NOW() - INTERVAL 7 DAY";
+    $date_filter_playfab = $is_full ? "1=1" : "p.created_at >= NOW() - INTERVAL 7 DAY";
 
     // Load captain name to cid map for fallback resolution
     $captain_name_map = [];
@@ -66,7 +66,7 @@ try {
     // 1. Ingest from overlay_matches (Tracker app live matches)
     $q_overlay = "SELECT o.* FROM overlay_matches o 
                   LEFT JOIN analytics_matches a ON a.run_id = CONCAT(o.run_id, '_', o.placement) 
-                  WHERE a.run_id IS NULL AND o.placement IS NOT NULL 
+                  WHERE $date_filter_overlay AND a.run_id IS NULL AND o.placement IS NOT NULL 
                   LIMIT $limit";
     $res = $conn->query($q_overlay);
     if ($res) {
@@ -133,7 +133,7 @@ try {
         $rem_limit = $limit - $processed;
         $q_playfab = "SELECT p.* FROM playfab_matches p 
                       LEFT JOIN analytics_matches a ON a.run_id = CONCAT(p.run_id, '_', p.placement) 
-                      WHERE a.run_id IS NULL AND p.placement IS NOT NULL 
+                      WHERE $date_filter_playfab AND a.run_id IS NULL AND p.placement IS NOT NULL 
                       LIMIT $rem_limit";
         $res = $conn->query($q_playfab);
         if ($res) {
