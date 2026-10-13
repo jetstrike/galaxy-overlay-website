@@ -5,20 +5,30 @@ error_reporting(E_ALL);
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-$host = 'localhost';
-$db = 'u834540789_Galaxy';
-$user = 'u834540789_Tracker';
-$pass = 'Slippery1!1!';
-
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 
 try {
     $conn = get_db_connection();
-    $res = $conn->query("SELECT DISTINCT season FROM analytics_cache ORDER BY season DESC");
-    $seasons = [];
+    
+    // Pull seasons directly from analytics_matches to ensure all active months are present
+    $res = $conn->query("SELECT DISTINCT DATE_FORMAT(date, '%Y-%m') as s FROM analytics_matches WHERE date IS NOT NULL ORDER BY s DESC");
+    $seasons = ['all'];
     while ($row = $res->fetch_assoc()) {
-        $seasons[] = $row['season'];
+        if (!empty($row['s'])) {
+            $seasons[] = $row['s'];
+        }
     }
+    
+    // Also include any cached seasons if different
+    $cacheRes = $conn->query("SELECT DISTINCT season FROM analytics_cache WHERE season != 'all'");
+    if ($cacheRes) {
+        while ($crow = $cacheRes->fetch_assoc()) {
+            if (!in_array($crow['season'], $seasons)) {
+                $seasons[] = $crow['season'];
+            }
+        }
+    }
+    
     echo json_encode($seasons);
 } catch (Throwable $e) {
     http_response_code(500);
