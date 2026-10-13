@@ -13,7 +13,7 @@ mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 function bulk_insert($conn, $table, $columns, $rows) {
     if (empty($rows)) return;
     $colList = implode(', ', array_map(function($c) { return "`$c`"; }, $columns));
-    $chunks = array_chunk($rows, 300);
+    $chunks = array_chunk($rows, 150);
     foreach ($chunks as $chunk) {
         $valClauses = [];
         foreach ($chunk as $row) {
@@ -32,9 +32,14 @@ function bulk_insert($conn, $table, $columns, $rows) {
 try {
     $conn = get_db_connection();
 
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 100;
-    if ($limit > 500) $limit = 500;
-    if ($limit < 1) $limit = 100;
+    // Increase query memory quota on TiDB Serverless if allowed
+    try {
+        $conn->query("SET tidb_mem_quota_query = 2147483648");
+    } catch (Throwable $e) {}
+
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 50;
+    if ($limit > 100) $limit = 100;
+    if ($limit < 1) $limit = 50;
 
     // Load captain name to cid map for fallback resolution
     $captain_name_map = [];
