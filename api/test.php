@@ -1,16 +1,13 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
+require_once __DIR__ . '/db.php';
+header('Content-Type: application/json');
 try {
-    require_once __DIR__ . '/db.php';
-    echo "db.php loaded\n";
     $conn = get_db_connection();
-    echo "Connected successfully to TiDB!\n";
-    $res = $conn->query("SELECT VERSION()");
-    $row = $res->fetch_row();
-    echo "Version: " . $row[0] . "\n";
+    $res = $conn->query("SELECT source, COUNT(*) as cnt, MIN(date) as min_d, MAX(date) as max_d FROM analytics_matches GROUP BY source");
+    $out = [];
+    while($r = $res->fetch_assoc()) $out[] = $r;
+    echo json_encode($out);
 } catch (Throwable $e) {
-    echo "Error: " . $e->getMessage() . "\n";
-    echo "Trace: " . $e->getTraceAsString() . "\n";
+    echo json_encode(['error' => $e->getMessage()]);
 }
+?>
