@@ -19,6 +19,17 @@ if (!$captain && !$captain_cid) {
 try {
     $conn = get_db_connection();
 
+    // If captain name provided but no cid, resolve captain_cid from analytics_cards
+    if ($captain && !$captain_cid) {
+        $c_stmt = $conn->prepare("SELECT cid FROM analytics_cards WHERE name = ? LIMIT 1");
+        $c_stmt->bind_param("s", $captain);
+        $c_stmt->execute();
+        $c_res = $c_stmt->get_result();
+        if ($c_row = $c_res->fetch_assoc()) {
+            $captain_cid = intval($c_row['cid']);
+        }
+    }
+
     $where = [];
     $params = [];
     $types = '';
@@ -29,10 +40,9 @@ try {
         $params[] = $captain_cid;
         $types .= 'si';
     } else if ($captain) {
-        $where[] = "(captain = ? OR captain_cid = (SELECT cid FROM analytics_cards WHERE name = ? AND card_type = 'captain' LIMIT 1))";
+        $where[] = "captain = ?";
         $params[] = $captain;
-        $params[] = $captain;
-        $types .= 'ss';
+        $types .= 's';
     } else {
         $where[] = "captain_cid = ?";
         $params[] = $captain_cid;
