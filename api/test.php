@@ -3,17 +3,26 @@ require_once __DIR__ . '/db.php';
 header('Content-Type: application/json');
 try {
     $conn = get_db_connection();
-    $start = microtime(true);
-    $q = "SELECT p.run_id, p.placement FROM playfab_matches p LEFT JOIN analytics_matches a ON a.run_id = CONCAT(p.run_id, '_', p.placement) WHERE p.created_at >= NOW() - INTERVAL 3 DAY AND a.run_id IS NULL AND p.placement IS NOT NULL LIMIT 5";
-    $res = $conn->query($q);
-    $rows = [];
-    while($r = $res->fetch_assoc()) $rows[] = $r;
-    $time = microtime(true) - $start;
+    
+    // Check Bing Wu in overlay_matches as requested by user
+    $q1 = "SELECT run_id, mmr, mmr_start, mmr_end, placement, deck_cids, captain, date, rules_version 
+           FROM overlay_matches 
+           WHERE (captain = 'Bing Wu' OR captain = 'bing_wu' OR captain_cid = 4052) 
+             AND (mmr >= 4000 OR mmr_start >= 4000)
+           ORDER BY date DESC";
+    $res1 = $conn->query($q1);
+    $overlay = [];
+    while($r = $res1->fetch_assoc()) $overlay[] = $r;
+
+    // Also check playfab_matches
+    $q2 = "SELECT COUNT(*) as c FROM playfab_matches WHERE (captain = 'Bing Wu' OR captain = 'bing_wu' OR captain_cid = 4052) AND mmr >= 4000";
+    $res2 = $conn->query($q2);
+    $pf_count = $res2->fetch_assoc()['c'];
 
     echo json_encode([
-        'time_seconds' => $time,
-        'count' => count($rows),
-        'rows' => $rows
+        'overlay_count' => count($overlay),
+        'playfab_count' => intval($pf_count),
+        'overlay_matches' => $overlay
     ]);
 } catch (Throwable $e) {
     echo json_encode(['error' => $e->getMessage()]);
