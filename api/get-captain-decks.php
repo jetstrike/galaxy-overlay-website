@@ -8,6 +8,7 @@ $captain = isset($_GET['captain']) ? trim($_GET['captain']) : '';
 $captain_cid = isset($_GET['captain_cid']) ? intval($_GET['captain_cid']) : 0;
 $min_mmr = isset($_GET['min_mmr']) ? intval($_GET['min_mmr']) : 0;
 $max_mmr = isset($_GET['max_mmr']) ? intval($_GET['max_mmr']) : 99999;
+$season = isset($_GET['season']) ? trim($_GET['season']) : 'all';
 $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 5000;
 
 if (!$captain && !$captain_cid) {
@@ -61,6 +62,16 @@ try {
         $types .= 'ii';
     }
 
+    // Optional season filter (%Y-%m, e.g. '2026-10' or 'current')
+    if ($season === 'current') {
+        $season = date('Y-m');
+    }
+    if ($season !== 'all' && preg_match('/^\d{4}-\d{2}$/', $season)) {
+        $where[] = "DATE_FORMAT(date, '%Y-%m') = ?";
+        $params[] = $season;
+        $types .= 's';
+    }
+
     $where_sql = implode(' AND ', $where);
     $sql = "SELECT run_id, mmr, mmr_start, mmr_end, placement, deck_cids, captain, captain_cid, date, rules_version 
             FROM overlay_matches 
@@ -85,6 +96,7 @@ try {
         'captain_cid' => $captain_cid,
         'min_mmr' => $min_mmr,
         'max_mmr' => $max_mmr,
+        'season' => $season,
         'count' => count($matches),
         'overlay_matches' => $matches
     ]);
