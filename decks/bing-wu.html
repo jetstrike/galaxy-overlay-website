@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bing Wu Competitive Deck Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --border: #1e293b;
+      --border-accent: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --rarity-common: #94a3b8;
+      --rarity-uncommon: #22c55e;
+      --rarity-rare: #3b82f6;
+      --rarity-epic: #a855f7;
+      --rarity-legendary: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; line-height: 1.5; padding-bottom: 80px; }
+    .container { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+    .hero-banner { background: linear-gradient(135deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.95) 50%, rgba(10, 14, 23, 1) 100%); border-bottom: 1px solid var(--border); padding: 48px 0; }
+    .hero-content { display: flex; gap: 36px; align-items: center; }
+    .captain-avatar { width: 140px; height: 140px; border-radius: 24px; object-fit: cover; border: 3px solid var(--accent-purple); box-shadow: 0 0 35px rgba(139, 92, 246, 0.4); background: #1e1b4b; }
+    .hero-text h1 { font-size: 38px; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 8px; }
+    .hero-text .subtitle { font-size: 14px; color: var(--accent-cyan); font-weight: 600; margin-bottom: 12px; }
+    .captain-passive-box { background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.3); padding: 12px 18px; border-radius: 12px; font-size: 14px; color: #e2e8f0; max-width: 760px; }
+    .stat-quick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 36px 0; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; }
+    .stat-val { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+    .stat-lbl { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+    .section-header { margin-bottom: 24px; margin-top: 40px; }
+    .section-header h2 { font-size: 24px; font-weight: 800; }
+    .section-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+    .core-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .core-card-item { display: flex; align-items: center; gap: 14px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+    .core-card-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+    .core-card-info { flex: 1; min-width: 0; }
+    .core-card-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .core-card-pick { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 800; color: #38bdf8; text-align: right; }
+    .decks-container { display: flex; flex-direction: column; gap: 32px; }
+    .deck-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; position: relative; }
+    .deck-box.top-deck { border: 2px solid var(--accent-purple); box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15); }
+    .deck-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px; flex-wrap: wrap; }
+    .deck-rank-badge { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 900; color: var(--accent-purple); background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .deck-metrics { display: flex; gap: 14px; flex-wrap: wrap; }
+    .metric-chip { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border); border-radius: 10px; padding: 6px 14px; text-align: center; }
+    .metric-chip-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; }
+    .metric-chip-lbl { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+    .deck-diff-badge { display: flex; gap: 8px; align-items: center; font-size: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .diff-pill-added { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+    .diff-pill-removed { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+    
+    /* 2 ROW x 6 COLUMN GRID */
+    .deck-cards-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, auto); gap: 12px; }
+    .card-slot { background: #0d131f; border-radius: 14px; border: 2px solid var(--border); padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; transition: all 0.2s ease; }
+    .card-slot:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); z-index: 10; }
+    .card-slot.rarity-Common { border-color: #64748b; }
+    .card-slot.rarity-Uncommon { border-color: #22c55e; }
+    .card-slot.rarity-Rare { border-color: #3b82f6; }
+    .card-slot.rarity-Epic { border-color: #a855f7; }
+    .card-slot.rarity-Legendary { border-color: #f59e0b; }
+    .card-img-wrap { width: 100%; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; margin-bottom: 8px; background: #1e293b; }
+    .card-img { width: 100%; height: 100%; object-fit: cover; }
+    .card-slot-name { font-size: 12px; font-weight: 700; color: #f1f5f9; line-height: 1.25; margin-top: 2px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
+
+    /* Tooltip */
+    .card-tooltip { position: absolute; bottom: 105%; left: 50%; transform: translateX(-50%); background: #0f172a; border: 1px solid #334155; box-shadow: 0 16px 40px rgba(0,0,0,0.8); border-radius: 12px; padding: 12px; width: 240px; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease; z-index: 100; text-align: left; }
+    .card-slot:hover .card-tooltip { opacity: 1; visibility: visible; }
+    .tooltip-title { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .tooltip-text { font-size: 11px; color: #cbd5e1; line-height: 1.4; white-space: pre-line; }
+
+    @media (max-width: 1100px) { .deck-cards-2x6 { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 640px) { .deck-cards-2x6 { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+
+    <!-- Top Site Navigation -->
+    <nav class="tracker-site-nav" style="background: rgba(10, 14, 23, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); position: sticky; top: 0; z-index: 1000;">
+      <div style="max-width: 1440px; margin: 0 auto; padding: 1rem 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <a href="/index.html" style="font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; text-decoration: none; color: #f0f2f5; display: flex; align-items: center; gap: 6px;">
+          Galaxy<span style="color: #6366f1;">Tracker</span>
+        </a>
+        <div style="display: flex; gap: 1.8rem; align-items: center; flex-wrap: wrap;">
+          <a href="/index.html" style="color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s;">Home</a>
+          <a href="/meta.html" style="color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s;">Meta Insights</a>
+          <a href="/tierlist.html" style="color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s;">Auto Tier List</a>
+          <a href="/decks.html" style="color: #38bdf8; text-decoration: none; font-weight: 700; font-size: 14px; border-bottom: 2px solid #38bdf8; padding-bottom: 2px;">Meta Deck Analysis</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Quick Switcher Bar -->
+    <div class="captain-switcher-bar" style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); border-bottom: 1px solid #1e293b; padding: 10px 24px;">
+      <div style="max-width: 1440px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+        <a href="/decks.html" style="display: inline-flex; align-items: center; gap: 6px; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 600; padding: 5px 12px; background: rgba(30, 41, 59, 0.5); border: 1px solid #334155; border-radius: 8px; transition: all 0.2s ease;">
+          &larr; All Captains Hub
+        </a>
+        <div style="display: flex; align-items: center; gap: 8px; overflow-x: auto; padding: 4px 0; -webkit-overflow-scrolling: touch;">
+          <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; margin-right: 4px;">Switch Captain:</span>
+          
+      <a href="/decks/bo-peep.html" class="switcher-pill " style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 9999px; border: 1px solid; text-decoration: none; font-size: 13px; transition: all 0.2s ease; background: rgba(15, 23, 42, 0.7); border-color: #334155; color: #94a3b8;">
+        <img src="https://galaxy-overlay.com/api/get-image.php?file=bo_peep__default__240.webp" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" alt="Bo Peep">
+        <span>Bo Peep</span>
+        <span style="font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #4ade80; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 6px;">88.2%</span>
+      </a>
+    
+      <a href="/decks/bing-wu.html" class="switcher-pill active" style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 9999px; border: 1px solid; text-decoration: none; font-size: 13px; transition: all 0.2s ease; background: rgba(99, 102, 241, 0.25); border-color: #818cf8; color: #fff; box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); font-weight: 700;">
+        <img src="https://galaxy-overlay.com/api/get-image.php?file=bing_wu__default__240.webp" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" alt="Bing Wu">
+        <span>Bing Wu</span>
+        <span style="font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #4ade80; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 6px;">82.9%</span>
+      </a>
+    
+      <a href="/decks/remi.html" class="switcher-pill " style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 9999px; border: 1px solid; text-decoration: none; font-size: 13px; transition: all 0.2s ease; background: rgba(15, 23, 42, 0.7); border-color: #334155; color: #94a3b8;">
+        <img src="https://galaxy-overlay.com/api/get-image.php?file=remi__default__240.webp" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" alt="Remi">
+        <span>Remi</span>
+        <span style="font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #38bdf8; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 6px;">54.4%</span>
+      </a>
+    
+      <a href="/decks/swishbuckler.html" class="switcher-pill " style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 9999px; border: 1px solid; text-decoration: none; font-size: 13px; transition: all 0.2s ease; background: rgba(15, 23, 42, 0.7); border-color: #334155; color: #94a3b8;">
+        <img src="https://galaxy-overlay.com/api/get-image.php?file=swishbuckler__default__240.webp" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" alt="Swishbuckler">
+        <span>Swishbuckler</span>
+        <span style="font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #38bdf8; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 6px;">53.3%</span>
+      </a>
+    
+      <a href="/decks/luna.html" class="switcher-pill " style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 9999px; border: 1px solid; text-decoration: none; font-size: 13px; transition: all 0.2s ease; background: rgba(15, 23, 42, 0.7); border-color: #334155; color: #94a3b8;">
+        <img src="https://galaxy-overlay.com/api/get-image.php?file=luna__default__240.webp" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" alt="Luna">
+        <span>Luna</span>
+        <span style="font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #38bdf8; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 6px;">52.3%</span>
+      </a>
+    
+      <a href="/decks/dracusmagus.html" class="switcher-pill " style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 9999px; border: 1px solid; text-decoration: none; font-size: 13px; transition: all 0.2s ease; background: rgba(15, 23, 42, 0.7); border-color: #334155; color: #94a3b8;">
+        <img src="https://galaxy-overlay.com/api/get-image.php?file=dracusmagus__default__240.webp" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" alt="Dracusmagus">
+        <span>Dracusmagus</span>
+        <span style="font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #fb923c; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 6px;">38.5%</span>
+      </a>
+    
+      <a href="/decks/mr-monet.html" class="switcher-pill " style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 9999px; border: 1px solid; text-decoration: none; font-size: 13px; transition: all 0.2s ease; background: rgba(15, 23, 42, 0.7); border-color: #334155; color: #94a3b8;">
+        <img src="https://galaxy-overlay.com/api/get-image.php?file=mr_monet__default__240.webp" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" alt="Mr. Monet">
+        <span>Mr. Monet</span>
+        <span style="font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #fb923c; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 6px;">15.4%</span>
+      </a>
+    
+        </div>
+      </div>
+    </div>
+  
+  <header class="hero-banner">
+    <div class="container hero-content">
+      <img class="captain-avatar" src="https://galaxy-overlay.com/api/get-image.php?file=bing_wu__default__240.webp" alt="Bing Wu">
+      <div class="hero-text">
+        <div class="subtitle">ONCE UPON A GALAXY • SEASON 2026-10 • MMR 3981 - 4683</div>
+        <h1>Bing Wu Competitive Deck Analysis</h1>
+        <div class="captain-passive-box">
+          <strong>Captain Passive:</strong> After you cast your second spell in a turn, get a bonus Chance Encounter character.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="stat-quick-grid">
+      <div class="stat-card">
+        <div class="stat-val" style="color: #c084fc;">216</div>
+        <div class="stat-lbl">Matches Analyzed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #06b6d4;">16</div>
+        <div class="stat-lbl">Unique Decks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #f59e0b;">82.9%</div>
+        <div class="stat-lbl">1st Place Win Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #10b981;">96.8%</div>
+        <div class="stat-lbl">Top 3 Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">4250</div>
+        <div class="stat-lbl">Avg Player MMR</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>Universal Core Cards (>70% Pick Rate)</h2>
+      <p>The foundational anchor cards played in the vast majority of competitive lists.</p>
+    </div>
+    <div class="core-cards-grid">
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon">
+          <div class="core-card-info">
+            <div class="core-card-name">Luck Dragon</div>
+            <div style="font-size: 11px; color: var(--rarity-legendary); font-weight: 600;">Legendary</div>
+          </div>
+          <div class="core-card-pick">98.6%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety">
+          <div class="core-card-info">
+            <div class="core-card-name">Comety</div>
+            <div style="font-size: 11px; color: var(--rarity-common); font-weight: 600;">Common</div>
+          </div>
+          <div class="core-card-pick">97.7%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster">
+          <div class="core-card-info">
+            <div class="core-card-name">Owlabaster</div>
+            <div style="font-size: 11px; color: var(--rarity-epic); font-weight: 600;">Epic</div>
+          </div>
+          <div class="core-card-pick">89.8%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller">
+          <div class="core-card-info">
+            <div class="core-card-name">Rocky, the Roller</div>
+            <div style="font-size: 11px; color: var(--rarity-legendary); font-weight: 600;">Legendary</div>
+          </div>
+          <div class="core-card-pick">88%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter">
+          <div class="core-card-info">
+            <div class="core-card-name">The Mad Splatter</div>
+            <div style="font-size: 11px; color: var(--rarity-uncommon); font-weight: 600;">Uncommon</div>
+          </div>
+          <div class="core-card-pick">87.5%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer">
+          <div class="core-card-info">
+            <div class="core-card-name">Purrfectioneer</div>
+            <div style="font-size: 11px; color: var(--rarity-uncommon); font-weight: 600;">Uncommon</div>
+          </div>
+          <div class="core-card-pick">78.2%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student">
+          <div class="core-card-info">
+            <div class="core-card-name">Marigold, Eternal Student</div>
+            <div style="font-size: 11px; color: var(--rarity-legendary); font-weight: 600;">Legendary</div>
+          </div>
+          <div class="core-card-pick">76.9%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin">
+          <div class="core-card-info">
+            <div class="core-card-name">Blue Paintkin</div>
+            <div style="font-size: 11px; color: var(--rarity-uncommon); font-weight: 600;">Uncommon</div>
+          </div>
+          <div class="core-card-pick">76.4%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer">
+          <div class="core-card-info">
+            <div class="core-card-name">Wormscale Tinkerer</div>
+            <div style="font-size: 11px; color: var(--rarity-legendary); font-weight: 600;">Legendary</div>
+          </div>
+          <div class="core-card-pick">69.4%</div>
+        </div>
+      
+        <div class="core-card-item">
+          <img class="core-card-thumb" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny">
+          <div class="core-card-info">
+            <div class="core-card-name">Plunder Penny</div>
+            <div style="font-size: 11px; color: var(--rarity-common); font-weight: 600;">Common</div>
+          </div>
+          <div class="core-card-pick">65.7%</div>
+        </div>
+      
+    </div>
+
+    <div class="section-header">
+      <h2>Unique Deck Lists</h2>
+      <p>Deduplicated decks, ordered strictly by card rarity (Common → Uncommon → Rare → Epic → Legendary).</p>
+    </div>
+
+    <div class="decks-container">
+      
+        <div class="deck-box top-deck">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#1</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #1 ⭐ (Meta Leader)</div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">44% of Meta (95 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">87.4%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">98.9%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.19</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny" loading="lazy">
+                </div>
+                <div class="card-slot-name">Plunder Penny</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Plunder Penny</div>
+                  <div class="tooltip-text">Hunt — Improve your buffs from spells by +1/+0.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=chaos__bronze__240.webp" alt="Chaos" loading="lazy">
+                </div>
+                <div class="card-slot-name">Chaos</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Chaos</div>
+                  <div class="tooltip-text">Recruit — Cast a random spell.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=genie_of_the_lamp__bronze__240.webp" alt="Genie of the Lamp" loading="lazy">
+                </div>
+                <div class="card-slot-name">Genie of the Lamp</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Genie of the Lamp</div>
+                  <div class="tooltip-text">Every other spell you cast directly on me, double my stats.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#2</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #2 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">18.1% of Meta (39 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">69.2%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">89.7%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.72</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Antiquitoy (Common)</span><span class="diff-pill-added">+ Satter Fae (Uncommon)</span><span class="diff-pill-added">+ Van GOGogo (Uncommon)</span><span class="diff-pill-added">+ Leprechaun (Rare)</span><span class="diff-pill-added">+ Model Elephant (Rare)</span><span class="diff-pill-added">+ Dotty Daughter (Epic)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Purrfectioneer (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span><span class="diff-pill-removed">- Marigold, Eternal Student (Legendary)</span><span class="diff-pill-removed">- Wormscale Tinkerer (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=antiquitoy__bronze__240.webp" alt="Antiquitoy" loading="lazy">
+                </div>
+                <div class="card-slot-name">Antiquitoy</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Antiquitoy</div>
+                  <div class="tooltip-text">When you buff one or more slots, I get +1/+1.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=satter_fae__bronze__240.webp" alt="Satter Fae" loading="lazy">
+                </div>
+                <div class="card-slot-name">Satter Fae</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Satter Fae</div>
+                  <div class="tooltip-text">Chance Encounter — Give your shop +1/+1.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=van_gogogo__bronze__240.webp" alt="Van GOGogo" loading="lazy">
+                </div>
+                <div class="card-slot-name">Van GOGogo</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Van GOGogo</div>
+                  <div class="tooltip-text">Quest — Golden another character.
+Treasure Find — Sunflowers</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp" alt="Leprechaun" loading="lazy">
+                </div>
+                <div class="card-slot-name">Leprechaun</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Leprechaun</div>
+                  <div class="tooltip-text">Chance Encounter — Get a random common treasure.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp" alt="Model Elephant" loading="lazy">
+                </div>
+                <div class="card-slot-name">Model Elephant</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Model Elephant</div>
+                  <div class="tooltip-text">Hunt — Give my slot +1/+1.
+When my slot is buffed, give it an additional +2/+2.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp" alt="Dotty Daughter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Dotty Daughter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Dotty Daughter</div>
+                  <div class="tooltip-text">Blue — When one of your slots gets a buff, double it.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#3</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #3 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">10.6% of Meta (23 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">78.3%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">91.3%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.43</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Red Paintkin (Uncommon)</span><span class="diff-pill-added">+ Yellow Paintkin (Uncommon)</span><span class="diff-pill-added">+ Leprechaun (Rare)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span><span class="diff-pill-added">+ The Orange Orangutan (Legendary)</span>
+              <span class="diff-pill-removed">- Blue Paintkin (Uncommon)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- The Mad Splatter (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span><span class="diff-pill-removed">- Rocky, the Roller (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny" loading="lazy">
+                </div>
+                <div class="card-slot-name">Plunder Penny</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Plunder Penny</div>
+                  <div class="tooltip-text">Hunt — Improve your buffs from spells by +1/+0.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp" alt="Red Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Red Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Red Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Red.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp" alt="Yellow Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Yellow Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Yellow Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Yellow.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp" alt="Leprechaun" loading="lazy">
+                </div>
+                <div class="card-slot-name">Leprechaun</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Leprechaun</div>
+                  <div class="tooltip-text">Chance Encounter — Get a random common treasure.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp" alt="The Orange Orangutan" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Orange Orangutan</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Orange Orangutan</div>
+                  <div class="tooltip-text">Yellow — Each fight, give your slots +10 Attack.
+Red — Each fight, give your slots +10 Health.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#4</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #4 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">8.8% of Meta (19 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">94.7%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.05</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Happy Little Painter (Common)</span><span class="diff-pill-added">+ Red Paintkin (Uncommon)</span><span class="diff-pill-added">+ Leprechaun (Rare)</span><span class="diff-pill-added">+ Mana Potion (Rare)</span><span class="diff-pill-added">+ Splat (Rare)</span><span class="diff-pill-added">+ The Purple Peacock (Legendary)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Blue Paintkin (Uncommon)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span><span class="diff-pill-removed">- Owlabaster (Epic)</span><span class="diff-pill-removed">- Wormscale Tinkerer (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp" alt="Happy Little Painter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Happy Little Painter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Happy Little Painter</div>
+                  <div class="tooltip-text">Quest — I'm on a Green slot during a fight.
+Treasure Find — Happy Little Tree</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp" alt="Red Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Red Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Red Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Red.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp" alt="Leprechaun" loading="lazy">
+                </div>
+                <div class="card-slot-name">Leprechaun</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Leprechaun</div>
+                  <div class="tooltip-text">Chance Encounter — Get a random common treasure.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=mana_potion__bronze__240.webp" alt="Mana Potion" loading="lazy">
+                </div>
+                <div class="card-slot-name">Mana Potion</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Mana Potion</div>
+                  <div class="tooltip-text">Farewell — Get a Blue Paintbrush.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=splat__bronze__240.webp" alt="Splat" loading="lazy">
+                </div>
+                <div class="card-slot-name">Splat</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Splat</div>
+                  <div class="tooltip-text">Farewell — Get a Yellow Paintbrush.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp" alt="The Purple Peacock" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Purple Peacock</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Purple Peacock</div>
+                  <div class="tooltip-text">Red — When you play a spell, increase your buffs from spells by +3 Attack
+Blue — When you play a spell directly on me, play it again.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#5</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #5 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">4.6% of Meta (10 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">90%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.2</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Van GOGogo (Uncommon)</span>
+              <span class="diff-pill-removed">- Genie of the Lamp (Epic)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny" loading="lazy">
+                </div>
+                <div class="card-slot-name">Plunder Penny</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Plunder Penny</div>
+                  <div class="tooltip-text">Hunt — Improve your buffs from spells by +1/+0.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=chaos__bronze__240.webp" alt="Chaos" loading="lazy">
+                </div>
+                <div class="card-slot-name">Chaos</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Chaos</div>
+                  <div class="tooltip-text">Recruit — Cast a random spell.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=van_gogogo__bronze__240.webp" alt="Van GOGogo" loading="lazy">
+                </div>
+                <div class="card-slot-name">Van GOGogo</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Van GOGogo</div>
+                  <div class="tooltip-text">Quest — Golden another character.
+Treasure Find — Sunflowers</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#6</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #6 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">2.3% of Meta (5 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">80%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.4</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Blue Mage (Uncommon)</span><span class="diff-pill-added">+ Leprechaun (Rare)</span><span class="diff-pill-added">+ Mana Potion (Rare)</span><span class="diff-pill-added">+ The Burninator (Legendary)</span><span class="diff-pill-added">+ The Green Gecko (Legendary)</span>
+              <span class="diff-pill-removed">- Comety (Common)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Purrfectioneer (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span><span class="diff-pill-removed">- Marigold, Eternal Student (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny" loading="lazy">
+                </div>
+                <div class="card-slot-name">Plunder Penny</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Plunder Penny</div>
+                  <div class="tooltip-text">Hunt — Improve your buffs from spells by +1/+0.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_mage__bronze__240.webp" alt="Blue Mage" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Mage</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Mage</div>
+                  <div class="tooltip-text">The first time you paint a slot each turn, I get +1/+1. If you painted it Blue, cast a random spell.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp" alt="Leprechaun" loading="lazy">
+                </div>
+                <div class="card-slot-name">Leprechaun</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Leprechaun</div>
+                  <div class="tooltip-text">Chance Encounter — Get a random common treasure.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=mana_potion__bronze__240.webp" alt="Mana Potion" loading="lazy">
+                </div>
+                <div class="card-slot-name">Mana Potion</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Mana Potion</div>
+                  <div class="tooltip-text">Farewell — Get a Blue Paintbrush.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_burninator__bronze__240.webp" alt="The Burninator" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Burninator</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Burninator</div>
+                  <div class="tooltip-text">Treasure Hoard 4
+When you discover a treasure, you get to keep all 3 of them.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_green_gecko__bronze__240.webp" alt="The Green Gecko" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Green Gecko</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Green Gecko</div>
+                  <div class="tooltip-text">Blue — Treasures you discover are one rarity higher.
+Yellow — Treasures you discover are one rarity higher.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#7</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #7 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">1.4% of Meta (3 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">100%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Lance A Little (Common)</span><span class="diff-pill-added">+ Red Paintkin (Uncommon)</span><span class="diff-pill-added">+ Anubis (Legendary)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span>
+              <span class="diff-pill-removed">- Blue Paintkin (Uncommon)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- The Mad Splatter (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=lance_a_little__bronze__240.webp" alt="Lance A Little" loading="lazy">
+                </div>
+                <div class="card-slot-name">Lance A Little</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Lance A Little</div>
+                  <div class="tooltip-text">Quest — During a fight, I have at least 10 attack.
+Treasure Find — Little Lance</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny" loading="lazy">
+                </div>
+                <div class="card-slot-name">Plunder Penny</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Plunder Penny</div>
+                  <div class="tooltip-text">Hunt — Improve your buffs from spells by +1/+0.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp" alt="Red Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Red Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Red Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Red.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=anubis__bronze__240.webp" alt="Anubis" loading="lazy">
+                </div>
+                <div class="card-slot-name">Anubis</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Anubis</div>
+                  <div class="tooltip-text">Farewell — Summon all your KO'd characters that have less Attack than me.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#8</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #8 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">1.4% of Meta (3 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">100%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Red Paintkin (Uncommon)</span><span class="diff-pill-added">+ The Purple Peacock (Legendary)</span>
+              <span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny" loading="lazy">
+                </div>
+                <div class="card-slot-name">Plunder Penny</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Plunder Penny</div>
+                  <div class="tooltip-text">Hunt — Improve your buffs from spells by +1/+0.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp" alt="Red Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Red Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Red Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Red.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp" alt="The Purple Peacock" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Purple Peacock</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Purple Peacock</div>
+                  <div class="tooltip-text">Red — When you play a spell, increase your buffs from spells by +3 Attack
+Blue — When you play a spell directly on me, play it again.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#9</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #9 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">1.4% of Meta (3 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">100%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Happy Little Painter (Common)</span><span class="diff-pill-added">+ White Rabbit (Epic)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp" alt="Happy Little Painter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Happy Little Painter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Happy Little Painter</div>
+                  <div class="tooltip-text">Quest — I'm on a Green slot during a fight.
+Treasure Find — Happy Little Tree</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp" alt="White Rabbit" loading="lazy">
+                </div>
+                <div class="card-slot-name">White Rabbit</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">White Rabbit</div>
+                  <div class="tooltip-text">Your 'Each Fight' abilities happen  an extra times.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#10</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #10 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">1.4% of Meta (3 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">100%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Blue Mage (Uncommon)</span><span class="diff-pill-added">+ Van GOGogo (Uncommon)</span><span class="diff-pill-added">+ Mana Potion (Rare)</span><span class="diff-pill-added">+ Snapping Hydra (Epic)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span><span class="diff-pill-added">+ The Purple Peacock (Legendary)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Purrfectioneer (Uncommon)</span><span class="diff-pill-removed">- Luck Dragon (Legendary)</span><span class="diff-pill-removed">- Marigold, Eternal Student (Legendary)</span><span class="diff-pill-removed">- Wormscale Tinkerer (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_mage__bronze__240.webp" alt="Blue Mage" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Mage</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Mage</div>
+                  <div class="tooltip-text">The first time you paint a slot each turn, I get +1/+1. If you painted it Blue, cast a random spell.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=van_gogogo__bronze__240.webp" alt="Van GOGogo" loading="lazy">
+                </div>
+                <div class="card-slot-name">Van GOGogo</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Van GOGogo</div>
+                  <div class="tooltip-text">Quest — Golden another character.
+Treasure Find — Sunflowers</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=mana_potion__bronze__240.webp" alt="Mana Potion" loading="lazy">
+                </div>
+                <div class="card-slot-name">Mana Potion</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Mana Potion</div>
+                  <div class="tooltip-text">Farewell — Get a Blue Paintbrush.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=genie_of_the_lamp__bronze__240.webp" alt="Genie of the Lamp" loading="lazy">
+                </div>
+                <div class="card-slot-name">Genie of the Lamp</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Genie of the Lamp</div>
+                  <div class="tooltip-text">Every other spell you cast directly on me, double my stats.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=snapping_hydra__bronze__240.webp" alt="Snapping Hydra" loading="lazy">
+                </div>
+                <div class="card-slot-name">Snapping Hydra</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Snapping Hydra</div>
+                  <div class="tooltip-text">I also damage one of the characters in the slots behind where I attack.
+Farewell — Double my attack</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp" alt="The Purple Peacock" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Purple Peacock</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Purple Peacock</div>
+                  <div class="tooltip-text">Red — When you play a spell, increase your buffs from spells by +3 Attack
+Blue — When you play a spell directly on me, play it again.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#11</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #11 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">1.4% of Meta (3 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">100%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Happy Little Painter (Common)</span><span class="diff-pill-added">+ Dotty Daughter (Epic)</span><span class="diff-pill-added">+ White Rabbit (Epic)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp" alt="Happy Little Painter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Happy Little Painter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Happy Little Painter</div>
+                  <div class="tooltip-text">Quest — I'm on a Green slot during a fight.
+Treasure Find — Happy Little Tree</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp" alt="Dotty Daughter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Dotty Daughter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Dotty Daughter</div>
+                  <div class="tooltip-text">Blue — When one of your slots gets a buff, double it.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp" alt="White Rabbit" loading="lazy">
+                </div>
+                <div class="card-slot-name">White Rabbit</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">White Rabbit</div>
+                  <div class="tooltip-text">Your 'Each Fight' abilities happen  an extra times.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#12</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #12 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">1.4% of Meta (3 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">33.3%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.67</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Fae Familiar (Uncommon)</span><span class="diff-pill-added">+ Red Mage (Uncommon)</span><span class="diff-pill-added">+ Yellow Mage (Uncommon)</span><span class="diff-pill-added">+ Leprechaun (Rare)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Blue Paintkin (Uncommon)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Rocky, the Roller (Legendary)</span><span class="diff-pill-removed">- Wormscale Tinkerer (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=fae_familiar__bronze__240.webp" alt="Fae Familiar" loading="lazy">
+                </div>
+                <div class="card-slot-name">Fae Familiar</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Fae Familiar</div>
+                  <div class="tooltip-text">When you cast a spell, give me and a random other character +1/+1.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=red_mage__bronze__240.webp" alt="Red Mage" loading="lazy">
+                </div>
+                <div class="card-slot-name">Red Mage</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Red Mage</div>
+                  <div class="tooltip-text">The first time you paint a slot each turn, I get +1/+1. If you painted it Red, improve your buffs from spells by +1 Attack.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=yellow_mage__bronze__240.webp" alt="Yellow Mage" loading="lazy">
+                </div>
+                <div class="card-slot-name">Yellow Mage</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Yellow Mage</div>
+                  <div class="tooltip-text">The first time you paint a slot each turn, I get +1/+1. If you painted it Yellow, improve your buffs from spells by +1 Health.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp" alt="Leprechaun" loading="lazy">
+                </div>
+                <div class="card-slot-name">Leprechaun</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Leprechaun</div>
+                  <div class="tooltip-text">Chance Encounter — Get a random common treasure.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=genie_of_the_lamp__bronze__240.webp" alt="Genie of the Lamp" loading="lazy">
+                </div>
+                <div class="card-slot-name">Genie of the Lamp</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Genie of the Lamp</div>
+                  <div class="tooltip-text">Every other spell you cast directly on me, double my stats.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#13</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #13 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">1.4% of Meta (3 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">66.7%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1.67</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Red Paintkin (Uncommon)</span><span class="diff-pill-added">+ The Burninator (Legendary)</span>
+              <span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=plunder_penny__bronze__240.webp" alt="Plunder Penny" loading="lazy">
+                </div>
+                <div class="card-slot-name">Plunder Penny</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Plunder Penny</div>
+                  <div class="tooltip-text">Hunt — Improve your buffs from spells by +1/+0.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp" alt="Red Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Red Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Red Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Red.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_burninator__bronze__240.webp" alt="The Burninator" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Burninator</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Burninator</div>
+                  <div class="tooltip-text">Treasure Hoard 4
+When you discover a treasure, you get to keep all 3 of them.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#14</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #14 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">0.9% of Meta (2 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">50%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">2</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Cherry Bomb (Rare)</span><span class="diff-pill-added">+ Leprechaun (Rare)</span><span class="diff-pill-added">+ Model Elephant (Rare)</span><span class="diff-pill-added">+ Dotty Daughter (Epic)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span><span class="diff-pill-added">+ The Purple Peacock (Legendary)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Blue Paintkin (Uncommon)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span><span class="diff-pill-removed">- Owlabaster (Epic)</span><span class="diff-pill-removed">- Marigold, Eternal Student (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=cherry_bomb__bronze__240.webp" alt="Cherry Bomb" loading="lazy">
+                </div>
+                <div class="card-slot-name">Cherry Bomb</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Cherry Bomb</div>
+                  <div class="tooltip-text">Farewell — Get a Red Paintbrush.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp" alt="Leprechaun" loading="lazy">
+                </div>
+                <div class="card-slot-name">Leprechaun</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Leprechaun</div>
+                  <div class="tooltip-text">Chance Encounter — Get a random common treasure.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp" alt="Model Elephant" loading="lazy">
+                </div>
+                <div class="card-slot-name">Model Elephant</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Model Elephant</div>
+                  <div class="tooltip-text">Hunt — Give my slot +1/+1.
+When my slot is buffed, give it an additional +2/+2.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp" alt="Dotty Daughter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Dotty Daughter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Dotty Daughter</div>
+                  <div class="tooltip-text">Blue — When one of your slots gets a buff, double it.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp" alt="The Purple Peacock" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Purple Peacock</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Purple Peacock</div>
+                  <div class="tooltip-text">Red — When you play a spell, increase your buffs from spells by +3 Attack
+Blue — When you play a spell directly on me, play it again.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp" alt="Wormscale Tinkerer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Wormscale Tinkerer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Wormscale Tinkerer</div>
+                  <div class="tooltip-text">Treasure Hoard
+Each fight, improve your treasure buffs by +1/+1.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#15</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #15 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">0.5% of Meta (1 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">0%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">2</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Antiquitoy (Common)</span><span class="diff-pill-added">+ Van GOGogo (Uncommon)</span><span class="diff-pill-added">+ Cherry Bomb (Rare)</span><span class="diff-pill-added">+ Leprechaun (Rare)</span><span class="diff-pill-added">+ White Rabbit (Epic)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span><span class="diff-pill-added">+ The Purple Peacock (Legendary)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Blue Paintkin (Uncommon)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span><span class="diff-pill-removed">- Owlabaster (Epic)</span><span class="diff-pill-removed">- Marigold, Eternal Student (Legendary)</span><span class="diff-pill-removed">- Wormscale Tinkerer (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=antiquitoy__bronze__240.webp" alt="Antiquitoy" loading="lazy">
+                </div>
+                <div class="card-slot-name">Antiquitoy</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Antiquitoy</div>
+                  <div class="tooltip-text">When you buff one or more slots, I get +1/+1.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp" alt="The Mad Splatter" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Mad Splatter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Mad Splatter</div>
+                  <div class="tooltip-text">Chance Encounter — Paint a random slot a random color.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=van_gogogo__bronze__240.webp" alt="Van GOGogo" loading="lazy">
+                </div>
+                <div class="card-slot-name">Van GOGogo</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Van GOGogo</div>
+                  <div class="tooltip-text">Quest — Golden another character.
+Treasure Find — Sunflowers</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=cherry_bomb__bronze__240.webp" alt="Cherry Bomb" loading="lazy">
+                </div>
+                <div class="card-slot-name">Cherry Bomb</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Cherry Bomb</div>
+                  <div class="tooltip-text">Farewell — Get a Red Paintbrush.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Rare">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp" alt="Leprechaun" loading="lazy">
+                </div>
+                <div class="card-slot-name">Leprechaun</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Leprechaun</div>
+                  <div class="tooltip-text">Chance Encounter — Get a random common treasure.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp" alt="White Rabbit" loading="lazy">
+                </div>
+                <div class="card-slot-name">White Rabbit</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">White Rabbit</div>
+                  <div class="tooltip-text">Your 'Each Fight' abilities happen  an extra times.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp" alt="The Purple Peacock" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Purple Peacock</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Purple Peacock</div>
+                  <div class="tooltip-text">Red — When you play a spell, increase your buffs from spells by +3 Attack
+Blue — When you play a spell directly on me, play it again.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+        <div class="deck-box ">
+          <div class="deck-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="deck-rank-badge">#16</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 800; color: #fff;">Build #16 </div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">0.5% of Meta (1 matches)</div>
+              </div>
+            </div>
+
+            <div class="deck-metrics">
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #10b981;">100%</div>
+                <div class="metric-chip-lbl">1st Place WR</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val" style="color: #c084fc;">100%</div>
+                <div class="metric-chip-lbl">Top 3 Rate</div>
+              </div>
+              <div class="metric-chip">
+                <div class="metric-chip-val">1</div>
+                <div class="metric-chip-lbl">Avg Placement</div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div class="deck-diff-badge">
+              <span style="font-weight: 700; color: #94a3b8;">Vs Meta #1:</span>
+              <span class="diff-pill-added">+ Happy Little Painter (Common)</span><span class="diff-pill-added">+ Yellow Paintkin (Uncommon)</span><span class="diff-pill-added">+ Dotty Daughter (Epic)</span><span class="diff-pill-added">+ Crimson, Stalwart Hero (Legendary)</span><span class="diff-pill-added">+ The Purple Peacock (Legendary)</span>
+              <span class="diff-pill-removed">- Plunder Penny (Common)</span><span class="diff-pill-removed">- Chaos (Uncommon)</span><span class="diff-pill-removed">- The Mad Splatter (Uncommon)</span><span class="diff-pill-removed">- Genie of the Lamp (Epic)</span><span class="diff-pill-removed">- Wormscale Tinkerer (Legendary)</span>
+            </div>
+          
+
+          <!-- 2x6 Grid -->
+          <div class="deck-cards-2x6">
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=comety__bronze__240.webp" alt="Comety" loading="lazy">
+                </div>
+                <div class="card-slot-name">Comety</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Comety</div>
+                  <div class="tooltip-text">Quest — I see 3 Chance Encounter characters appear in your shops.
+Treasure Find — Lucky Star</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Common">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp" alt="Happy Little Painter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Happy Little Painter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Happy Little Painter</div>
+                  <div class="tooltip-text">Quest — I'm on a Green slot during a fight.
+Treasure Find — Happy Little Tree</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp" alt="Blue Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Blue Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Blue Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Blue.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp" alt="Purrfectioneer" loading="lazy">
+                </div>
+                <div class="card-slot-name">Purrfectioneer</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Purrfectioneer</div>
+                  <div class="tooltip-text">Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Uncommon">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp" alt="Yellow Paintkin" loading="lazy">
+                </div>
+                <div class="card-slot-name">Yellow Paintkin</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Yellow Paintkin</div>
+                  <div class="tooltip-text">Recruit — Paint a slot Yellow.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp" alt="Dotty Daughter" loading="lazy">
+                </div>
+                <div class="card-slot-name">Dotty Daughter</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Dotty Daughter</div>
+                  <div class="tooltip-text">Blue — When one of your slots gets a buff, double it.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Epic">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp" alt="Owlabaster" loading="lazy">
+                </div>
+                <div class="card-slot-name">Owlabaster</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Owlabaster</div>
+                  <div class="tooltip-text">Chance Encounter — Improve your buffs from spells by +2/+2.
+Recruit — Cast Abra Cadabra.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp" alt="Crimson, Stalwart Hero" loading="lazy">
+                </div>
+                <div class="card-slot-name">Crimson, Stalwart Hero</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Crimson, Stalwart Hero</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Red.
+Quest — Have 5 Red slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp" alt="Luck Dragon" loading="lazy">
+                </div>
+                <div class="card-slot-name">Luck Dragon</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Luck Dragon</div>
+                  <div class="tooltip-text">Treasure Hoard 2
+Chance Encounter — Get a random treasure. Repeat this for each of your Gold characters.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp" alt="Marigold, Eternal Student" loading="lazy">
+                </div>
+                <div class="card-slot-name">Marigold, Eternal Student</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Marigold, Eternal Student</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Yellow.
+Quest — Have 5 Yellow slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp" alt="Rocky, the Roller" loading="lazy">
+                </div>
+                <div class="card-slot-name">Rocky, the Roller</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">Rocky, the Roller</div>
+                  <div class="tooltip-text">At the start of the game, paint a random slot Blue.
+Quest — Have 5 Blue slots.</div>
+                </div>
+              </div>
+            
+              <div class="card-slot rarity-Legendary">
+                <div class="card-img-wrap">
+                  <img class="card-img" src="https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp" alt="The Purple Peacock" loading="lazy">
+                </div>
+                <div class="card-slot-name">The Purple Peacock</div>
+
+                <div class="card-tooltip">
+                  <div class="tooltip-title">The Purple Peacock</div>
+                  <div class="tooltip-text">Red — When you play a spell, increase your buffs from spells by +3 Attack
+Blue — When you play a spell directly on me, play it again.</div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      
+    </div>
+  </main>
+
+    <footer style="margin-top: 60px; padding: 30px 24px; border-top: 1px solid #1e293b; text-align: center; color: #64748b; font-size: 13px;">
+      <p>&copy; 2026 Galaxy Tracker. Not affiliated with Once Upon a Galaxy. &bull; <a href="/decks.html" style="color: inherit; text-decoration: underline;">Meta Deck Analysis</a> &bull; <a href="/guide.html" style="color: inherit; text-decoration: underline;">Setup Guide</a> &bull; <a href="/privacy_policy.html" style="color: inherit; text-decoration: underline;">Privacy Policy</a></p>
+    </footer>
+  
+</body>
+</html>
