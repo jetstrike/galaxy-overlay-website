@@ -1,0 +1,10 @@
+# Database credentials & local config
+api/db_config.php
+.env
+.env.*
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

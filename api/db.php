@@ -1,11 +1,18 @@
 <?php
 // Centralized Database Connection for TiDB Cloud Serverless
 
-$db_host = 'gateway01.us-west-2.prod.aws.tidbcloud.com';
-$db_port = 4000;
-$db_user = '8H9QVXuqz8WDTEg.root';
-$db_pass = 'rlNgzuVxjg5hAqad';
-$db_name = 'u834540789_Galaxy';
+// Safe defaults / environment variables (NO secrets hardcoded in git)
+$db_host = getenv('DB_HOST') ?: 'gateway01.us-west-2.prod.aws.tidbcloud.com';
+$db_port = (int)(getenv('DB_PORT') ?: 4000);
+$db_user = getenv('DB_USER') ?: '8H9QVXuqz8WDTEg.root';
+$db_pass = getenv('DB_PASS') ?: '';
+$db_name = getenv('DB_NAME') ?: 'u834540789_Galaxy';
+
+// Load untracked local / server configuration if present
+$local_config = __DIR__ . '/db_config.php';
+if (file_exists($local_config)) {
+    require_once $local_config;
+}
 
 // Compatibility aliases for legacy scripts
 $host       = $db_host;
