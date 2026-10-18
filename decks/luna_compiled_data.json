@@ -4,14 +4,14 @@
     "captainKey": "luna",
     "captainCid": 4056,
     "captainPassive": "On turn 11, transform all of your characters on painted slots into Secret Rares.",
-    "totalMatches": 107,
-    "uniqueDecksCount": 20,
+    "totalMatches": 170,
+    "uniqueDecksCount": 25,
     "minMmr": 4002,
-    "maxMmr": 4642,
-    "avgMmr": 4233,
+    "maxMmr": 4965,
+    "avgMmr": 4338,
     "season": "2026-10",
-    "overallWinRate1st": 52.3,
-    "overallTop3Rate": 77.6
+    "overallWinRate1st": 45.3,
+    "overallTop3Rate": 75.3
   },
   "cardStats": [
     {
@@ -25,14 +25,14 @@
         "Hero"
       ],
       "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
-      "count": 107,
-      "wins1st": 56,
-      "top3": 83,
-      "sumPlacement": 232,
-      "pickRate": 100,
-      "winRate1st": 52.3,
-      "top3Rate": 77.6,
-      "avgPlacement": 2.17
+      "count": 169,
+      "wins1st": 76,
+      "top3": 127,
+      "sumPlacement": 394,
+      "pickRate": 99.4,
+      "winRate1st": 45,
+      "top3Rate": 75.1,
+      "avgPlacement": 2.33
     },
     {
       "cid": 4039,
@@ -44,14 +44,14 @@
         "Paintkin"
       ],
       "rules_text": "Recruit — Paint a slot Yellow.",
-      "count": 107,
-      "wins1st": 56,
-      "top3": 83,
-      "sumPlacement": 232,
-      "pickRate": 100,
-      "winRate1st": 52.3,
-      "top3Rate": 77.6,
-      "avgPlacement": 2.17
+      "count": 166,
+      "wins1st": 75,
+      "top3": 125,
+      "sumPlacement": 384,
+      "pickRate": 97.6,
+      "winRate1st": 45.2,
+      "top3Rate": 75.3,
+      "avgPlacement": 2.31
     },
     {
       "cid": 4009,
@@ -64,14 +64,14 @@
         "Hero"
       ],
       "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
-      "count": 104,
-      "wins1st": 56,
-      "top3": 82,
-      "sumPlacement": 220,
-      "pickRate": 97.2,
-      "winRate1st": 53.8,
-      "top3Rate": 78.8,
-      "avgPlacement": 2.12
+      "count": 165,
+      "wins1st": 76,
+      "top3": 126,
+      "sumPlacement": 378,
+      "pickRate": 97.1,
+      "winRate1st": 46.1,
+      "top3Rate": 76.4,
+      "avgPlacement": 2.29
     },
     {
       "cid": 4027,
@@ -83,14 +83,14 @@
         "Paintkin"
       ],
       "rules_text": "Recruit — Paint a slot Red.",
-      "count": 104,
-      "wins1st": 56,
-      "top3": 82,
-      "sumPlacement": 220,
-      "pickRate": 97.2,
-      "winRate1st": 53.8,
-      "top3Rate": 78.8,
-      "avgPlacement": 2.12
+      "count": 165,
+      "wins1st": 76,
+      "top3": 126,
+      "sumPlacement": 378,
+      "pickRate": 97.1,
+      "winRate1st": 46.1,
+      "top3Rate": 76.4,
+      "avgPlacement": 2.29
     },
     {
       "cid": 4047,
@@ -103,14 +103,14 @@
         "Toy"
       ],
       "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
-      "count": 104,
-      "wins1st": 56,
-      "top3": 82,
-      "sumPlacement": 220,
-      "pickRate": 97.2,
-      "winRate1st": 53.8,
-      "top3Rate": 78.8,
-      "avgPlacement": 2.12
+      "count": 165,
+      "wins1st": 76,
+      "top3": 126,
+      "sumPlacement": 378,
+      "pickRate": 97.1,
+      "winRate1st": 46.1,
+      "top3Rate": 76.4,
+      "avgPlacement": 2.29
     },
     {
       "cid": 4010,
@@ -123,14 +123,14 @@
         "Mage"
       ],
       "rules_text": "Blue — When one of your slots gets a buff, double it.",
-      "count": 76,
-      "wins1st": 42,
-      "top3": 62,
-      "sumPlacement": 152,
-      "pickRate": 71,
-      "winRate1st": 55.3,
-      "top3Rate": 81.6,
-      "avgPlacement": 2
+      "count": 119,
+      "wins1st": 55,
+      "top3": 92,
+      "sumPlacement": 266,
+      "pickRate": 70,
+      "winRate1st": 46.2,
+      "top3Rate": 77.3,
+      "avgPlacement": 2.24
     },
     {
       "cid": 4029,
@@ -143,52 +143,14 @@
         "Hero"
       ],
       "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
-      "count": 69,
-      "wins1st": 40,
-      "top3": 57,
-      "sumPlacement": 134,
-      "pickRate": 64.5,
-      "winRate1st": 58,
-      "top3Rate": 82.6,
-      "avgPlacement": 1.94
-    },
-    {
-      "cid": 4036,
-      "name": "Antiquitoy",
-      "rarity": "Common",
-      "card_key": "antiquitoy",
-      "card_type": "character",
-      "factions": [
-        "Toy"
-      ],
-      "rules_text": "When you buff one or more slots, I get +1/+1.",
-      "count": 65,
-      "wins1st": 37,
-      "top3": 52,
-      "sumPlacement": 134,
-      "pickRate": 60.7,
-      "winRate1st": 56.9,
-      "top3Rate": 80,
-      "avgPlacement": 2.06
-    },
-    {
-      "cid": 4021,
-      "name": "The Orange Orangutan",
-      "rarity": "Legendary",
-      "card_key": "the_orange_orangutan",
-      "card_type": "character",
-      "factions": [
-        "Animal"
-      ],
-      "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
-      "count": 63,
-      "wins1st": 34,
-      "top3": 51,
-      "sumPlacement": 131,
-      "pickRate": 58.9,
-      "winRate1st": 54,
-      "top3Rate": 81,
-      "avgPlacement": 2.08
+      "count": 116,
+      "wins1st": 56,
+      "top3": 90,
+      "sumPlacement": 254,
+      "pickRate": 68.2,
+      "winRate1st": 48.3,
+      "top3Rate": 77.6,
+      "avgPlacement": 2.19
     },
     {
       "cid": 4019,
@@ -201,34 +163,52 @@
         "Animal"
       ],
       "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
-      "count": 62,
-      "wins1st": 30,
-      "top3": 46,
-      "sumPlacement": 142,
-      "pickRate": 57.9,
-      "winRate1st": 48.4,
-      "top3Rate": 74.2,
-      "avgPlacement": 2.29
+      "count": 107,
+      "wins1st": 40,
+      "top3": 78,
+      "sumPlacement": 269,
+      "pickRate": 62.9,
+      "winRate1st": 37.4,
+      "top3Rate": 72.9,
+      "avgPlacement": 2.51
     },
     {
-      "cid": 4024,
-      "name": "The Purple Peacock",
-      "rarity": "Legendary",
-      "card_key": "the_purple_peacock",
+      "cid": 4036,
+      "name": "Antiquitoy",
+      "rarity": "Common",
+      "card_key": "antiquitoy",
       "card_type": "character",
       "factions": [
-        "Animal",
-        "Mage"
+        "Toy"
       ],
-      "rules_text": "Red — When you play a spell, increase your buffs from spells by +3 Attack\nBlue — When you play a spell directly on me, play it again.",
-      "count": 45,
-      "wins1st": 26,
-      "top3": 40,
-      "sumPlacement": 81,
-      "pickRate": 42.1,
-      "winRate1st": 57.8,
-      "top3Rate": 88.9,
-      "avgPlacement": 1.8
+      "rules_text": "When you buff one or more slots, I get +1/+1.",
+      "count": 100,
+      "wins1st": 45,
+      "top3": 78,
+      "sumPlacement": 230,
+      "pickRate": 58.8,
+      "winRate1st": 45,
+      "top3Rate": 78,
+      "avgPlacement": 2.3
+    },
+    {
+      "cid": 4021,
+      "name": "The Orange Orangutan",
+      "rarity": "Legendary",
+      "card_key": "the_orange_orangutan",
+      "card_type": "character",
+      "factions": [
+        "Animal"
+      ],
+      "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
+      "count": 94,
+      "wins1st": 47,
+      "top3": 73,
+      "sumPlacement": 206,
+      "pickRate": 55.3,
+      "winRate1st": 50,
+      "top3Rate": 77.7,
+      "avgPlacement": 2.19
     },
     {
       "cid": 4043,
@@ -241,14 +221,14 @@
         "Villain"
       ],
       "rules_text": "Chance Encounter — Paint a random slot a random color.",
-      "count": 45,
-      "wins1st": 22,
-      "top3": 33,
-      "sumPlacement": 100,
-      "pickRate": 42.1,
-      "winRate1st": 48.9,
-      "top3Rate": 73.3,
-      "avgPlacement": 2.22
+      "count": 67,
+      "wins1st": 32,
+      "top3": 49,
+      "sumPlacement": 148,
+      "pickRate": 39.4,
+      "winRate1st": 47.8,
+      "top3Rate": 73.1,
+      "avgPlacement": 2.21
     },
     {
       "cid": 4048,
@@ -261,52 +241,34 @@
         "Mage"
       ],
       "rules_text": "Chance Encounter — Improve your buffs from spells by +2/+2.\nRecruit — Cast Abra Cadabra.",
-      "count": 41,
-      "wins1st": 23,
-      "top3": 31,
-      "sumPlacement": 86,
-      "pickRate": 38.3,
-      "winRate1st": 56.1,
-      "top3Rate": 75.6,
-      "avgPlacement": 2.1
+      "count": 65,
+      "wins1st": 32,
+      "top3": 48,
+      "sumPlacement": 142,
+      "pickRate": 38.2,
+      "winRate1st": 49.2,
+      "top3Rate": 73.8,
+      "avgPlacement": 2.18
     },
     {
-      "cid": 4005,
-      "name": "Blue Paintkin",
-      "rarity": "Uncommon",
-      "card_key": "blue_paintkin",
+      "cid": 4024,
+      "name": "The Purple Peacock",
+      "rarity": "Legendary",
+      "card_key": "the_purple_peacock",
       "card_type": "character",
       "factions": [
-        "Paintkin"
+        "Animal",
+        "Mage"
       ],
-      "rules_text": "Recruit — Paint a slot Blue.",
-      "count": 33,
-      "wins1st": 19,
-      "top3": 26,
-      "sumPlacement": 67,
-      "pickRate": 30.8,
-      "winRate1st": 57.6,
-      "top3Rate": 78.8,
-      "avgPlacement": 2.03
-    },
-    {
-      "cid": 4031,
-      "name": "Starry Knight",
-      "rarity": "Epic",
-      "card_key": "starry_knight",
-      "card_type": "character",
-      "factions": [
-        "Hero"
-      ],
-      "rules_text": "Quest — I KO two enemies in a single fight.\nEach fight, I get +5/+5. When I KO an enemy improve this ability by +1/+1.",
-      "count": 33,
-      "wins1st": 13,
-      "top3": 21,
-      "sumPlacement": 90,
-      "pickRate": 30.8,
-      "winRate1st": 39.4,
-      "top3Rate": 63.6,
-      "avgPlacement": 2.73
+      "rules_text": "Red — When you play a spell, increase your buffs from spells by +3 Attack\nBlue — When you play a spell directly on me, play it again.",
+      "count": 57,
+      "wins1st": 29,
+      "top3": 46,
+      "sumPlacement": 117,
+      "pickRate": 33.5,
+      "winRate1st": 50.9,
+      "top3Rate": 80.7,
+      "avgPlacement": 2.05
     },
     {
       "cid": 4032,
@@ -318,14 +280,52 @@
         "Paintkin"
       ],
       "rules_text": "Farewell — Get a Yellow Paintbrush.",
-      "count": 26,
-      "wins1st": 10,
-      "top3": 19,
-      "sumPlacement": 67,
-      "pickRate": 24.3,
-      "winRate1st": 38.5,
-      "top3Rate": 73.1,
-      "avgPlacement": 2.58
+      "count": 42,
+      "wins1st": 13,
+      "top3": 30,
+      "sumPlacement": 113,
+      "pickRate": 24.7,
+      "winRate1st": 31,
+      "top3Rate": 71.4,
+      "avgPlacement": 2.69
+    },
+    {
+      "cid": 4005,
+      "name": "Blue Paintkin",
+      "rarity": "Uncommon",
+      "card_key": "blue_paintkin",
+      "card_type": "character",
+      "factions": [
+        "Paintkin"
+      ],
+      "rules_text": "Recruit — Paint a slot Blue.",
+      "count": 38,
+      "wins1st": 20,
+      "top3": 28,
+      "sumPlacement": 85,
+      "pickRate": 22.4,
+      "winRate1st": 52.6,
+      "top3Rate": 73.7,
+      "avgPlacement": 2.24
+    },
+    {
+      "cid": 4031,
+      "name": "Starry Knight",
+      "rarity": "Epic",
+      "card_key": "starry_knight",
+      "card_type": "character",
+      "factions": [
+        "Hero"
+      ],
+      "rules_text": "Quest — I KO two enemies in a single fight.\nEach fight, I get +5/+5. When I KO an enemy improve this ability by +1/+1.",
+      "count": 37,
+      "wins1st": 14,
+      "top3": 22,
+      "sumPlacement": 103,
+      "pickRate": 21.8,
+      "winRate1st": 37.8,
+      "top3Rate": 59.5,
+      "avgPlacement": 2.78
     },
     {
       "cid": 3103,
@@ -338,33 +338,14 @@
         "Animal"
       ],
       "rules_text": "Cast three spells directly on me to get a bonus shop of Golden characters from your starting deck.",
-      "count": 25,
-      "wins1st": 14,
-      "top3": 19,
-      "sumPlacement": 53,
-      "pickRate": 23.4,
-      "winRate1st": 56,
-      "top3Rate": 76,
+      "count": 34,
+      "wins1st": 18,
+      "top3": 26,
+      "sumPlacement": 72,
+      "pickRate": 20,
+      "winRate1st": 52.9,
+      "top3Rate": 76.5,
       "avgPlacement": 2.12
-    },
-    {
-      "cid": 4014,
-      "name": "Happy Little Painter",
-      "rarity": "Common",
-      "card_key": "happy_little_painter",
-      "card_type": "character",
-      "factions": [
-        "Artist"
-      ],
-      "rules_text": "Quest — I'm on a Green slot during a fight.\nTreasure Find — Happy Little Tree",
-      "count": 25,
-      "wins1st": 15,
-      "top3": 21,
-      "sumPlacement": 48,
-      "pickRate": 23.4,
-      "winRate1st": 60,
-      "top3Rate": 84,
-      "avgPlacement": 1.92
     },
     {
       "cid": 1422,
@@ -377,14 +358,33 @@
         "Dragon"
       ],
       "rules_text": "Treasure Hoard\nEach fight, improve your treasure buffs by +1/+1.",
-      "count": 18,
-      "wins1st": 7,
-      "top3": 12,
-      "sumPlacement": 49,
-      "pickRate": 16.8,
-      "winRate1st": 38.9,
-      "top3Rate": 66.7,
-      "avgPlacement": 2.72
+      "count": 33,
+      "wins1st": 10,
+      "top3": 23,
+      "sumPlacement": 91,
+      "pickRate": 19.4,
+      "winRate1st": 30.3,
+      "top3Rate": 69.7,
+      "avgPlacement": 2.76
+    },
+    {
+      "cid": 4042,
+      "name": "Purrfectioneer",
+      "rarity": "Uncommon",
+      "card_key": "purrfectioneer",
+      "card_type": "character",
+      "factions": [
+        "Dragon"
+      ],
+      "rules_text": "Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.",
+      "count": 30,
+      "wins1st": 13,
+      "top3": 25,
+      "sumPlacement": 66,
+      "pickRate": 17.6,
+      "winRate1st": 43.3,
+      "top3Rate": 83.3,
+      "avgPlacement": 2.2
     },
     {
       "cid": 2123,
@@ -397,14 +397,33 @@
         "Hero"
       ],
       "rules_text": "Sneak\nHunt — Get a random treasure from your opponent. (That you don't already have)",
-      "count": 18,
-      "wins1st": 8,
-      "top3": 17,
-      "sumPlacement": 34,
-      "pickRate": 16.8,
-      "winRate1st": 44.4,
-      "top3Rate": 94.4,
-      "avgPlacement": 1.89
+      "count": 29,
+      "wins1st": 11,
+      "top3": 23,
+      "sumPlacement": 66,
+      "pickRate": 17.1,
+      "winRate1st": 37.9,
+      "top3Rate": 79.3,
+      "avgPlacement": 2.28
+    },
+    {
+      "cid": 4014,
+      "name": "Happy Little Painter",
+      "rarity": "Common",
+      "card_key": "happy_little_painter",
+      "card_type": "character",
+      "factions": [
+        "Artist"
+      ],
+      "rules_text": "Quest — I'm on a Green slot during a fight.\nTreasure Find — Happy Little Tree",
+      "count": 27,
+      "wins1st": 15,
+      "top3": 21,
+      "sumPlacement": 56,
+      "pickRate": 15.9,
+      "winRate1st": 55.6,
+      "top3Rate": 77.8,
+      "avgPlacement": 2.07
     },
     {
       "cid": 4049,
@@ -416,14 +435,14 @@
         "Fae"
       ],
       "rules_text": "Double the effect of your painted slots.",
-      "count": 17,
-      "wins1st": 6,
-      "top3": 11,
-      "sumPlacement": 48,
-      "pickRate": 15.9,
-      "winRate1st": 35.3,
-      "top3Rate": 64.7,
-      "avgPlacement": 2.82
+      "count": 26,
+      "wins1st": 10,
+      "top3": 18,
+      "sumPlacement": 69,
+      "pickRate": 15.3,
+      "winRate1st": 38.5,
+      "top3Rate": 69.2,
+      "avgPlacement": 2.65
     },
     {
       "cid": 3005,
@@ -437,14 +456,113 @@
         "Pirate"
       ],
       "rules_text": "Farewell — Summon the smallest character from your starting deck and give it +10/+10.",
+      "count": 23,
+      "wins1st": 13,
+      "top3": 18,
+      "sumPlacement": 46,
+      "pickRate": 13.5,
+      "winRate1st": 56.5,
+      "top3Rate": 78.3,
+      "avgPlacement": 2
+    },
+    {
+      "cid": 3008,
+      "name": "Bubbles",
+      "rarity": "Common",
+      "card_key": "bubbles",
+      "card_type": "character",
+      "factions": [
+        "Animal",
+        "Hero"
+      ],
+      "rules_text": "If your first heart would be emptied, it's cracked instead, then Banish me.",
+      "count": 18,
+      "wins1st": 6,
+      "top3": 14,
+      "sumPlacement": 50,
+      "pickRate": 10.6,
+      "winRate1st": 33.3,
+      "top3Rate": 77.8,
+      "avgPlacement": 2.78
+    },
+    {
+      "cid": 2143,
+      "name": "Miseria",
+      "rarity": "Uncommon",
+      "card_key": "miseria",
+      "card_type": "character",
+      "factions": [
+        "Celestial"
+      ],
+      "rules_text": "Quest — Lose a fight.\nTreasure Find — Constellation Prize",
       "count": 15,
-      "wins1st": 7,
+      "wins1st": 10,
       "top3": 12,
-      "sumPlacement": 31,
-      "pickRate": 14,
-      "winRate1st": 46.7,
+      "sumPlacement": 26,
+      "pickRate": 8.8,
+      "winRate1st": 66.7,
       "top3Rate": 80,
-      "avgPlacement": 2.07
+      "avgPlacement": 1.73
+    },
+    {
+      "cid": 3068,
+      "name": "Crab Dragoon",
+      "rarity": "Legendary",
+      "card_key": "crab_dragoon",
+      "card_type": "character",
+      "factions": [
+        "Animal",
+        "Dragon"
+      ],
+      "rules_text": "Treasure Hoard 3\nFarewell — Get a random treasure, then give one of your other characters Treasure Hoard.",
+      "count": 15,
+      "wins1st": 6,
+      "top3": 11,
+      "sumPlacement": 37,
+      "pickRate": 8.8,
+      "winRate1st": 40,
+      "top3Rate": 73.3,
+      "avgPlacement": 2.47
+    },
+    {
+      "cid": 1263,
+      "name": "Wicked Witch",
+      "rarity": "Epic",
+      "card_key": "wicked_witch",
+      "card_type": "character",
+      "factions": [
+        "Mage",
+        "Villain"
+      ],
+      "rules_text": "Ranged\nAfter I attack, reduce that enemy and the ones next to it to 1 Health.",
+      "count": 13,
+      "wins1st": 3,
+      "top3": 10,
+      "sumPlacement": 36,
+      "pickRate": 7.6,
+      "winRate1st": 23.1,
+      "top3Rate": 76.9,
+      "avgPlacement": 2.77
+    },
+    {
+      "cid": 1416,
+      "name": "Snapping Hydra",
+      "rarity": "Epic",
+      "card_key": "snapping_hydra",
+      "card_type": "character",
+      "factions": [
+        "Dragon",
+        "Animal"
+      ],
+      "rules_text": "I also damage one of the characters in the slots behind where I attack.\nFarewell — Double my attack",
+      "count": 13,
+      "wins1st": 3,
+      "top3": 10,
+      "sumPlacement": 39,
+      "pickRate": 7.6,
+      "winRate1st": 23.1,
+      "top3Rate": 76.9,
+      "avgPlacement": 3
     },
     {
       "cid": 4012,
@@ -458,51 +576,32 @@
       "rules_text": "Red Hunt — Give each of your characters +10/+5",
       "count": 13,
       "wins1st": 7,
-      "top3": 9,
-      "sumPlacement": 30,
-      "pickRate": 12.1,
+      "top3": 8,
+      "sumPlacement": 32,
+      "pickRate": 7.6,
       "winRate1st": 53.8,
-      "top3Rate": 69.2,
-      "avgPlacement": 2.31
+      "top3Rate": 61.5,
+      "avgPlacement": 2.46
     },
     {
-      "cid": 4042,
-      "name": "Purrfectioneer",
-      "rarity": "Uncommon",
-      "card_key": "purrfectioneer",
-      "card_type": "character",
-      "factions": [
-        "Dragon"
-      ],
-      "rules_text": "Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.",
-      "count": 9,
-      "wins1st": 4,
-      "top3": 7,
-      "sumPlacement": 19,
-      "pickRate": 8.4,
-      "winRate1st": 44.4,
-      "top3Rate": 77.8,
-      "avgPlacement": 2.11
-    },
-    {
-      "cid": 3068,
-      "name": "Crab Dragoon",
+      "cid": 4058,
+      "name": "Luck Dragon",
       "rarity": "Legendary",
-      "card_key": "crab_dragoon",
+      "card_key": "luck_dragon",
       "card_type": "character",
       "factions": [
-        "Animal",
+        "Celestial",
         "Dragon"
       ],
-      "rules_text": "Treasure Hoard 3\nFarewell — Get a random treasure, then give one of your other characters Treasure Hoard.",
-      "count": 8,
-      "wins1st": 5,
-      "top3": 7,
-      "sumPlacement": 16,
-      "pickRate": 7.5,
-      "winRate1st": 62.5,
-      "top3Rate": 87.5,
-      "avgPlacement": 2
+      "rules_text": "Treasure Hoard 2\nChance Encounter — Get a random treasure. Repeat this for each of your Gold characters.",
+      "count": 12,
+      "wins1st": 3,
+      "top3": 10,
+      "sumPlacement": 33,
+      "pickRate": 7.1,
+      "winRate1st": 25,
+      "top3Rate": 83.3,
+      "avgPlacement": 2.75
     },
     {
       "cid": 4007,
@@ -514,33 +613,14 @@
         "Paintkin"
       ],
       "rules_text": "Farewell — Get a Red Paintbrush.",
-      "count": 8,
+      "count": 9,
       "wins1st": 3,
       "top3": 7,
-      "sumPlacement": 18,
-      "pickRate": 7.5,
-      "winRate1st": 37.5,
-      "top3Rate": 87.5,
-      "avgPlacement": 2.25
-    },
-    {
-      "cid": 2143,
-      "name": "Miseria",
-      "rarity": "Uncommon",
-      "card_key": "miseria",
-      "card_type": "character",
-      "factions": [
-        "Celestial"
-      ],
-      "rules_text": "Quest — Lose a fight.\nTreasure Find — Constellation Prize",
-      "count": 6,
-      "wins1st": 4,
-      "top3": 4,
-      "sumPlacement": 12,
-      "pickRate": 5.6,
-      "winRate1st": 66.7,
-      "top3Rate": 66.7,
-      "avgPlacement": 2
+      "sumPlacement": 22,
+      "pickRate": 5.3,
+      "winRate1st": 33.3,
+      "top3Rate": 77.8,
+      "avgPlacement": 2.44
     },
     {
       "cid": 1107,
@@ -558,10 +638,48 @@
       "wins1st": 3,
       "top3": 3,
       "sumPlacement": 7,
-      "pickRate": 3.7,
+      "pickRate": 2.4,
       "winRate1st": 75,
       "top3Rate": 75,
       "avgPlacement": 1.75
+    },
+    {
+      "cid": 4011,
+      "name": "Mana Potion",
+      "rarity": "Rare",
+      "card_key": "mana_potion",
+      "card_type": "character",
+      "factions": [
+        "Paintkin"
+      ],
+      "rules_text": "Farewell — Get a Blue Paintbrush.",
+      "count": 4,
+      "wins1st": 0,
+      "top3": 1,
+      "sumPlacement": 16,
+      "pickRate": 2.4,
+      "winRate1st": 0,
+      "top3Rate": 25,
+      "avgPlacement": 4
+    },
+    {
+      "cid": 4041,
+      "name": "Leprechaun",
+      "rarity": "Rare",
+      "card_key": "leprechaun",
+      "card_type": "character",
+      "factions": [
+        "Fae"
+      ],
+      "rules_text": "Chance Encounter — Get a random common treasure.",
+      "count": 4,
+      "wins1st": 0,
+      "top3": 1,
+      "sumPlacement": 16,
+      "pickRate": 2.4,
+      "winRate1st": 0,
+      "top3Rate": 25,
+      "avgPlacement": 4
     },
     {
       "cid": 4045,
@@ -575,12 +693,12 @@
       "rules_text": "The first time you paint a slot each turn, I get +1/+1. If you painted it Red, improve your buffs from spells by +1 Attack.",
       "count": 4,
       "wins1st": 2,
-      "top3": 3,
-      "sumPlacement": 10,
-      "pickRate": 3.7,
+      "top3": 2,
+      "sumPlacement": 12,
+      "pickRate": 2.4,
       "winRate1st": 50,
-      "top3Rate": 75,
-      "avgPlacement": 2.5
+      "top3Rate": 50,
+      "avgPlacement": 3
     },
     {
       "cid": 4051,
@@ -594,12 +712,12 @@
       "rules_text": "The first time you paint a slot each turn, I get +1/+1. If you painted it Yellow, improve your buffs from spells by +1 Health.",
       "count": 4,
       "wins1st": 2,
-      "top3": 3,
-      "sumPlacement": 10,
-      "pickRate": 3.7,
+      "top3": 2,
+      "sumPlacement": 12,
+      "pickRate": 2.4,
       "winRate1st": 50,
-      "top3Rate": 75,
-      "avgPlacement": 2.5
+      "top3Rate": 50,
+      "avgPlacement": 3
     },
     {
       "cid": 1096,
@@ -615,7 +733,7 @@
       "wins1st": 2,
       "top3": 2,
       "sumPlacement": 7,
-      "pickRate": 2.8,
+      "pickRate": 1.8,
       "winRate1st": 66.7,
       "top3Rate": 66.7,
       "avgPlacement": 2.33
@@ -634,7 +752,7 @@
       "wins1st": 2,
       "top3": 2,
       "sumPlacement": 7,
-      "pickRate": 2.8,
+      "pickRate": 1.8,
       "winRate1st": 66.7,
       "top3Rate": 66.7,
       "avgPlacement": 2.33
@@ -655,68 +773,87 @@
       "wins1st": 2,
       "top3": 2,
       "sumPlacement": 7,
-      "pickRate": 2.8,
+      "pickRate": 1.8,
       "winRate1st": 66.7,
       "top3Rate": 66.7,
       "avgPlacement": 2.33
     },
     {
-      "cid": 3008,
-      "name": "Bubbles",
-      "rarity": "Common",
-      "card_key": "bubbles",
+      "cid": 1409,
+      "name": "Monstro",
+      "rarity": "Legendary",
+      "card_key": "monstro",
+      "card_type": "character",
+      "factions": [
+        "Animal"
+      ],
+      "rules_text": "I have +6/+6 for each Animal you have recruited this game.\nQuest — I have 100 Attack or Health during a fight.",
+      "count": 3,
+      "wins1st": 1,
+      "top3": 2,
+      "sumPlacement": 10,
+      "pickRate": 1.8,
+      "winRate1st": 33.3,
+      "top3Rate": 66.7,
+      "avgPlacement": 3.33
+    },
+    {
+      "cid": 4002,
+      "name": "BaBaBanana",
+      "rarity": "Epic",
+      "card_key": "bababanana",
       "card_type": "character",
       "factions": [
         "Animal",
-        "Hero"
+        "Toy"
       ],
-      "rules_text": "If your first heart would be emptied, it's cracked instead, then Banish me.",
+      "rules_text": "Yellow — When I'm attacked, give your characters +5/+10",
       "count": 3,
+      "wins1st": 1,
+      "top3": 2,
+      "sumPlacement": 10,
+      "pickRate": 1.8,
+      "winRate1st": 33.3,
+      "top3Rate": 66.7,
+      "avgPlacement": 3.33
+    },
+    {
+      "cid": 1356,
+      "name": "Pied Piper",
+      "rarity": "Common",
+      "card_key": "pied_piper",
+      "card_type": "character",
+      "factions": [
+        "Animal"
+      ],
+      "rules_text": "Recruit — Your next shop is all Animals.",
+      "count": 2,
       "wins1st": 2,
       "top3": 2,
-      "sumPlacement": 7,
-      "pickRate": 2.8,
-      "winRate1st": 66.7,
-      "top3Rate": 66.7,
-      "avgPlacement": 2.33
+      "sumPlacement": 2,
+      "pickRate": 1.2,
+      "winRate1st": 100,
+      "top3Rate": 100,
+      "avgPlacement": 1
     },
     {
-      "cid": 4011,
-      "name": "Mana Potion",
-      "rarity": "Rare",
-      "card_key": "mana_potion",
+      "cid": 2073,
+      "name": "Leapfrog",
+      "rarity": "Epic",
+      "card_key": "leapfrog",
       "card_type": "character",
       "factions": [
-        "Paintkin"
+        "Animal"
       ],
-      "rules_text": "Farewell — Get a Blue Paintbrush.",
-      "count": 3,
-      "wins1st": 0,
-      "top3": 1,
-      "sumPlacement": 12,
-      "pickRate": 2.8,
-      "winRate1st": 0,
-      "top3Rate": 33.3,
-      "avgPlacement": 4
-    },
-    {
-      "cid": 4041,
-      "name": "Leprechaun",
-      "rarity": "Rare",
-      "card_key": "leprechaun",
-      "card_type": "character",
-      "factions": [
-        "Fae"
-      ],
-      "rules_text": "Chance Encounter — Get a random common treasure.",
-      "count": 3,
-      "wins1st": 0,
-      "top3": 1,
-      "sumPlacement": 12,
-      "pickRate": 2.8,
-      "winRate1st": 0,
-      "top3Rate": 33.3,
-      "avgPlacement": 4
+      "rules_text": "When I replace a character, I gain their stats.\nWhen a character replaces me, they gain my stats.",
+      "count": 2,
+      "wins1st": 2,
+      "top3": 2,
+      "sumPlacement": 2,
+      "pickRate": 1.2,
+      "winRate1st": 100,
+      "top3Rate": 100,
+      "avgPlacement": 1
     },
     {
       "cid": 4001,
@@ -732,30 +869,29 @@
       "wins1st": 0,
       "top3": 0,
       "sumPlacement": 10,
-      "pickRate": 1.9,
+      "pickRate": 1.2,
       "winRate1st": 0,
       "top3Rate": 0,
       "avgPlacement": 5
     },
     {
-      "cid": 1263,
-      "name": "Wicked Witch",
-      "rarity": "Epic",
-      "card_key": "wicked_witch",
+      "cid": 4037,
+      "name": "Van GOGogo",
+      "rarity": "Uncommon",
+      "card_key": "van_gogogo",
       "card_type": "character",
       "factions": [
-        "Mage",
-        "Villain"
+        "Artist"
       ],
-      "rules_text": "Ranged\nAfter I attack, reduce that enemy and the ones next to it to 1 Health.",
-      "count": 1,
-      "wins1st": 1,
+      "rules_text": "Quest — Golden another character.\nTreasure Find — Sunflowers",
+      "count": 2,
+      "wins1st": 0,
       "top3": 1,
-      "sumPlacement": 1,
-      "pickRate": 0.9,
-      "winRate1st": 100,
-      "top3Rate": 100,
-      "avgPlacement": 1
+      "sumPlacement": 6,
+      "pickRate": 1.2,
+      "winRate1st": 0,
+      "top3Rate": 50,
+      "avgPlacement": 3
     },
     {
       "cid": 1342,
@@ -772,27 +908,7 @@
       "wins1st": 0,
       "top3": 0,
       "sumPlacement": 6,
-      "pickRate": 0.9,
-      "winRate1st": 0,
-      "top3Rate": 0,
-      "avgPlacement": 6
-    },
-    {
-      "cid": 1416,
-      "name": "Snapping Hydra",
-      "rarity": "Epic",
-      "card_key": "snapping_hydra",
-      "card_type": "character",
-      "factions": [
-        "Dragon",
-        "Animal"
-      ],
-      "rules_text": "I also damage one of the characters in the slots behind where I attack.\nFarewell — Double my attack",
-      "count": 1,
-      "wins1st": 0,
-      "top3": 0,
-      "sumPlacement": 6,
-      "pickRate": 0.9,
+      "pickRate": 0.6,
       "winRate1st": 0,
       "top3Rate": 0,
       "avgPlacement": 6
@@ -812,7 +928,7 @@
       "wins1st": 0,
       "top3": 0,
       "sumPlacement": 6,
-      "pickRate": 0.9,
+      "pickRate": 0.6,
       "winRate1st": 0,
       "top3Rate": 0,
       "avgPlacement": 6
@@ -831,40 +947,21 @@
       "wins1st": 0,
       "top3": 0,
       "sumPlacement": 6,
-      "pickRate": 0.9,
+      "pickRate": 0.6,
       "winRate1st": 0,
       "top3Rate": 0,
       "avgPlacement": 6
-    },
-    {
-      "cid": 4037,
-      "name": "Van GOGogo",
-      "rarity": "Uncommon",
-      "card_key": "van_gogogo",
-      "card_type": "character",
-      "factions": [
-        "Artist"
-      ],
-      "rules_text": "Quest — Golden another character.\nTreasure Find — Sunflowers",
-      "count": 1,
-      "wins1st": 0,
-      "top3": 0,
-      "sumPlacement": 4,
-      "pickRate": 0.9,
-      "winRate1st": 0,
-      "top3Rate": 0,
-      "avgPlacement": 4
     }
   ],
   "decks": [
     {
       "rank": 1,
-      "count": 24,
-      "metaShare": 22.4,
-      "avgPlacement": 1.96,
-      "winRate1st": 58.3,
-      "top3Rate": 79.2,
-      "avgMmr": 4430,
+      "count": 31,
+      "metaShare": 18.2,
+      "avgPlacement": 2.06,
+      "winRate1st": 51.6,
+      "top3Rate": 77.4,
+      "avgMmr": 4505,
       "cards": [
         {
           "cid": 4036,
@@ -1039,223 +1136,12 @@
     },
     {
       "rank": 2,
-      "count": 17,
-      "metaShare": 15.9,
-      "avgPlacement": 1.35,
-      "winRate1st": 76.5,
-      "top3Rate": 100,
-      "avgMmr": 4181,
-      "cards": [
-        {
-          "cid": 4036,
-          "name": "Antiquitoy",
-          "rarity": "Common",
-          "card_key": "antiquitoy",
-          "card_type": "character",
-          "factions": [
-            "Toy"
-          ],
-          "rules_text": "When you buff one or more slots, I get +1/+1.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=antiquitoy__bronze__240.webp",
-          "rarityColor": "#94a3b8"
-        },
-        {
-          "cid": 4014,
-          "name": "Happy Little Painter",
-          "rarity": "Common",
-          "card_key": "happy_little_painter",
-          "card_type": "character",
-          "factions": [
-            "Artist"
-          ],
-          "rules_text": "Quest — I'm on a Green slot during a fight.\nTreasure Find — Happy Little Tree",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp",
-          "rarityColor": "#94a3b8"
-        },
-        {
-          "cid": 4005,
-          "name": "Blue Paintkin",
-          "rarity": "Uncommon",
-          "card_key": "blue_paintkin",
-          "card_type": "character",
-          "factions": [
-            "Paintkin"
-          ],
-          "rules_text": "Recruit — Paint a slot Blue.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4027,
-          "name": "Red Paintkin",
-          "rarity": "Uncommon",
-          "card_key": "red_paintkin",
-          "card_type": "character",
-          "factions": [
-            "Paintkin"
-          ],
-          "rules_text": "Recruit — Paint a slot Red.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4039,
-          "name": "Yellow Paintkin",
-          "rarity": "Uncommon",
-          "card_key": "yellow_paintkin",
-          "card_type": "character",
-          "factions": [
-            "Paintkin"
-          ],
-          "rules_text": "Recruit — Paint a slot Yellow.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4010,
-          "name": "Dotty Daughter",
-          "rarity": "Epic",
-          "card_key": "dotty_daughter",
-          "card_type": "character",
-          "factions": [
-            "Animal",
-            "Mage"
-          ],
-          "rules_text": "Blue — When one of your slots gets a buff, double it.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
-          "rarityColor": "#a855f7"
-        },
-        {
-          "cid": 4047,
-          "name": "White Rabbit",
-          "rarity": "Epic",
-          "card_key": "white_rabbit",
-          "card_type": "character",
-          "factions": [
-            "Animal",
-            "Toy"
-          ],
-          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
-          "rarityColor": "#a855f7"
-        },
-        {
-          "cid": 4009,
-          "name": "Crimson, Stalwart Hero",
-          "rarity": "Legendary",
-          "card_key": "crimson_stalwart_hero",
-          "card_type": "character",
-          "factions": [
-            "Pirate",
-            "Hero"
-          ],
-          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4018,
-          "name": "Marigold, Eternal Student",
-          "rarity": "Legendary",
-          "card_key": "marigold_eternal_student",
-          "card_type": "character",
-          "factions": [
-            "Mage",
-            "Hero"
-          ],
-          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4029,
-          "name": "Rocky, the Roller",
-          "rarity": "Legendary",
-          "card_key": "rocky_the_roller",
-          "card_type": "character",
-          "factions": [
-            "Giant",
-            "Hero"
-          ],
-          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4021,
-          "name": "The Orange Orangutan",
-          "rarity": "Legendary",
-          "card_key": "the_orange_orangutan",
-          "card_type": "character",
-          "factions": [
-            "Animal"
-          ],
-          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4024,
-          "name": "The Purple Peacock",
-          "rarity": "Legendary",
-          "card_key": "the_purple_peacock",
-          "card_type": "character",
-          "factions": [
-            "Animal",
-            "Mage"
-          ],
-          "rules_text": "Red — When you play a spell, increase your buffs from spells by +3 Attack\nBlue — When you play a spell directly on me, play it again.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        }
-      ],
-      "diffFromDeck1": {
-        "removed": [
-          {
-            "name": "The Mad Splatter",
-            "rarity": "Uncommon"
-          },
-          {
-            "name": "Model Elephant",
-            "rarity": "Rare"
-          },
-          {
-            "name": "Wishing Fish",
-            "rarity": "Rare"
-          },
-          {
-            "name": "Owlabaster",
-            "rarity": "Epic"
-          }
-        ],
-        "added": [
-          {
-            "name": "Happy Little Painter",
-            "rarity": "Common"
-          },
-          {
-            "name": "Blue Paintkin",
-            "rarity": "Uncommon"
-          },
-          {
-            "name": "The Orange Orangutan",
-            "rarity": "Legendary"
-          },
-          {
-            "name": "The Purple Peacock",
-            "rarity": "Legendary"
-          }
-        ]
-      }
-    },
-    {
-      "rank": 3,
-      "count": 16,
-      "metaShare": 15,
-      "avgPlacement": 2.75,
-      "winRate1st": 37.5,
-      "top3Rate": 68.8,
-      "avgMmr": 4114,
+      "count": 19,
+      "metaShare": 11.2,
+      "avgPlacement": 2.68,
+      "winRate1st": 36.8,
+      "top3Rate": 68.4,
+      "avgMmr": 4130,
       "cards": [
         {
           "cid": 4036,
@@ -1467,13 +1353,643 @@
       }
     },
     {
+      "rank": 3,
+      "count": 18,
+      "metaShare": 10.6,
+      "avgPlacement": 1.5,
+      "winRate1st": 72.2,
+      "top3Rate": 94.4,
+      "avgMmr": 4180,
+      "cards": [
+        {
+          "cid": 4036,
+          "name": "Antiquitoy",
+          "rarity": "Common",
+          "card_key": "antiquitoy",
+          "card_type": "character",
+          "factions": [
+            "Toy"
+          ],
+          "rules_text": "When you buff one or more slots, I get +1/+1.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=antiquitoy__bronze__240.webp",
+          "rarityColor": "#94a3b8"
+        },
+        {
+          "cid": 4014,
+          "name": "Happy Little Painter",
+          "rarity": "Common",
+          "card_key": "happy_little_painter",
+          "card_type": "character",
+          "factions": [
+            "Artist"
+          ],
+          "rules_text": "Quest — I'm on a Green slot during a fight.\nTreasure Find — Happy Little Tree",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp",
+          "rarityColor": "#94a3b8"
+        },
+        {
+          "cid": 4005,
+          "name": "Blue Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "blue_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Blue.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4027,
+          "name": "Red Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "red_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Red.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4039,
+          "name": "Yellow Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "yellow_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Yellow.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4010,
+          "name": "Dotty Daughter",
+          "rarity": "Epic",
+          "card_key": "dotty_daughter",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Blue — When one of your slots gets a buff, double it.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4047,
+          "name": "White Rabbit",
+          "rarity": "Epic",
+          "card_key": "white_rabbit",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4009,
+          "name": "Crimson, Stalwart Hero",
+          "rarity": "Legendary",
+          "card_key": "crimson_stalwart_hero",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4018,
+          "name": "Marigold, Eternal Student",
+          "rarity": "Legendary",
+          "card_key": "marigold_eternal_student",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4029,
+          "name": "Rocky, the Roller",
+          "rarity": "Legendary",
+          "card_key": "rocky_the_roller",
+          "card_type": "character",
+          "factions": [
+            "Giant",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4021,
+          "name": "The Orange Orangutan",
+          "rarity": "Legendary",
+          "card_key": "the_orange_orangutan",
+          "card_type": "character",
+          "factions": [
+            "Animal"
+          ],
+          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4024,
+          "name": "The Purple Peacock",
+          "rarity": "Legendary",
+          "card_key": "the_purple_peacock",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Red — When you play a spell, increase your buffs from spells by +3 Attack\nBlue — When you play a spell directly on me, play it again.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        }
+      ],
+      "diffFromDeck1": {
+        "removed": [
+          {
+            "name": "The Mad Splatter",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Model Elephant",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Wishing Fish",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Owlabaster",
+            "rarity": "Epic"
+          }
+        ],
+        "added": [
+          {
+            "name": "Happy Little Painter",
+            "rarity": "Common"
+          },
+          {
+            "name": "Blue Paintkin",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "The Orange Orangutan",
+            "rarity": "Legendary"
+          },
+          {
+            "name": "The Purple Peacock",
+            "rarity": "Legendary"
+          }
+        ]
+      }
+    },
+    {
       "rank": 4,
-      "count": 9,
-      "metaShare": 8.4,
-      "avgPlacement": 2.11,
-      "winRate1st": 33.3,
-      "top3Rate": 88.9,
-      "avgMmr": 4066,
+      "count": 14,
+      "metaShare": 8.2,
+      "avgPlacement": 2.21,
+      "winRate1st": 42.9,
+      "top3Rate": 78.6,
+      "avgMmr": 4432,
+      "cards": [
+        {
+          "cid": 4027,
+          "name": "Red Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "red_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Red.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4039,
+          "name": "Yellow Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "yellow_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Yellow.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4019,
+          "name": "Model Elephant",
+          "rarity": "Rare",
+          "card_key": "model_elephant",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Animal"
+          ],
+          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 2123,
+          "name": "Mr. Fox",
+          "rarity": "Rare",
+          "card_key": "mr_fox",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Hero"
+          ],
+          "rules_text": "Sneak\nHunt — Get a random treasure from your opponent. (That you don't already have)",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=mr_fox__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4010,
+          "name": "Dotty Daughter",
+          "rarity": "Epic",
+          "card_key": "dotty_daughter",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Blue — When one of your slots gets a buff, double it.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4048,
+          "name": "Owlabaster",
+          "rarity": "Epic",
+          "card_key": "owlabaster",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Chance Encounter — Improve your buffs from spells by +2/+2.\nRecruit — Cast Abra Cadabra.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4047,
+          "name": "White Rabbit",
+          "rarity": "Epic",
+          "card_key": "white_rabbit",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 3068,
+          "name": "Crab Dragoon",
+          "rarity": "Legendary",
+          "card_key": "crab_dragoon",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Dragon"
+          ],
+          "rules_text": "Treasure Hoard 3\nFarewell — Get a random treasure, then give one of your other characters Treasure Hoard.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crab_dragoon__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4009,
+          "name": "Crimson, Stalwart Hero",
+          "rarity": "Legendary",
+          "card_key": "crimson_stalwart_hero",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4018,
+          "name": "Marigold, Eternal Student",
+          "rarity": "Legendary",
+          "card_key": "marigold_eternal_student",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4029,
+          "name": "Rocky, the Roller",
+          "rarity": "Legendary",
+          "card_key": "rocky_the_roller",
+          "card_type": "character",
+          "factions": [
+            "Giant",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4024,
+          "name": "The Purple Peacock",
+          "rarity": "Legendary",
+          "card_key": "the_purple_peacock",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Red — When you play a spell, increase your buffs from spells by +3 Attack\nBlue — When you play a spell directly on me, play it again.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        }
+      ],
+      "diffFromDeck1": {
+        "removed": [
+          {
+            "name": "Antiquitoy",
+            "rarity": "Common"
+          },
+          {
+            "name": "The Mad Splatter",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Wishing Fish",
+            "rarity": "Rare"
+          }
+        ],
+        "added": [
+          {
+            "name": "Mr. Fox",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Crab Dragoon",
+            "rarity": "Legendary"
+          },
+          {
+            "name": "The Purple Peacock",
+            "rarity": "Legendary"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "count": 13,
+      "metaShare": 7.6,
+      "avgPlacement": 2.77,
+      "winRate1st": 23.1,
+      "top3Rate": 76.9,
+      "avgMmr": 4496,
+      "cards": [
+        {
+          "cid": 4036,
+          "name": "Antiquitoy",
+          "rarity": "Common",
+          "card_key": "antiquitoy",
+          "card_type": "character",
+          "factions": [
+            "Toy"
+          ],
+          "rules_text": "When you buff one or more slots, I get +1/+1.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=antiquitoy__bronze__240.webp",
+          "rarityColor": "#94a3b8"
+        },
+        {
+          "cid": 4027,
+          "name": "Red Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "red_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Red.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4039,
+          "name": "Yellow Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "yellow_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Yellow.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4019,
+          "name": "Model Elephant",
+          "rarity": "Rare",
+          "card_key": "model_elephant",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Animal"
+          ],
+          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4032,
+          "name": "Splat",
+          "rarity": "Rare",
+          "card_key": "splat",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Farewell — Get a Yellow Paintbrush.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=splat__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4047,
+          "name": "White Rabbit",
+          "rarity": "Epic",
+          "card_key": "white_rabbit",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 1263,
+          "name": "Wicked Witch",
+          "rarity": "Epic",
+          "card_key": "wicked_witch",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Villain"
+          ],
+          "rules_text": "Ranged\nAfter I attack, reduce that enemy and the ones next to it to 1 Health.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=wicked_witch__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4009,
+          "name": "Crimson, Stalwart Hero",
+          "rarity": "Legendary",
+          "card_key": "crimson_stalwart_hero",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4018,
+          "name": "Marigold, Eternal Student",
+          "rarity": "Legendary",
+          "card_key": "marigold_eternal_student",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4029,
+          "name": "Rocky, the Roller",
+          "rarity": "Legendary",
+          "card_key": "rocky_the_roller",
+          "card_type": "character",
+          "factions": [
+            "Giant",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4021,
+          "name": "The Orange Orangutan",
+          "rarity": "Legendary",
+          "card_key": "the_orange_orangutan",
+          "card_type": "character",
+          "factions": [
+            "Animal"
+          ],
+          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 1422,
+          "name": "Wormscale Tinkerer",
+          "rarity": "Legendary",
+          "card_key": "wormscale_tinkerer",
+          "card_type": "character",
+          "factions": [
+            "Fae",
+            "Dragon"
+          ],
+          "rules_text": "Treasure Hoard\nEach fight, improve your treasure buffs by +1/+1.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        }
+      ],
+      "diffFromDeck1": {
+        "removed": [
+          {
+            "name": "The Mad Splatter",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Wishing Fish",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Dotty Daughter",
+            "rarity": "Epic"
+          },
+          {
+            "name": "Owlabaster",
+            "rarity": "Epic"
+          }
+        ],
+        "added": [
+          {
+            "name": "Splat",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Wicked Witch",
+            "rarity": "Epic"
+          },
+          {
+            "name": "The Orange Orangutan",
+            "rarity": "Legendary"
+          },
+          {
+            "name": "Wormscale Tinkerer",
+            "rarity": "Legendary"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "count": 13,
+      "metaShare": 7.6,
+      "avgPlacement": 2.31,
+      "winRate1st": 38.5,
+      "top3Rate": 76.9,
+      "avgMmr": 4146,
       "cards": [
         {
           "cid": 4027,
@@ -1682,9 +2198,222 @@
       }
     },
     {
-      "rank": 5,
+      "rank": 7,
+      "count": 12,
+      "metaShare": 7.1,
+      "avgPlacement": 2.75,
+      "winRate1st": 25,
+      "top3Rate": 83.3,
+      "avgMmr": 4668,
+      "cards": [
+        {
+          "cid": 4036,
+          "name": "Antiquitoy",
+          "rarity": "Common",
+          "card_key": "antiquitoy",
+          "card_type": "character",
+          "factions": [
+            "Toy"
+          ],
+          "rules_text": "When you buff one or more slots, I get +1/+1.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=antiquitoy__bronze__240.webp",
+          "rarityColor": "#94a3b8"
+        },
+        {
+          "cid": 3008,
+          "name": "Bubbles",
+          "rarity": "Common",
+          "card_key": "bubbles",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Hero"
+          ],
+          "rules_text": "If your first heart would be emptied, it's cracked instead, then Banish me.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=bubbles__bronze__240.webp",
+          "rarityColor": "#94a3b8"
+        },
+        {
+          "cid": 4042,
+          "name": "Purrfectioneer",
+          "rarity": "Uncommon",
+          "card_key": "purrfectioneer",
+          "card_type": "character",
+          "factions": [
+            "Dragon"
+          ],
+          "rules_text": "Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4027,
+          "name": "Red Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "red_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Red.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4039,
+          "name": "Yellow Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "yellow_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Yellow.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4019,
+          "name": "Model Elephant",
+          "rarity": "Rare",
+          "card_key": "model_elephant",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Animal"
+          ],
+          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4010,
+          "name": "Dotty Daughter",
+          "rarity": "Epic",
+          "card_key": "dotty_daughter",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Blue — When one of your slots gets a buff, double it.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 1416,
+          "name": "Snapping Hydra",
+          "rarity": "Epic",
+          "card_key": "snapping_hydra",
+          "card_type": "character",
+          "factions": [
+            "Dragon",
+            "Animal"
+          ],
+          "rules_text": "I also damage one of the characters in the slots behind where I attack.\nFarewell — Double my attack",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=snapping_hydra__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4047,
+          "name": "White Rabbit",
+          "rarity": "Epic",
+          "card_key": "white_rabbit",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4009,
+          "name": "Crimson, Stalwart Hero",
+          "rarity": "Legendary",
+          "card_key": "crimson_stalwart_hero",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4058,
+          "name": "Luck Dragon",
+          "rarity": "Legendary",
+          "card_key": "luck_dragon",
+          "card_type": "character",
+          "factions": [
+            "Celestial",
+            "Dragon"
+          ],
+          "rules_text": "Treasure Hoard 2\nChance Encounter — Get a random treasure. Repeat this for each of your Gold characters.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=luck_dragon__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4018,
+          "name": "Marigold, Eternal Student",
+          "rarity": "Legendary",
+          "card_key": "marigold_eternal_student",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        }
+      ],
+      "diffFromDeck1": {
+        "removed": [
+          {
+            "name": "The Mad Splatter",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Wishing Fish",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Owlabaster",
+            "rarity": "Epic"
+          },
+          {
+            "name": "Rocky, the Roller",
+            "rarity": "Legendary"
+          }
+        ],
+        "added": [
+          {
+            "name": "Bubbles",
+            "rarity": "Common"
+          },
+          {
+            "name": "Purrfectioneer",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Snapping Hydra",
+            "rarity": "Epic"
+          },
+          {
+            "name": "Luck Dragon",
+            "rarity": "Legendary"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 8,
       "count": 8,
-      "metaShare": 7.5,
+      "metaShare": 4.7,
       "avgPlacement": 2.38,
       "winRate1st": 50,
       "top3Rate": 62.5,
@@ -1901,14 +2630,40 @@
       }
     },
     {
-      "rank": 6,
-      "count": 7,
-      "metaShare": 6.5,
-      "avgPlacement": 1.43,
-      "winRate1st": 71.4,
-      "top3Rate": 100,
-      "avgMmr": 4343,
+      "rank": 9,
+      "count": 6,
+      "metaShare": 3.5,
+      "avgPlacement": 1.5,
+      "winRate1st": 83.3,
+      "top3Rate": 83.3,
+      "avgMmr": 4259,
       "cards": [
+        {
+          "cid": 2143,
+          "name": "Miseria",
+          "rarity": "Uncommon",
+          "card_key": "miseria",
+          "card_type": "character",
+          "factions": [
+            "Celestial"
+          ],
+          "rules_text": "Quest — Lose a fight.\nTreasure Find — Constellation Prize",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=miseria__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4042,
+          "name": "Purrfectioneer",
+          "rarity": "Uncommon",
+          "card_key": "purrfectioneer",
+          "card_type": "character",
+          "factions": [
+            "Dragon"
+          ],
+          "rules_text": "Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
         {
           "cid": 4027,
           "name": "Red Paintkin",
@@ -1920,6 +2675,20 @@
           ],
           "rules_text": "Recruit — Paint a slot Red.",
           "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4043,
+          "name": "The Mad Splatter",
+          "rarity": "Uncommon",
+          "card_key": "the_mad_splatter",
+          "card_type": "character",
+          "factions": [
+            "Paintkin",
+            "Villain"
+          ],
+          "rules_text": "Chance Encounter — Paint a random slot a random color.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp",
           "rarityColor": "#22c55e"
         },
         {
@@ -1936,45 +2705,18 @@
           "rarityColor": "#22c55e"
         },
         {
-          "cid": 4019,
-          "name": "Model Elephant",
-          "rarity": "Rare",
-          "card_key": "model_elephant",
-          "card_type": "character",
-          "factions": [
-            "Pirate",
-            "Animal"
-          ],
-          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
-          "rarityColor": "#3b82f6"
-        },
-        {
-          "cid": 2123,
-          "name": "Mr. Fox",
-          "rarity": "Rare",
-          "card_key": "mr_fox",
-          "card_type": "character",
-          "factions": [
-            "Animal",
-            "Hero"
-          ],
-          "rules_text": "Sneak\nHunt — Get a random treasure from your opponent. (That you don't already have)",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=mr_fox__bronze__240.webp",
-          "rarityColor": "#3b82f6"
-        },
-        {
-          "cid": 4010,
-          "name": "Dotty Daughter",
+          "cid": 3005,
+          "name": "Astral Navigator",
           "rarity": "Epic",
-          "card_key": "dotty_daughter",
+          "card_key": "astral_navigator",
           "card_type": "character",
           "factions": [
+            "Celestial",
             "Animal",
-            "Mage"
+            "Pirate"
           ],
-          "rules_text": "Blue — When one of your slots gets a buff, double it.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rules_text": "Farewell — Summon the smallest character from your starting deck and give it +10/+10.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=astral_navigator__bronze__240.webp",
           "rarityColor": "#a855f7"
         },
         {
@@ -2004,20 +2746,6 @@
           "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
           "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
           "rarityColor": "#a855f7"
-        },
-        {
-          "cid": 3068,
-          "name": "Crab Dragoon",
-          "rarity": "Legendary",
-          "card_key": "crab_dragoon",
-          "card_type": "character",
-          "factions": [
-            "Animal",
-            "Dragon"
-          ],
-          "rules_text": "Treasure Hoard 3\nFarewell — Get a random treasure, then give one of your other characters Treasure Hoard.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crab_dragoon__bronze__240.webp",
-          "rarityColor": "#f59e0b"
         },
         {
           "cid": 4009,
@@ -2062,17 +2790,16 @@
           "rarityColor": "#f59e0b"
         },
         {
-          "cid": 4024,
-          "name": "The Purple Peacock",
+          "cid": 4021,
+          "name": "The Orange Orangutan",
           "rarity": "Legendary",
-          "card_key": "the_purple_peacock",
+          "card_key": "the_orange_orangutan",
           "card_type": "character",
           "factions": [
-            "Animal",
-            "Mage"
+            "Animal"
           ],
-          "rules_text": "Red — When you play a spell, increase your buffs from spells by +3 Attack\nBlue — When you play a spell directly on me, play it again.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_purple_peacock__bronze__240.webp",
+          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
           "rarityColor": "#f59e0b"
         }
       ],
@@ -2083,8 +2810,220 @@
             "rarity": "Common"
           },
           {
-            "name": "The Mad Splatter",
+            "name": "Model Elephant",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Wishing Fish",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Dotty Daughter",
+            "rarity": "Epic"
+          }
+        ],
+        "added": [
+          {
+            "name": "Miseria",
             "rarity": "Uncommon"
+          },
+          {
+            "name": "Purrfectioneer",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Astral Navigator",
+            "rarity": "Epic"
+          },
+          {
+            "name": "The Orange Orangutan",
+            "rarity": "Legendary"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 10,
+      "count": 5,
+      "metaShare": 2.9,
+      "avgPlacement": 2,
+      "winRate1st": 40,
+      "top3Rate": 80,
+      "avgMmr": 4448,
+      "cards": [
+        {
+          "cid": 2143,
+          "name": "Miseria",
+          "rarity": "Uncommon",
+          "card_key": "miseria",
+          "card_type": "character",
+          "factions": [
+            "Celestial"
+          ],
+          "rules_text": "Quest — Lose a fight.\nTreasure Find — Constellation Prize",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=miseria__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4042,
+          "name": "Purrfectioneer",
+          "rarity": "Uncommon",
+          "card_key": "purrfectioneer",
+          "card_type": "character",
+          "factions": [
+            "Dragon"
+          ],
+          "rules_text": "Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4027,
+          "name": "Red Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "red_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Red.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4043,
+          "name": "The Mad Splatter",
+          "rarity": "Uncommon",
+          "card_key": "the_mad_splatter",
+          "card_type": "character",
+          "factions": [
+            "Paintkin",
+            "Villain"
+          ],
+          "rules_text": "Chance Encounter — Paint a random slot a random color.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4039,
+          "name": "Yellow Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "yellow_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Yellow.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4010,
+          "name": "Dotty Daughter",
+          "rarity": "Epic",
+          "card_key": "dotty_daughter",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Blue — When one of your slots gets a buff, double it.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4048,
+          "name": "Owlabaster",
+          "rarity": "Epic",
+          "card_key": "owlabaster",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Chance Encounter — Improve your buffs from spells by +2/+2.\nRecruit — Cast Abra Cadabra.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4047,
+          "name": "White Rabbit",
+          "rarity": "Epic",
+          "card_key": "white_rabbit",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4009,
+          "name": "Crimson, Stalwart Hero",
+          "rarity": "Legendary",
+          "card_key": "crimson_stalwart_hero",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4018,
+          "name": "Marigold, Eternal Student",
+          "rarity": "Legendary",
+          "card_key": "marigold_eternal_student",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4029,
+          "name": "Rocky, the Roller",
+          "rarity": "Legendary",
+          "card_key": "rocky_the_roller",
+          "card_type": "character",
+          "factions": [
+            "Giant",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4021,
+          "name": "The Orange Orangutan",
+          "rarity": "Legendary",
+          "card_key": "the_orange_orangutan",
+          "card_type": "character",
+          "factions": [
+            "Animal"
+          ],
+          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        }
+      ],
+      "diffFromDeck1": {
+        "removed": [
+          {
+            "name": "Antiquitoy",
+            "rarity": "Common"
+          },
+          {
+            "name": "Model Elephant",
+            "rarity": "Rare"
           },
           {
             "name": "Wishing Fish",
@@ -2093,28 +3032,28 @@
         ],
         "added": [
           {
-            "name": "Mr. Fox",
-            "rarity": "Rare"
+            "name": "Miseria",
+            "rarity": "Uncommon"
           },
           {
-            "name": "Crab Dragoon",
-            "rarity": "Legendary"
+            "name": "Purrfectioneer",
+            "rarity": "Uncommon"
           },
           {
-            "name": "The Purple Peacock",
+            "name": "The Orange Orangutan",
             "rarity": "Legendary"
           }
         ]
       }
     },
     {
-      "rank": 7,
+      "rank": 11,
       "count": 4,
-      "metaShare": 3.7,
-      "avgPlacement": 2.5,
+      "metaShare": 2.4,
+      "avgPlacement": 3,
       "winRate1st": 50,
-      "top3Rate": 75,
-      "avgMmr": 4310,
+      "top3Rate": 50,
+      "avgMmr": 4365,
       "cards": [
         {
           "cid": 4045,
@@ -2340,9 +3279,449 @@
       }
     },
     {
-      "rank": 8,
+      "rank": 12,
+      "count": 4,
+      "metaShare": 2.4,
+      "avgPlacement": 4,
+      "winRate1st": 0,
+      "top3Rate": 25,
+      "avgMmr": 4034,
+      "cards": [
+        {
+          "cid": 4014,
+          "name": "Happy Little Painter",
+          "rarity": "Common",
+          "card_key": "happy_little_painter",
+          "card_type": "character",
+          "factions": [
+            "Artist"
+          ],
+          "rules_text": "Quest — I'm on a Green slot during a fight.\nTreasure Find — Happy Little Tree",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp",
+          "rarityColor": "#94a3b8"
+        },
+        {
+          "cid": 4005,
+          "name": "Blue Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "blue_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Blue.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4043,
+          "name": "The Mad Splatter",
+          "rarity": "Uncommon",
+          "card_key": "the_mad_splatter",
+          "card_type": "character",
+          "factions": [
+            "Paintkin",
+            "Villain"
+          ],
+          "rules_text": "Chance Encounter — Paint a random slot a random color.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4039,
+          "name": "Yellow Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "yellow_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Yellow.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4041,
+          "name": "Leprechaun",
+          "rarity": "Rare",
+          "card_key": "leprechaun",
+          "card_type": "character",
+          "factions": [
+            "Fae"
+          ],
+          "rules_text": "Chance Encounter — Get a random common treasure.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4011,
+          "name": "Mana Potion",
+          "rarity": "Rare",
+          "card_key": "mana_potion",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Farewell — Get a Blue Paintbrush.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=mana_potion__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4019,
+          "name": "Model Elephant",
+          "rarity": "Rare",
+          "card_key": "model_elephant",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Animal"
+          ],
+          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4010,
+          "name": "Dotty Daughter",
+          "rarity": "Epic",
+          "card_key": "dotty_daughter",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Blue — When one of your slots gets a buff, double it.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4048,
+          "name": "Owlabaster",
+          "rarity": "Epic",
+          "card_key": "owlabaster",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Chance Encounter — Improve your buffs from spells by +2/+2.\nRecruit — Cast Abra Cadabra.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4031,
+          "name": "Starry Knight",
+          "rarity": "Epic",
+          "card_key": "starry_knight",
+          "card_type": "character",
+          "factions": [
+            "Hero"
+          ],
+          "rules_text": "Quest — I KO two enemies in a single fight.\nEach fight, I get +5/+5. When I KO an enemy improve this ability by +1/+1.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=starry_knight__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4018,
+          "name": "Marigold, Eternal Student",
+          "rarity": "Legendary",
+          "card_key": "marigold_eternal_student",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4029,
+          "name": "Rocky, the Roller",
+          "rarity": "Legendary",
+          "card_key": "rocky_the_roller",
+          "card_type": "character",
+          "factions": [
+            "Giant",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        }
+      ],
+      "diffFromDeck1": {
+        "removed": [
+          {
+            "name": "Antiquitoy",
+            "rarity": "Common"
+          },
+          {
+            "name": "Red Paintkin",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Wishing Fish",
+            "rarity": "Rare"
+          },
+          {
+            "name": "White Rabbit",
+            "rarity": "Epic"
+          },
+          {
+            "name": "Crimson, Stalwart Hero",
+            "rarity": "Legendary"
+          }
+        ],
+        "added": [
+          {
+            "name": "Happy Little Painter",
+            "rarity": "Common"
+          },
+          {
+            "name": "Blue Paintkin",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Leprechaun",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Mana Potion",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Starry Knight",
+            "rarity": "Epic"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 13,
       "count": 3,
-      "metaShare": 2.8,
+      "metaShare": 1.8,
+      "avgPlacement": 3.33,
+      "winRate1st": 33.3,
+      "top3Rate": 66.7,
+      "avgMmr": 4503,
+      "cards": [
+        {
+          "cid": 3008,
+          "name": "Bubbles",
+          "rarity": "Common",
+          "card_key": "bubbles",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Hero"
+          ],
+          "rules_text": "If your first heart would be emptied, it's cracked instead, then Banish me.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=bubbles__bronze__240.webp",
+          "rarityColor": "#94a3b8"
+        },
+        {
+          "cid": 4005,
+          "name": "Blue Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "blue_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Blue.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4027,
+          "name": "Red Paintkin",
+          "rarity": "Uncommon",
+          "card_key": "red_paintkin",
+          "card_type": "character",
+          "factions": [
+            "Paintkin"
+          ],
+          "rules_text": "Recruit — Paint a slot Red.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4019,
+          "name": "Model Elephant",
+          "rarity": "Rare",
+          "card_key": "model_elephant",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Animal"
+          ],
+          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4049,
+          "name": "Varnish",
+          "rarity": "Rare",
+          "card_key": "varnish",
+          "card_type": "character",
+          "factions": [
+            "Fae"
+          ],
+          "rules_text": "Double the effect of your painted slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=varnish__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4002,
+          "name": "BaBaBanana",
+          "rarity": "Epic",
+          "card_key": "bababanana",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Yellow — When I'm attacked, give your characters +5/+10",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=bababanana__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4010,
+          "name": "Dotty Daughter",
+          "rarity": "Epic",
+          "card_key": "dotty_daughter",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Blue — When one of your slots gets a buff, double it.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4047,
+          "name": "White Rabbit",
+          "rarity": "Epic",
+          "card_key": "white_rabbit",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4009,
+          "name": "Crimson, Stalwart Hero",
+          "rarity": "Legendary",
+          "card_key": "crimson_stalwart_hero",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4018,
+          "name": "Marigold, Eternal Student",
+          "rarity": "Legendary",
+          "card_key": "marigold_eternal_student",
+          "card_type": "character",
+          "factions": [
+            "Mage",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 1409,
+          "name": "Monstro",
+          "rarity": "Legendary",
+          "card_key": "monstro",
+          "card_type": "character",
+          "factions": [
+            "Animal"
+          ],
+          "rules_text": "I have +6/+6 for each Animal you have recruited this game.\nQuest — I have 100 Attack or Health during a fight.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=monstro__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4029,
+          "name": "Rocky, the Roller",
+          "rarity": "Legendary",
+          "card_key": "rocky_the_roller",
+          "card_type": "character",
+          "factions": [
+            "Giant",
+            "Hero"
+          ],
+          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
+          "rarityColor": "#f59e0b"
+        }
+      ],
+      "diffFromDeck1": {
+        "removed": [
+          {
+            "name": "Antiquitoy",
+            "rarity": "Common"
+          },
+          {
+            "name": "The Mad Splatter",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Yellow Paintkin",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Wishing Fish",
+            "rarity": "Rare"
+          },
+          {
+            "name": "Owlabaster",
+            "rarity": "Epic"
+          }
+        ],
+        "added": [
+          {
+            "name": "Bubbles",
+            "rarity": "Common"
+          },
+          {
+            "name": "Blue Paintkin",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Varnish",
+            "rarity": "Rare"
+          },
+          {
+            "name": "BaBaBanana",
+            "rarity": "Epic"
+          },
+          {
+            "name": "Monstro",
+            "rarity": "Legendary"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 14,
+      "count": 3,
+      "metaShare": 1.8,
       "avgPlacement": 2.33,
       "winRate1st": 66.7,
       "top3Rate": 66.7,
@@ -2553,9 +3932,9 @@
       }
     },
     {
-      "rank": 9,
+      "rank": 15,
       "count": 3,
-      "metaShare": 2.8,
+      "metaShare": 1.8,
       "avgPlacement": 1,
       "winRate1st": 100,
       "top3Rate": 100,
@@ -2775,52 +4154,38 @@
       }
     },
     {
-      "rank": 10,
-      "count": 3,
-      "metaShare": 2.8,
-      "avgPlacement": 4,
-      "winRate1st": 0,
-      "top3Rate": 33.3,
-      "avgMmr": 4015,
+      "rank": 16,
+      "count": 2,
+      "metaShare": 1.2,
+      "avgPlacement": 1,
+      "winRate1st": 100,
+      "top3Rate": 100,
+      "avgMmr": 4537,
       "cards": [
         {
-          "cid": 4014,
-          "name": "Happy Little Painter",
+          "cid": 1356,
+          "name": "Pied Piper",
           "rarity": "Common",
-          "card_key": "happy_little_painter",
+          "card_key": "pied_piper",
           "card_type": "character",
           "factions": [
-            "Artist"
+            "Animal"
           ],
-          "rules_text": "Quest — I'm on a Green slot during a fight.\nTreasure Find — Happy Little Tree",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=happy_little_painter__bronze__240.webp",
+          "rules_text": "Recruit — Your next shop is all Animals.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=pied_piper__bronze__240.webp",
           "rarityColor": "#94a3b8"
         },
         {
-          "cid": 4005,
-          "name": "Blue Paintkin",
+          "cid": 4027,
+          "name": "Red Paintkin",
           "rarity": "Uncommon",
-          "card_key": "blue_paintkin",
+          "card_key": "red_paintkin",
           "card_type": "character",
           "factions": [
             "Paintkin"
           ],
-          "rules_text": "Recruit — Paint a slot Blue.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=blue_paintkin__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4043,
-          "name": "The Mad Splatter",
-          "rarity": "Uncommon",
-          "card_key": "the_mad_splatter",
-          "card_type": "character",
-          "factions": [
-            "Paintkin",
-            "Villain"
-          ],
-          "rules_text": "Chance Encounter — Paint a random slot a random color.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp",
+          "rules_text": "Recruit — Paint a slot Red.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
           "rarityColor": "#22c55e"
         },
         {
@@ -2837,43 +4202,30 @@
           "rarityColor": "#22c55e"
         },
         {
-          "cid": 4041,
-          "name": "Leprechaun",
+          "cid": 4049,
+          "name": "Varnish",
           "rarity": "Rare",
-          "card_key": "leprechaun",
+          "card_key": "varnish",
           "card_type": "character",
           "factions": [
             "Fae"
           ],
-          "rules_text": "Chance Encounter — Get a random common treasure.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=leprechaun__bronze__240.webp",
+          "rules_text": "Double the effect of your painted slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=varnish__bronze__240.webp",
           "rarityColor": "#3b82f6"
         },
         {
-          "cid": 4011,
-          "name": "Mana Potion",
+          "cid": 3103,
+          "name": "Wishing Fish",
           "rarity": "Rare",
-          "card_key": "mana_potion",
+          "card_key": "wishing_fish",
           "card_type": "character",
           "factions": [
-            "Paintkin"
-          ],
-          "rules_text": "Farewell — Get a Blue Paintbrush.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=mana_potion__bronze__240.webp",
-          "rarityColor": "#3b82f6"
-        },
-        {
-          "cid": 4019,
-          "name": "Model Elephant",
-          "rarity": "Rare",
-          "card_key": "model_elephant",
-          "card_type": "character",
-          "factions": [
-            "Pirate",
+            "Celestial",
             "Animal"
           ],
-          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
+          "rules_text": "Cast three spells directly on me to get a bonus shop of Golden characters from your starting deck.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=wishing_fish__bronze__240.webp",
           "rarityColor": "#3b82f6"
         },
         {
@@ -2891,31 +4243,45 @@
           "rarityColor": "#a855f7"
         },
         {
-          "cid": 4048,
-          "name": "Owlabaster",
+          "cid": 2073,
+          "name": "Leapfrog",
           "rarity": "Epic",
-          "card_key": "owlabaster",
+          "card_key": "leapfrog",
           "card_type": "character",
           "factions": [
-            "Animal",
-            "Mage"
+            "Animal"
           ],
-          "rules_text": "Chance Encounter — Improve your buffs from spells by +2/+2.\nRecruit — Cast Abra Cadabra.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp",
+          "rules_text": "When I replace a character, I gain their stats.\nWhen a character replaces me, they gain my stats.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=leapfrog__bronze__240.webp",
           "rarityColor": "#a855f7"
         },
         {
-          "cid": 4031,
-          "name": "Starry Knight",
+          "cid": 4047,
+          "name": "White Rabbit",
           "rarity": "Epic",
-          "card_key": "starry_knight",
+          "card_key": "white_rabbit",
           "card_type": "character",
           "factions": [
+            "Animal",
+            "Toy"
+          ],
+          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
+          "cid": 4009,
+          "name": "Crimson, Stalwart Hero",
+          "rarity": "Legendary",
+          "card_key": "crimson_stalwart_hero",
+          "card_type": "character",
+          "factions": [
+            "Pirate",
             "Hero"
           ],
-          "rules_text": "Quest — I KO two enemies in a single fight.\nEach fight, I get +5/+5. When I KO an enemy improve this ability by +1/+1.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=starry_knight__bronze__240.webp",
-          "rarityColor": "#a855f7"
+          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
+          "rarityColor": "#f59e0b"
         },
         {
           "cid": 4018,
@@ -2944,6 +4310,19 @@
           "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
           "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
           "rarityColor": "#f59e0b"
+        },
+        {
+          "cid": 4021,
+          "name": "The Orange Orangutan",
+          "rarity": "Legendary",
+          "card_key": "the_orange_orangutan",
+          "card_type": "character",
+          "factions": [
+            "Animal"
+          ],
+          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
+          "rarityColor": "#f59e0b"
         }
       ],
       "diffFromDeck1": {
@@ -2953,50 +4332,42 @@
             "rarity": "Common"
           },
           {
-            "name": "Red Paintkin",
+            "name": "The Mad Splatter",
             "rarity": "Uncommon"
           },
           {
-            "name": "Wishing Fish",
+            "name": "Model Elephant",
             "rarity": "Rare"
           },
           {
-            "name": "White Rabbit",
+            "name": "Owlabaster",
             "rarity": "Epic"
-          },
-          {
-            "name": "Crimson, Stalwart Hero",
-            "rarity": "Legendary"
           }
         ],
         "added": [
           {
-            "name": "Happy Little Painter",
+            "name": "Pied Piper",
             "rarity": "Common"
           },
           {
-            "name": "Blue Paintkin",
-            "rarity": "Uncommon"
-          },
-          {
-            "name": "Leprechaun",
+            "name": "Varnish",
             "rarity": "Rare"
           },
           {
-            "name": "Mana Potion",
-            "rarity": "Rare"
-          },
-          {
-            "name": "Starry Knight",
+            "name": "Leapfrog",
             "rarity": "Epic"
+          },
+          {
+            "name": "The Orange Orangutan",
+            "rarity": "Legendary"
           }
         ]
       }
     },
     {
-      "rank": 11,
+      "rank": 17,
       "count": 2,
-      "metaShare": 1.9,
+      "metaShare": 1.2,
       "avgPlacement": 2.5,
       "winRate1st": 0,
       "top3Rate": 100,
@@ -3214,222 +4585,9 @@
       }
     },
     {
-      "rank": 12,
+      "rank": 18,
       "count": 2,
-      "metaShare": 1.9,
-      "avgPlacement": 2.5,
-      "winRate1st": 50,
-      "top3Rate": 50,
-      "avgMmr": 4163,
-      "cards": [
-        {
-          "cid": 2143,
-          "name": "Miseria",
-          "rarity": "Uncommon",
-          "card_key": "miseria",
-          "card_type": "character",
-          "factions": [
-            "Celestial"
-          ],
-          "rules_text": "Quest — Lose a fight.\nTreasure Find — Constellation Prize",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=miseria__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4042,
-          "name": "Purrfectioneer",
-          "rarity": "Uncommon",
-          "card_key": "purrfectioneer",
-          "card_type": "character",
-          "factions": [
-            "Dragon"
-          ],
-          "rules_text": "Chance Encounter — Improve the buffs from your treasures by +1/+1. If there's nothing to buff, get a Dragon's Claw instead.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=purrfectioneer__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4027,
-          "name": "Red Paintkin",
-          "rarity": "Uncommon",
-          "card_key": "red_paintkin",
-          "card_type": "character",
-          "factions": [
-            "Paintkin"
-          ],
-          "rules_text": "Recruit — Paint a slot Red.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4043,
-          "name": "The Mad Splatter",
-          "rarity": "Uncommon",
-          "card_key": "the_mad_splatter",
-          "card_type": "character",
-          "factions": [
-            "Paintkin",
-            "Villain"
-          ],
-          "rules_text": "Chance Encounter — Paint a random slot a random color.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 4039,
-          "name": "Yellow Paintkin",
-          "rarity": "Uncommon",
-          "card_key": "yellow_paintkin",
-          "card_type": "character",
-          "factions": [
-            "Paintkin"
-          ],
-          "rules_text": "Recruit — Paint a slot Yellow.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=yellow_paintkin__bronze__240.webp",
-          "rarityColor": "#22c55e"
-        },
-        {
-          "cid": 3005,
-          "name": "Astral Navigator",
-          "rarity": "Epic",
-          "card_key": "astral_navigator",
-          "card_type": "character",
-          "factions": [
-            "Celestial",
-            "Animal",
-            "Pirate"
-          ],
-          "rules_text": "Farewell — Summon the smallest character from your starting deck and give it +10/+10.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=astral_navigator__bronze__240.webp",
-          "rarityColor": "#a855f7"
-        },
-        {
-          "cid": 4048,
-          "name": "Owlabaster",
-          "rarity": "Epic",
-          "card_key": "owlabaster",
-          "card_type": "character",
-          "factions": [
-            "Animal",
-            "Mage"
-          ],
-          "rules_text": "Chance Encounter — Improve your buffs from spells by +2/+2.\nRecruit — Cast Abra Cadabra.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=owlabaster__bronze__240.webp",
-          "rarityColor": "#a855f7"
-        },
-        {
-          "cid": 4047,
-          "name": "White Rabbit",
-          "rarity": "Epic",
-          "card_key": "white_rabbit",
-          "card_type": "character",
-          "factions": [
-            "Animal",
-            "Toy"
-          ],
-          "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
-          "rarityColor": "#a855f7"
-        },
-        {
-          "cid": 4009,
-          "name": "Crimson, Stalwart Hero",
-          "rarity": "Legendary",
-          "card_key": "crimson_stalwart_hero",
-          "card_type": "character",
-          "factions": [
-            "Pirate",
-            "Hero"
-          ],
-          "rules_text": "At the start of the game, paint a random slot Red.\nQuest — Have 5 Red slots.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=crimson_stalwart_hero__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4018,
-          "name": "Marigold, Eternal Student",
-          "rarity": "Legendary",
-          "card_key": "marigold_eternal_student",
-          "card_type": "character",
-          "factions": [
-            "Mage",
-            "Hero"
-          ],
-          "rules_text": "At the start of the game, paint a random slot Yellow.\nQuest — Have 5 Yellow slots.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=marigold_eternal_student__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4029,
-          "name": "Rocky, the Roller",
-          "rarity": "Legendary",
-          "card_key": "rocky_the_roller",
-          "card_type": "character",
-          "factions": [
-            "Giant",
-            "Hero"
-          ],
-          "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4021,
-          "name": "The Orange Orangutan",
-          "rarity": "Legendary",
-          "card_key": "the_orange_orangutan",
-          "card_type": "character",
-          "factions": [
-            "Animal"
-          ],
-          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        }
-      ],
-      "diffFromDeck1": {
-        "removed": [
-          {
-            "name": "Antiquitoy",
-            "rarity": "Common"
-          },
-          {
-            "name": "Model Elephant",
-            "rarity": "Rare"
-          },
-          {
-            "name": "Wishing Fish",
-            "rarity": "Rare"
-          },
-          {
-            "name": "Dotty Daughter",
-            "rarity": "Epic"
-          }
-        ],
-        "added": [
-          {
-            "name": "Miseria",
-            "rarity": "Uncommon"
-          },
-          {
-            "name": "Purrfectioneer",
-            "rarity": "Uncommon"
-          },
-          {
-            "name": "Astral Navigator",
-            "rarity": "Epic"
-          },
-          {
-            "name": "The Orange Orangutan",
-            "rarity": "Legendary"
-          }
-        ]
-      }
-    },
-    {
-      "rank": 13,
-      "count": 2,
-      "metaShare": 1.9,
+      "metaShare": 1.2,
       "avgPlacement": 2.5,
       "winRate1st": 50,
       "top3Rate": 50,
@@ -3631,27 +4789,14 @@
       }
     },
     {
-      "rank": 14,
+      "rank": 19,
       "count": 1,
-      "metaShare": 0.9,
-      "avgPlacement": 1,
-      "winRate1st": 100,
+      "metaShare": 0.6,
+      "avgPlacement": 2,
+      "winRate1st": 0,
       "top3Rate": 100,
-      "avgMmr": 4358,
+      "avgMmr": 4562,
       "cards": [
-        {
-          "cid": 4036,
-          "name": "Antiquitoy",
-          "rarity": "Common",
-          "card_key": "antiquitoy",
-          "card_type": "character",
-          "factions": [
-            "Toy"
-          ],
-          "rules_text": "When you buff one or more slots, I get +1/+1.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=antiquitoy__bronze__240.webp",
-          "rarityColor": "#94a3b8"
-        },
         {
           "cid": 4027,
           "name": "Red Paintkin",
@@ -3663,6 +4808,33 @@
           ],
           "rules_text": "Recruit — Paint a slot Red.",
           "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=red_paintkin__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4043,
+          "name": "The Mad Splatter",
+          "rarity": "Uncommon",
+          "card_key": "the_mad_splatter",
+          "card_type": "character",
+          "factions": [
+            "Paintkin",
+            "Villain"
+          ],
+          "rules_text": "Chance Encounter — Paint a random slot a random color.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_mad_splatter__bronze__240.webp",
+          "rarityColor": "#22c55e"
+        },
+        {
+          "cid": 4037,
+          "name": "Van GOGogo",
+          "rarity": "Uncommon",
+          "card_key": "van_gogogo",
+          "card_type": "character",
+          "factions": [
+            "Artist"
+          ],
+          "rules_text": "Quest — Golden another character.\nTreasure Find — Sunflowers",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=van_gogogo__bronze__240.webp",
           "rarityColor": "#22c55e"
         },
         {
@@ -3679,17 +4851,16 @@
           "rarityColor": "#22c55e"
         },
         {
-          "cid": 4019,
-          "name": "Model Elephant",
+          "cid": 4007,
+          "name": "Cherry Bomb",
           "rarity": "Rare",
-          "card_key": "model_elephant",
+          "card_key": "cherry_bomb",
           "card_type": "character",
           "factions": [
-            "Pirate",
-            "Animal"
+            "Paintkin"
           ],
-          "rules_text": "Hunt — Give my slot +1/+1.\nWhen my slot is buffed, give it an additional +2/+2.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=model_elephant__bronze__240.webp",
+          "rules_text": "Farewell — Get a Red Paintbrush.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=cherry_bomb__bronze__240.webp",
           "rarityColor": "#3b82f6"
         },
         {
@@ -3706,6 +4877,33 @@
           "rarityColor": "#3b82f6"
         },
         {
+          "cid": 4049,
+          "name": "Varnish",
+          "rarity": "Rare",
+          "card_key": "varnish",
+          "card_type": "character",
+          "factions": [
+            "Fae"
+          ],
+          "rules_text": "Double the effect of your painted slots.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=varnish__bronze__240.webp",
+          "rarityColor": "#3b82f6"
+        },
+        {
+          "cid": 4010,
+          "name": "Dotty Daughter",
+          "rarity": "Epic",
+          "card_key": "dotty_daughter",
+          "card_type": "character",
+          "factions": [
+            "Animal",
+            "Mage"
+          ],
+          "rules_text": "Blue — When one of your slots gets a buff, double it.",
+          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=dotty_daughter__bronze__240.webp",
+          "rarityColor": "#a855f7"
+        },
+        {
           "cid": 4047,
           "name": "White Rabbit",
           "rarity": "Epic",
@@ -3717,20 +4915,6 @@
           ],
           "rules_text": "Your 'Each Fight' abilities happen  an extra times.",
           "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=white_rabbit__bronze__240.webp",
-          "rarityColor": "#a855f7"
-        },
-        {
-          "cid": 1263,
-          "name": "Wicked Witch",
-          "rarity": "Epic",
-          "card_key": "wicked_witch",
-          "card_type": "character",
-          "factions": [
-            "Mage",
-            "Villain"
-          ],
-          "rules_text": "Ranged\nAfter I attack, reduce that enemy and the ones next to it to 1 Health.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=wicked_witch__bronze__240.webp",
           "rarityColor": "#a855f7"
         },
         {
@@ -3774,48 +4958,21 @@
           "rules_text": "At the start of the game, paint a random slot Blue.\nQuest — Have 5 Blue slots.",
           "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=rocky_the_roller__bronze__240.webp",
           "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 4021,
-          "name": "The Orange Orangutan",
-          "rarity": "Legendary",
-          "card_key": "the_orange_orangutan",
-          "card_type": "character",
-          "factions": [
-            "Animal"
-          ],
-          "rules_text": "Yellow — Each fight, give your slots +10 Attack.\nRed — Each fight, give your slots +10 Health.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=the_orange_orangutan__bronze__240.webp",
-          "rarityColor": "#f59e0b"
-        },
-        {
-          "cid": 1422,
-          "name": "Wormscale Tinkerer",
-          "rarity": "Legendary",
-          "card_key": "wormscale_tinkerer",
-          "card_type": "character",
-          "factions": [
-            "Fae",
-            "Dragon"
-          ],
-          "rules_text": "Treasure Hoard\nEach fight, improve your treasure buffs by +1/+1.",
-          "imageUrl": "https://galaxy-overlay.com/api/get-image.php?file=wormscale_tinkerer__bronze__240.webp",
-          "rarityColor": "#f59e0b"
         }
       ],
       "diffFromDeck1": {
         "removed": [
           {
-            "name": "The Mad Splatter",
-            "rarity": "Uncommon"
+            "name": "Antiquitoy",
+            "rarity": "Common"
+          },
+          {
+            "name": "Model Elephant",
+            "rarity": "Rare"
           },
           {
             "name": "Wishing Fish",
             "rarity": "Rare"
-          },
-          {
-            "name": "Dotty Daughter",
-            "rarity": "Epic"
           },
           {
             "name": "Owlabaster",
@@ -3824,28 +4981,28 @@
         ],
         "added": [
           {
+            "name": "Van GOGogo",
+            "rarity": "Uncommon"
+          },
+          {
+            "name": "Cherry Bomb",
+            "rarity": "Rare"
+          },
+          {
             "name": "Splat",
             "rarity": "Rare"
           },
           {
-            "name": "Wicked Witch",
-            "rarity": "Epic"
-          },
-          {
-            "name": "The Orange Orangutan",
-            "rarity": "Legendary"
-          },
-          {
-            "name": "Wormscale Tinkerer",
-            "rarity": "Legendary"
+            "name": "Varnish",
+            "rarity": "Rare"
           }
         ]
       }
     },
     {
-      "rank": 15,
+      "rank": 20,
       "count": 1,
-      "metaShare": 0.9,
+      "metaShare": 0.6,
       "avgPlacement": 6,
       "winRate1st": 0,
       "top3Rate": 0,
@@ -4072,9 +5229,9 @@
       }
     },
     {
-      "rank": 16,
+      "rank": 21,
       "count": 1,
-      "metaShare": 0.9,
+      "metaShare": 0.6,
       "avgPlacement": 4,
       "winRate1st": 0,
       "top3Rate": 0,
@@ -4294,9 +5451,9 @@
       }
     },
     {
-      "rank": 17,
+      "rank": 22,
       "count": 1,
-      "metaShare": 0.9,
+      "metaShare": 0.6,
       "avgPlacement": 4,
       "winRate1st": 0,
       "top3Rate": 0,
@@ -4520,9 +5677,9 @@
       }
     },
     {
-      "rank": 18,
+      "rank": 23,
       "count": 1,
-      "metaShare": 0.9,
+      "metaShare": 0.6,
       "avgPlacement": 5,
       "winRate1st": 0,
       "top3Rate": 0,
@@ -4716,9 +5873,9 @@
       }
     },
     {
-      "rank": 19,
+      "rank": 24,
       "count": 1,
-      "metaShare": 0.9,
+      "metaShare": 0.6,
       "avgPlacement": 2,
       "winRate1st": 0,
       "top3Rate": 100,
@@ -4940,9 +6097,9 @@
       }
     },
     {
-      "rank": 20,
+      "rank": 25,
       "count": 1,
-      "metaShare": 0.9,
+      "metaShare": 0.6,
       "avgPlacement": 1,
       "winRate1st": 100,
       "top3Rate": 100,
