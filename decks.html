@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=1.0.17">
+  <link rel="stylesheet" href="styles.css?v=1.0.18">
   <style>
     :root {
       --bg-color: #0c0f14;
@@ -76,18 +76,7 @@
     }
 
     /* Navbar */
-    .navbar {
-      padding: 1.5rem 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(12, 15, 20, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--glass-border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+    
     .logo {
       font-size: 1.5rem;
       font-weight: 800;
@@ -95,26 +84,11 @@
       text-decoration: none;
       color: inherit;
     }
-    .logo span { color: var(--accent-primary); }
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 15px;
-      transition: color 0.2s ease;
-    }
-    .nav-links a:hover { color: var(--text-main); }
-    .nav-links a.active {
-      color: var(--accent-cyan);
-      border-bottom: 2px solid var(--accent-cyan);
-      padding-bottom: 4px;
-    }
+    
+    
+    
+    
+    
 
     /* Main Container */
     .main-hub {
@@ -511,7 +485,7 @@
   </div>
 
   <!-- Navigation -->
-  <nav class="navbar">
+    <nav class="navbar">
     <a href="index.html" class="logo">Galaxy<span>Tracker</span></a>
     <div class="nav-links">
       <a href="index.html">Home</a>

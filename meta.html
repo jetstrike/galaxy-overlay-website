@@ -29,31 +29,11 @@
                 radial-gradient(circle at 85% 30%, rgba(255, 0, 127, 0.05) 0%, transparent 50%);
         }
 
-        .navbar {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        
 
-        .logo span {
-            color: var(--text-main);
-            -webkit-text-fill-color: var(--text-main);
-        }
+        
 
         .meta-dashboard {
             max-width: 1200px;
@@ -242,18 +222,19 @@
             to { transform: rotate(360deg); }
         }
     </style>
+  <link rel="stylesheet" href="styles.css?v=1.0.18">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">Galaxy<span>Tracker</span></div>
-        <div class="nav-links" style="display: flex; gap: 2rem;">
-            <a href="index.html" style="color: var(--text-main); text-decoration: none; font-weight: 600;">Home</a>
-            <a href="meta.html" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">Meta Insights</a>
-            <a href="tierlist.html" style="color: var(--text-main); text-decoration: none; font-weight: 600;">Auto Tier List</a>
-            <a href="decks.html" style="color: var(--text-main); text-decoration: none; font-weight: 600;">Meta Deck Analysis</a>
-            <a href="turns.html" style="color: var(--text-main); text-decoration: none; font-weight: 600;">Turn Breakdowns</a>
-        </div>
-    </nav>
+      <nav class="navbar">
+    <a href="index.html" class="logo">Galaxy<span>Tracker</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="meta.html" class="active">Meta Insights</a>
+      <a href="tierlist.html">Auto Tier List</a>
+      <a href="decks.html">Meta Deck Analysis</a>
+      <a href="turns.html">Turn Breakdowns</a>
+    </div>
+  </nav>
 
     <main class="meta-dashboard">
         <div class="stats-header">
