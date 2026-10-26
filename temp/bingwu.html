@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bing Wu Turn 9 Board Analysis (All PlayFab Games)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --border: #1e293b;
+      --border-accent: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --tier-bronze: #b4733c;
+      --tier-silver: #94a3b8;
+      --tier-golden: #f59e0b;
+      --buff-green: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; line-height: 1.5; padding-bottom: 80px; }
+    .container { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+    
+    /* Header */
+    .hero-banner { background: linear-gradient(135deg, rgba(14, 116, 144, 0.4) 0%, rgba(15, 23, 42, 0.95) 50%, rgba(10, 14, 23, 1) 100%); border-bottom: 1px solid var(--border); padding: 40px 0; }
+    .hero-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+    .hero-title h1 { font-size: 34px; font-weight: 900; letter-spacing: -0.02em; }
+    .hero-title .subtitle { font-size: 14px; color: var(--accent-cyan); font-weight: 600; margin-top: 4px; }
+    .hero-desc { color: var(--text-muted); font-size: 13px; margin-top: 8px; max-width: 680px; }
+    
+    /* Stat grid */
+    .stat-quick-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 28px 0; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; text-align: center; }
+    .stat-val { font-size: 26px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: #fff; }
+    .stat-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+    
+    /* Slot Averages */
+    .section-title { font-size: 20px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .slot-averages-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; }
+    .slot-avg-card { background: rgba(17, 24, 39, 0.7); border: 1px solid var(--border); border-radius: 12px; padding: 14px; position: relative; }
+    .slot-avg-card.top-slot { border-color: rgba(6, 182, 212, 0.5); box-shadow: 0 0 15px rgba(6, 182, 212, 0.15); }
+    .slot-avg-num { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 6px; }
+    .slot-avg-stat { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #f8fafc; }
+    .slot-avg-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .slot-avg-buff { color: var(--buff-green); font-weight: 600; font-size: 11px; }
+    .slot-avg-units { margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; font-size: 10px; color: #94a3b8; }
+    .slot-avg-units div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Controls bar */
+    .controls-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .filter-group { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .search-input { background: #0f172a; border: 1px solid var(--border-accent); border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 13px; min-width: 260px; outline: none; }
+    .search-input:focus { border-color: var(--accent-cyan); }
+    .select-control { background: #0f172a; border: 1px solid var(--border-accent); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; cursor: pointer; }
+    .match-count-badge { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent-cyan); }
+
+    /* Board list */
+    .games-list { display: flex; flex-direction: column; gap: 18px; }
+    .game-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; transition: border-color 0.2s; }
+    .game-card:hover { border-color: var(--border-accent); }
+    .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+    .game-meta { display: flex; align-items: center; gap: 10px; }
+    .place-badge { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px; }
+    .place-1 { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; }
+    .place-2 { background: rgba(148, 163, 184, 0.2); border: 1px solid rgba(148, 163, 184, 0.4); color: #cbd5e1; }
+    .place-3 { background: rgba(180, 115, 60, 0.2); border: 1px solid rgba(180, 115, 60, 0.4); color: #f97316; }
+    .place-other { background: rgba(71, 85, 105, 0.2); border: 1px solid rgba(71, 85, 105, 0.4); color: #94a3b8; }
+    .player-name { font-weight: 700; font-size: 14px; color: #fff; }
+    .game-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); }
+    .game-stats-pill { display: flex; gap: 8px; align-items: center; }
+    .board-total-tag { background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800; padding: 4px 10px; border-radius: 6px; }
+    .slot-buff-tag { background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
+
+    /* Slots row */
+    .slots-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .slot-box { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; }
+    .slot-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .slot-tag { font-size: 10px; font-weight: 800; color: #64748b; }
+    .tier-badge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 4px; text-transform: uppercase; }
+    .tier-1 { background: rgba(180, 115, 60, 0.25); color: #d97706; }
+    .tier-2 { background: rgba(200, 220, 245, 0.25); color: #cbd5e1; }
+    .tier-3 { background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .unit-title { font-size: 12px; font-weight: 700; color: #f1f5f9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px; }
+    .slot-metrics { margin-top: auto; display: flex; flex-direction: column; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    .stat-row { display: flex; justify-content: space-between; align-items: center; }
+    .stat-row-lbl { color: var(--text-muted); font-size: 10px; font-family: 'Inter', sans-serif; }
+    .stat-row-val { font-weight: 700; }
+    .stat-final { color: #f8fafc; font-weight: 800; }
+    .stat-buff { color: var(--buff-green); font-size: 10px; }
+
+    /* Pagination */
+    .pagination-bar { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 36px; }
+    .page-btn { background: #0f172a; border: 1px solid var(--border-accent); color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .page-btn:hover:not(:disabled) { border-color: var(--accent-cyan); }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-info { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+
+    @media (max-width: 1024px) {
+      .slot-averages-grid, .slots-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .slot-averages-grid, .slots-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Background Orbs */
+    .background-effects {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.25;
+      animation: float 14s infinite alternate ease-in-out;
+    }
+    .glow-orb.primary {
+      top: -10%; right: -5%;
+      width: 550px; height: 550px;
+      background: var(--accent-cyan);
+    }
+    .glow-orb.secondary {
+      bottom: -15%; left: -10%;
+      width: 650px; height: 650px;
+      background: var(--accent-purple);
+      animation-delay: -6s;
+    }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 40px) scale(1.08); }
+    }
+
+    /* Navbar */
+    .navbar {
+      padding: 1.25rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(12, 15, 20, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo span { color: var(--accent-cyan); }
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #fff; }
+
+  </style>
+</head>
+<body>
+
+  <div class="background-effects">
+    <div class="glow-orb primary"></div>
+    <div class="glow-orb secondary"></div>
+  </div>
+
+  <nav class="navbar">
+    <a href="/" class="logo">Galaxy<span>Tracker</span></a>
+    <div class="nav-links">
+      <a href="/meta.html">Meta Analytics</a>
+      <a href="/decks.html">Meta Decks</a>
+      <a href="/tierlist.html">Tier List</a>
+      <a href="/captain.html">Captains</a>
+      <a href="/guide.html">Guides</a>
+    </div>
+  </nav>
+
+  <div class="hero-banner">
+    <div class="container hero-content">
+      <div class="hero-title">
+        <h1>Bing Wu Turn 9 Board Analysis</h1>
+        <div class="subtitle">Complete Dataset from PlayFab Database matches</div>
+        <div class="hero-desc">
+          Breakdown of unit placements, slot buffs, and total combat stats for all 5 board slots on Turn 9 across 9,682 unique Bing Wu games.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Macro KPIs -->
+    <div class="stat-quick-grid">
+      <div class="stat-card">
+        <div class="stat-val" id="kpi-total-games">9,682</div>
+        <div class="stat-lbl">Games Reaching Turn 9</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #38bdf8;" id="kpi-avg-stats">816.8</div>
+        <div class="stat-lbl">Average Board Stats</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #a78bfa;" id="kpi-median-stats">609.0</div>
+        <div class="stat-lbl">Median Board Stats</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #4ade80;" id="kpi-p90-stats">1,401</div>
+        <div class="stat-lbl">90th Percentile Stats</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #fbbf24;" id="kpi-win-rate">74.6%</div>
+        <div class="stat-lbl">Turn 9 1st-Place Rate</div>
+      </div>
+    </div>
+
+    <!-- Slot Averages Grid -->
+    <div class="section-title">⚡ Average Slot Breakdown (Turn 9)</div>
+    <div class="slot-averages-grid">
+      <div class="slot-avg-card top-slot">
+        <div class="slot-avg-num">Slot 1 (Anchor Slot)</div>
+        <div class="slot-avg-stat">218.7 Total</div>
+        <div class="slot-avg-sub">113.3 Atk / 105.4 Hp</div>
+        <div class="slot-avg-buff">+52.1 / +50.2 Slot Buff</div>
+        <div class="slot-avg-units">
+          <div>• Model Elephant (8.7%)</div>
+          <div>• Plunder Penny (8.7%)</div>
+          <div>• Owlabaster (4.6%)</div>
+        </div>
+      </div>
+      <div class="slot-avg-card">
+        <div class="slot-avg-num">Slot 2</div>
+        <div class="slot-avg-stat">162.1 Total</div>
+        <div class="slot-avg-sub">82.6 Atk / 79.5 Hp</div>
+        <div class="slot-avg-buff">+30.8 / +30.6 Slot Buff</div>
+        <div class="slot-avg-units">
+          <div>• Owlabaster (9.4%)</div>
+          <div>• Purrfectioneer (6.4%)</div>
+          <div>• Mana Potion (4.8%)</div>
+        </div>
+      </div>
+      <div class="slot-avg-card">
+        <div class="slot-avg-num">Slot 3</div>
+        <div class="slot-avg-stat">154.4 Total</div>
+        <div class="slot-avg-sub">77.8 Atk / 76.6 Hp</div>
+        <div class="slot-avg-buff">+28.3 / +28.0 Slot Buff</div>
+        <div class="slot-avg-units">
+          <div>• Owlabaster (9.1%)</div>
+          <div>• Purrfectioneer (6.6%)</div>
+          <div>• Slappy (4.1%)</div>
+        </div>
+      </div>
+      <div class="slot-avg-card">
+        <div class="slot-avg-num">Slot 4</div>
+        <div class="slot-avg-stat">139.5 Total</div>
+        <div class="slot-avg-sub">71.4 Atk / 68.1 Hp</div>
+        <div class="slot-avg-buff">+26.6 / +26.3 Slot Buff</div>
+        <div class="slot-avg-units">
+          <div>• Owlabaster (8.5%)</div>
+          <div>• Boon Willow (6.3%)</div>
+          <div>• Purrfectioneer (5.3%)</div>
+        </div>
+      </div>
+      <div class="slot-avg-card">
+        <div class="slot-avg-num">Slot 5</div>
+        <div class="slot-avg-stat">142.1 Total</div>
+        <div class="slot-avg-sub">71.9 Atk / 70.2 Hp</div>
+        <div class="slot-avg-buff">+25.7 / +25.7 Slot Buff</div>
+        <div class="slot-avg-units">
+          <div>• Owlabaster (9.2%)</div>
+          <div>• Purrfectioneer (6.6%)</div>
+          <div>• Boon Willow (4.7%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-panel">
+      <div class="filter-group">
+        <input type="text" id="search-box" class="search-input" placeholder="Search player or unit (e.g. Elephant)..." />
+        <select id="filter-placement" class="select-control">
+          <option value="all">All Placements</option>
+          <option value="1">1st Place Only</option>
+          <option value="top3">Top 3 Only</option>
+          <option value="2">2nd Place</option>
+          <option value="3">3rd Place</option>
+          <option value="4+">4th Place & Below</option>
+        </select>
+        <select id="filter-mmr" class="select-control">
+          <option value="all">All MMRs</option>
+          <option value="4000">4000+ MMR</option>
+          <option value="3500">3500+ MMR</option>
+          <option value="3000">3000+ MMR</option>
+        </select>
+        <select id="sort-by" class="select-control">
+          <option value="stats-desc">Stats: High to Low</option>
+          <option value="stats-asc">Stats: Low to High</option>
+          <option value="place-asc">Placement: 1st to 8th</option>
+          <option value="mmr-desc">MMR: High to Low</option>
+        </select>
+      </div>
+      <div class="match-count-badge" id="filtered-count">Showing 0 matches</div>
+    </div>
+
+    <!-- Games Container -->
+    <div class="games-list" id="games-container">
+      <div style="text-align: center; padding: 40px; color: var(--text-muted);">Loading boards...</div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar">
+      <button class="page-btn" id="btn-prev" onclick="changePage(-1)">← Previous</button>
+      <div class="page-info" id="page-display">Page 1 / 1</div>
+      <button class="page-btn" id="btn-next" onclick="changePage(1)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Load dataset -->
+  <script src="/temp/bing_wu_turn9_compact.js"></script>
+  <script>
+    if (!window.BING_WU_GAMES) {
+      document.write('<script src="bing_wu_turn9_compact.js"><\/script>');
+    }
+  </script>
+  <script>
+    let allGames = window.BING_WU_GAMES || [];
+    let filteredGames = [];
+    let currentPage = 1;
+    const pageSize = 50;
+
+    const tierLabels = { 1: 'Bronze', 2: 'Silver', 3: 'Golden' };
+
+    function init() {
+      applyFilters();
+
+      document.getElementById('search-box').addEventListener('input', () => { currentPage = 1; applyFilters(); });
+      document.getElementById('filter-placement').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+      document.getElementById('filter-mmr').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+      document.getElementById('sort-by').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('search-box').value.toLowerCase().trim();
+      const placeFilter = document.getElementById('filter-placement').value;
+      const mmrFilter = document.getElementById('filter-mmr').value;
+      const sortBy = document.getElementById('sort-by').value;
+
+      filteredGames = allGames.filter(g => {
+        // g format: [run_id, player_name, placement, mmr, total_stats, slot_buffs_total, slots_array]
+        const runId = g[0];
+        const player = (g[1] || '').toLowerCase();
+        const place = g[2];
+        const mmr = g[3] || 0;
+        const slots = g[6];
+
+        if (placeFilter === '1' && place !== 1) return false;
+        if (placeFilter === 'top3' && (place === null || place > 3)) return false;
+        if (placeFilter === '2' && place !== 2) return false;
+        if (placeFilter === '3' && place !== 3) return false;
+        if (placeFilter === '4+' && (place === null || place < 4)) return false;
+
+        if (mmrFilter === '4000' && mmr < 4000) return false;
+        if (mmrFilter === '3500' && mmr < 3500) return false;
+        if (mmrFilter === '3000' && mmr < 3000) return false;
+
+        if (query) {
+          const matchPlayer = player.includes(query);
+          const matchId = runId.toLowerCase().includes(query);
+          const matchUnit = slots.some(s => (s[0] || '').toLowerCase().includes(query));
+          if (!matchPlayer && !matchId && !matchUnit) return false;
+        }
+
+        return true;
+      });
+
+      // Sort
+      if (sortBy === 'stats-desc') {
+        filteredGames.sort((a, b) => b[4] - a[4]);
+      } else if (sortBy === 'stats-asc') {
+        filteredGames.sort((a, b) => a[4] - b[4]);
+      } else if (sortBy === 'place-asc') {
+        filteredGames.sort((a, b) => (a[2] || 99) - (b[2] || 99));
+      } else if (sortBy === 'mmr-desc') {
+        filteredGames.sort((a, b) => (b[3] || 0) - (a[3] || 0));
+      }
+
+      renderList();
+    }
+
+    function renderList() {
+      const container = document.getElementById('games-container');
+      const countEl = document.getElementById('filtered-count');
+      const totalFiltered = filteredGames.length;
+      countEl.textContent = `Showing ${totalFiltered.toLocaleString()} matches`;
+
+      const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      document.getElementById('page-display').textContent = `Page ${currentPage} / ${totalPages}`;
+      document.getElementById('btn-prev').disabled = currentPage <= 1;
+      document.getElementById('btn-next').disabled = currentPage >= totalPages;
+
+      if (totalFiltered === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">No matches found matching filter criteria.</div>';
+        return;
+      }
+
+      const startIdx = (currentPage - 1) * pageSize;
+      const pageItems = filteredGames.slice(startIdx, startIdx + pageSize);
+
+      let html = '';
+      for (const g of pageItems) {
+        // [run_id, player_name, placement, mmr, total_stats, slot_buffs_total, slots_array]
+        const runId = g[0];
+        const player = g[1];
+        const place = g[2];
+        const mmr = g[3];
+        const totalStats = g[4];
+        const slotBuffsTotal = g[5];
+        const slots = g[6];
+
+        let placeClass = 'place-other';
+        if (place === 1) placeClass = 'place-1';
+        else if (place === 2) placeClass = 'place-2';
+        else if (place === 3) placeClass = 'place-3';
+
+        const placeText = place ? `${place}${getOrdinal(place)} Place` : 'Place ?';
+        const mmrText = mmr ? `${mmr} MMR` : 'Unrated';
+
+        let slotsHtml = '';
+        slots.forEach((s, idx) => {
+          // s format: [name, tier, slot_atk, slot_hp, final_atk, final_hp, total_slot_stats, card_key]
+          const unitName = s[0];
+          const tier = s[1];
+          const slotAtk = s[2];
+          const slotHp = s[3];
+          const finalAtk = s[4];
+          const finalHp = s[5];
+          const totalSlotStats = s[6];
+
+          const tierClass = `tier-${tier}`;
+          const tierName = tierLabels[tier] || `Tier ${tier}`;
+
+          slotsHtml += `
+            <div class="slot-box">
+              <div>
+                <div class="slot-head">
+                  <span class="slot-tag">SLOT ${idx + 1}</span>
+                  <span class="tier-badge ${tierClass}">${tierName}</span>
+                </div>
+                <div class="unit-title" title="${unitName}">${unitName}</div>
+              </div>
+              <div class="slot-metrics">
+                <div class="stat-row">
+                  <span class="stat-row-lbl">Slot Buff:</span>
+                  <span class="stat-buff">+${slotAtk}/+${slotHp}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-row-lbl">Final:</span>
+                  <span class="stat-final">${finalAtk}/${finalHp}</span>
+                </div>
+                <div class="stat-row" style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 2px; margin-top: 2px;">
+                  <span class="stat-row-lbl">Total:</span>
+                  <span style="color: #38bdf8; font-weight: 800;">${totalSlotStats}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+          <div class="game-card">
+            <div class="game-header">
+              <div class="game-meta">
+                <span class="place-badge ${placeClass}">${placeText}</span>
+                <span class="player-name">${escapeHtml(player)}</span>
+                <span class="game-id">${escapeHtml(runId)}</span>
+                <span style="color: var(--text-muted); font-size: 11px;">• ${mmrText}</span>
+              </div>
+              <div class="game-stats-pill">
+                <span class="slot-buff-tag">Slot Buffs: +${slotBuffsTotal}</span>
+                <span class="board-total-tag">Turn 9 Total: ${totalStats}</span>
+              </div>
+            </div>
+            <div class="slots-grid">
+              ${slotsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function changePage(delta) {
+      currentPage += delta;
+      renderList();
+      window.scrollTo({ top: document.querySelector('.controls-panel').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function getOrdinal(n) {
+      const s = ["th", "st", "nd", "rd"];
+      const v = n % 100;
+      return s[(v - 20) % 10] || s[v] || s[0];
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
