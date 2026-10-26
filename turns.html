@@ -99,11 +99,21 @@
     .select-control { background: #0f172a; border: 1px solid var(--border-accent); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; cursor: pointer; }
     .match-count-badge { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent-cyan); }
 
-    /* Captains Grid */
+    /* Captains Grid (3 columns) */
     .captains-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
+    }
+    @media (max-width: 1050px) {
+      .captains-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 650px) {
+      .captains-grid {
+        grid-template-columns: 1fr;
+      }
     }
     .captain-card {
       background: var(--bg-card);
