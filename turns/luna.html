@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Luna Multi-Turn Board Analysis | Galaxy Tracker</title>
-  <meta name="description" content="Explore Luna board states, unit frequencies, slot buffs, and stat progression across turns 3, 5, 7, 9.">
+  <meta name="description" content="Explore Luna board states, unit frequencies, slot buffs, and stat progression across turns 3, 5, 7, 9, 11.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=1.0.18">
   <style>
     :root {
       --bg-dark: #0a0e17;
@@ -57,14 +58,6 @@
       0% { transform: translate(0, 0) scale(1); }
       100% { transform: translate(40px, 40px) scale(1.08); }
     }
-
-    /* Navbar */
-    
-    
-    
-    
-    
-    
 
     /* Breadcrumbs */
     .breadcrumb-bar {
@@ -270,7 +263,6 @@
       .hero-content { flex-direction: column; align-items: flex-start; }
     }
   </style>
-  <link rel="stylesheet" href="../styles.css?v=1.0.18">
 </head>
 <body>
   
@@ -280,7 +272,7 @@
   </div>
 
   
-    <nav class="navbar">
+  <nav class="navbar">
     <a href="../index.html" class="logo">Galaxy<span>Tracker</span></a>
     <div class="nav-links">
       <a href="../index.html">Home</a>
@@ -321,7 +313,8 @@
           <button class="turn-tab-btn " data-turn="3" onclick="switchGlobalTurn(3)">Turn 3</button>
 <button class="turn-tab-btn " data-turn="5" onclick="switchGlobalTurn(5)">Turn 5</button>
 <button class="turn-tab-btn " data-turn="7" onclick="switchGlobalTurn(7)">Turn 7</button>
-<button class="turn-tab-btn active" data-turn="9" onclick="switchGlobalTurn(9)">Turn 9</button>
+<button class="turn-tab-btn " data-turn="9" onclick="switchGlobalTurn(9)">Turn 9</button>
+<button class="turn-tab-btn active" data-turn="11" onclick="switchGlobalTurn(11)">Turn 11</button>
 
         </div>
       </div>
@@ -336,7 +329,7 @@
 
     <!-- Slot Averages -->
     <div class="section-title">
-      <span>Slot Stat Averages & Top Frequent Units (<span id="active-turn-slot-label">Turn 9</span>)</span>
+      <span>Slot Stat Averages & Top Frequent Units (<span id="active-turn-slot-label">Turn 11</span>)</span>
     </div>
     <div class="slot-averages-grid" id="slot-averages-container">
       <!-- Populated dynamically based on active turn -->
@@ -386,7 +379,7 @@
   <!-- Load Multi-Turn Dataset -->
   <script src="luna_compact.js"></script>
   <script>
-    let targetTurns = [3, 5, 7, 9];
+    let targetTurns = [3, 5, 7, 9, 11];
     let activeGlobalTurn = targetTurns[targetTurns.length - 1];
     let allGames = window.CAPTAIN_GAMES || [];
     let unitsList = window.CAPTAIN_UNITS || [];
