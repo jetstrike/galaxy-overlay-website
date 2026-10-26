@@ -112,12 +112,12 @@
     .hero-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
     .hero-left { display: flex; align-items: center; gap: 24px; }
     .captain-portrait-frame {
-      width: 100px;
-      height: 100px;
-      border-radius: 18px;
+      width: 96px;
+      height: 144px;
+      border-radius: 12px;
       overflow: hidden;
       border: 2px solid rgba(6, 182, 212, 0.5);
-      box-shadow: 0 0 25px rgba(6, 182, 212, 0.25);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.25);
       background: #0f172a;
       flex-shrink: 0;
     }
@@ -125,6 +125,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
     .hero-title h1 { font-size: 32px; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
     .hero-title .subtitle { font-size: 13px; color: var(--accent-cyan); font-weight: 700; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -325,7 +326,7 @@
       <div class="hero-content">
         <div class="hero-left">
           <div class="captain-portrait-frame">
-            <img src="https://galaxy-overlay.com/api/get-image.php?file=dracusmagus__bronze__240.webp" alt="Dracusmagus" onerror="this.src='/assets/captain-placeholder.webp'" />
+            <img src="https://galaxy-overlay.com/api/get-image.php?file=dracusmagus__default__240.webp" alt="Dracusmagus" onerror="this.style.opacity='0'" />
           </div>
           <div class="hero-title">
             <div class="subtitle">Once Upon a Galaxy • Captain Deep-Dive</div>
