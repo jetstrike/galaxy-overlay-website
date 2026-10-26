@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Captain Turn Breakdowns | Once Upon a Galaxy Tracker</title>
+  <meta name="description" content="Explore board compositions, stat scaling, unit frequencies, and slot buffs across Turns 3, 5, 7, and 9 for all Once Upon a Galaxy captains.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #162032;
+      --border: #1e293b;
+      --border-accent: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --buff-green: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; line-height: 1.5; padding-bottom: 80px; min-height: 100vh; }
+    .container { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+    
+    .background-effects {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.25;
+      animation: float 14s infinite alternate ease-in-out;
+    }
+    .glow-orb.primary {
+      top: -10%; right: -5%;
+      width: 550px; height: 550px;
+      background: var(--accent-cyan);
+    }
+    .glow-orb.secondary {
+      bottom: -15%; left: -10%;
+      width: 650px; height: 650px;
+      background: var(--accent-purple);
+      animation-delay: -6s;
+    }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 40px) scale(1.08); }
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 32px;
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar .logo {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .navbar .logo span { color: var(--accent-cyan); }
+    .navbar .nav-links { display: flex; gap: 24px; }
+    .navbar .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .navbar .nav-links a:hover, .navbar .nav-links a.active { color: #fff; }
+
+    /* Hero Banner */
+    .hero-banner { 
+      background: linear-gradient(135deg, rgba(14, 116, 144, 0.45) 0%, rgba(15, 23, 42, 0.95) 55%, rgba(10, 14, 23, 1) 100%); 
+      border-bottom: 1px solid var(--border); 
+      padding: 44px 0 36px 0; 
+      position: relative;
+    }
+    .hero-title h1 { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+    .hero-title .subtitle { font-size: 13px; color: var(--accent-cyan); font-weight: 700; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .hero-desc { color: var(--text-muted); font-size: 14px; margin-top: 10px; max-width: 720px; }
+
+    /* Controls bar */
+    .controls-panel { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border); 
+      border-radius: 14px; 
+      padding: 16px 20px; 
+      margin: 28px 0; 
+      display: flex; 
+      gap: 16px; 
+      flex-wrap: wrap; 
+      align-items: center; 
+      justify-content: space-between; 
+    }
+    .filter-group { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .search-input { background: #0f172a; border: 1px solid var(--border-accent); border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 13px; min-width: 280px; outline: none; }
+    .search-input:focus { border-color: var(--accent-cyan); }
+    .select-control { background: #0f172a; border: 1px solid var(--border-accent); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; cursor: pointer; }
+    .match-count-badge { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent-cyan); }
+
+    /* Captains Grid */
+    .captains-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .captain-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .captain-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(6, 182, 212, 0.4);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      background: var(--bg-card-hover);
+    }
+    .captain-card-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .cap-thumb-frame {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(6, 182, 212, 0.3);
+      background: #0f172a;
+      flex-shrink: 0;
+    }
+    .cap-thumb-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cap-info { flex: 1; overflow: hidden; }
+    .cap-name { font-size: 16px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cap-matches { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-cyan); font-weight: 700; margin-top: 2px; }
+
+    .cap-metrics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 12px;
+    }
+    .metric-cell {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .metric-val {
+      font-size: 16px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+    }
+    .metric-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+    .view-link-btn {
+      margin-top: 12px;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-cyan);
+      text-align: center;
+      padding: 7px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: background 0.15s;
+    }
+    .captain-card:hover .view-link-btn {
+      background: var(--accent-cyan);
+      color: #042f2e;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="background-effects">
+    <div class="glow-orb primary"></div>
+    <div class="glow-orb secondary"></div>
+  </div>
+
+  
+  <nav class="navbar">
+    <a href="index.html" class="logo">Galaxy<span>Tracker</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="meta.html">Meta Insights</a>
+      <a href="tierlist.html">Auto Tier List</a>
+      <a href="decks.html">Meta Deck Analysis</a>
+      <a href="turns.html" class="active">Turn Breakdowns</a>
+    </div>
+  </nav>
+
+
+  <div class="hero-banner">
+    <div class="container">
+      <div class="hero-title">
+        <div class="subtitle">Once Upon a Galaxy • Analytics Hub</div>
+        <h1>Captain Turn Breakdowns</h1>
+        <div class="hero-desc">
+          Compare board development, unit frequencies, slot buffs, and stat progression across Turns 3, 5, 7, and 9 for all captains. Select any captain below to view their interactive multi-turn dashboard.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="controls-panel">
+      <div class="filter-group">
+        <input type="text" id="captain-search" class="search-input" placeholder="Search captains (e.g. Bing Wu, Dorothy, Hades)..." />
+        <select id="captain-sort" class="select-control">
+          <option value="matches-desc">Most Matches Analyzed</option>
+          <option value="stats-desc">Highest Turn 9 Board Stats</option>
+          <option value="name-asc">Alphabetical (A - Z)</option>
+        </select>
+      </div>
+      <div class="match-count-badge" id="captains-count-badge">Showing 0 Captains</div>
+    </div>
+
+    <div class="captains-grid" id="captains-container">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <script>
+    let allCaptains = [{"cid": 1001, "name": "Wizard Headmaster", "card_key": "wizard_headmaster", "slug": "wizard_headmaster", "total_matches": 740, "turn9_avg_stats": 611.4, "turn9_avg_buffs": 92.9, "page_url": "turns/wizard_headmaster.html"}, {"cid": 1002, "name": "Athena", "card_key": "athena", "slug": "athena", "total_matches": 348, "turn9_avg_stats": 281.3, "turn9_avg_buffs": 42.9, "page_url": "turns/athena.html"}, {"cid": 1005, "name": "Chief Evil Officer", "card_key": "chief_evil_officer", "slug": "chief_evil_officer", "total_matches": 411, "turn9_avg_stats": 283.4, "turn9_avg_buffs": 44.6, "page_url": "turns/chief_evil_officer.html"}, {"cid": 1006, "name": "CHUK-E", "card_key": "chuk_e", "slug": "chuk_e", "total_matches": 314, "turn9_avg_stats": 184.1, "turn9_avg_buffs": 25.5, "page_url": "turns/chuk_e.html"}, {"cid": 1007, "name": "Dorothy", "card_key": "dorothy", "slug": "dorothy", "total_matches": 763, "turn9_avg_stats": 303.9, "turn9_avg_buffs": 68.4, "page_url": "turns/dorothy.html"}, {"cid": 1008, "name": "Dr. Agon", "card_key": "dr_agon", "slug": "dr_agon", "total_matches": 688, "turn9_avg_stats": 346.7, "turn9_avg_buffs": 56.3, "page_url": "turns/dr_agon.html"}, {"cid": 1009, "name": "Dungeon Master", "card_key": "dungeon_master", "slug": "dungeon_master", "total_matches": 733, "turn9_avg_stats": 299.8, "turn9_avg_buffs": 67.3, "page_url": "turns/dungeon_master.html"}, {"cid": 1010, "name": "Hades", "card_key": "hades", "slug": "hades", "total_matches": 484, "turn9_avg_stats": 379.2, "turn9_avg_buffs": 50.2, "page_url": "turns/hades.html"}, {"cid": 1011, "name": "Indiana Clones", "card_key": "indiana_clones", "slug": "indiana_clones", "total_matches": 971, "turn9_avg_stats": 337.5, "turn9_avg_buffs": 54.4, "page_url": "turns/indiana_clones.html"}, {"cid": 1012, "name": "Jay Sparrow", "card_key": "jay_sparrow", "slug": "jay_sparrow", "total_matches": 1426, "turn9_avg_stats": 857.2, "turn9_avg_buffs": 79.7, "page_url": "turns/jay_sparrow.html"}, {"cid": 1013, "name": "King Arthur", "card_key": "king_arthur", "slug": "king_arthur", "total_matches": 465, "turn9_avg_stats": 280.0, "turn9_avg_buffs": 42.4, "page_url": "turns/king_arthur.html"}, {"cid": 1014, "name": "King Midas", "card_key": "king_midas", "slug": "king_midas", "total_matches": 963, "turn9_avg_stats": 285.4, "turn9_avg_buffs": 60.3, "page_url": "turns/king_midas.html"}, {"cid": 1015, "name": "Lil' Genie", "card_key": "lil_genie", "slug": "lil_genie", "total_matches": 467, "turn9_avg_stats": 386.4, "turn9_avg_buffs": 50.3, "page_url": "turns/lil_genie.html"}, {"cid": 1016, "name": "Professor Who's Who", "card_key": "professor_whos_who", "slug": "professor_whos_who", "total_matches": 605, "turn9_avg_stats": 441.9, "turn9_avg_buffs": 88.5, "page_url": "turns/professor_whos_who.html"}, {"cid": 1017, "name": "Melody", "card_key": "melody", "slug": "melody", "total_matches": 584, "turn9_avg_stats": 392.9, "turn9_avg_buffs": 78.8, "page_url": "turns/melody.html"}, {"cid": 1019, "name": "Princess Animall", "card_key": "princess_animall", "slug": "princess_animall", "total_matches": 471, "turn9_avg_stats": 362.5, "turn9_avg_buffs": 141.7, "page_url": "turns/princess_animall.html"}, {"cid": 1020, "name": "Loki", "card_key": "loki", "slug": "loki", "total_matches": 731, "turn9_avg_stats": 476.4, "turn9_avg_buffs": 146.2, "page_url": "turns/loki.html"}, {"cid": 1022, "name": "Skip, the Time Skipper", "card_key": "skip_the_time_skipper", "slug": "skip_the_time_skipper", "total_matches": 707, "turn9_avg_stats": 370.6, "turn9_avg_buffs": 93.4, "page_url": "turns/skip_the_time_skipper.html"}, {"cid": 1023, "name": "The Collector", "card_key": "the_collector", "slug": "the_collector", "total_matches": 693, "turn9_avg_stats": 306.0, "turn9_avg_buffs": 35.4, "page_url": "turns/the_collector.html"}, {"cid": 1024, "name": "This Little Piggie", "card_key": "this_little_piggie", "slug": "this_little_piggie", "total_matches": 422, "turn9_avg_stats": 398.2, "turn9_avg_buffs": 69.9, "page_url": "turns/this_little_piggie.html"}, {"cid": 1025, "name": "Thing in the Ice", "card_key": "thing_in_the_ice", "slug": "thing_in_the_ice", "total_matches": 897, "turn9_avg_stats": 369.2, "turn9_avg_buffs": 59.6, "page_url": "turns/thing_in_the_ice.html"}, {"cid": 1027, "name": "Geppetto", "card_key": "geppetto", "slug": "geppetto", "total_matches": 1084, "turn9_avg_stats": 193.8, "turn9_avg_buffs": 59.7, "page_url": "turns/geppetto.html"}, {"cid": 1028, "name": "Trash Panda", "card_key": "trash_panda", "slug": "trash_panda", "total_matches": 1678, "turn9_avg_stats": 302.4, "turn9_avg_buffs": 61.5, "page_url": "turns/trash_panda.html"}, {"cid": 1029, "name": "Witches, III", "card_key": "witches_iii", "slug": "witches_iii", "total_matches": 352, "turn9_avg_stats": 271.4, "turn9_avg_buffs": 95.6, "page_url": "turns/witches_iii.html"}, {"cid": 1327, "name": "Elec-Drake", "card_key": "elec_drake", "slug": "elec_drake", "total_matches": 1334, "turn9_avg_stats": 293.7, "turn9_avg_buffs": 67.3, "page_url": "turns/elec_drake.html"}, {"cid": 1362, "name": "Maximus", "card_key": "maximus", "slug": "maximus", "total_matches": 365, "turn9_avg_stats": 345.0, "turn9_avg_buffs": 61.4, "page_url": "turns/maximus.html"}, {"cid": 1363, "name": "Jason of the Argonauts", "card_key": "jason_of_the_argonauts", "slug": "jason_of_the_argonauts", "total_matches": 1119, "turn9_avg_stats": 332.7, "turn9_avg_buffs": 68.8, "page_url": "turns/jason_of_the_argonauts.html"}, {"cid": 1364, "name": "Mr. Lamppost", "card_key": "mr_lamppost", "slug": "mr_lamppost", "total_matches": 487, "turn9_avg_stats": 364.1, "turn9_avg_buffs": 103.1, "page_url": "turns/mr_lamppost.html"}, {"cid": 1365, "name": "Sir Galahad", "card_key": "sir_galahad", "slug": "sir_galahad", "total_matches": 546, "turn9_avg_stats": 312.4, "turn9_avg_buffs": 88.3, "page_url": "turns/sir_galahad.html"}, {"cid": 1367, "name": "Dragonmother", "card_key": "dragonmother", "slug": "dragonmother", "total_matches": 403, "turn9_avg_stats": 358.1, "turn9_avg_buffs": 63.6, "page_url": "turns/dragonmother.html"}, {"cid": 1386, "name": "Zheng Yi Sao", "card_key": "zheng_yi_sao", "slug": "zheng_yi_sao", "total_matches": 580, "turn9_avg_stats": 388.5, "turn9_avg_buffs": 59.4, "page_url": "turns/zheng_yi_sao.html"}, {"cid": 1430, "name": "Artemis", "card_key": "artemis", "slug": "artemis", "total_matches": 615, "turn9_avg_stats": 272.5, "turn9_avg_buffs": 52.7, "page_url": "turns/artemis.html"}, {"cid": 1431, "name": "Merryweather", "card_key": "merryweather", "slug": "merryweather", "total_matches": 326, "turn9_avg_stats": 291.0, "turn9_avg_buffs": 40.4, "page_url": "turns/merryweather.html"}, {"cid": 1432, "name": "Silversmith", "card_key": "silversmith", "slug": "silversmith", "total_matches": 803, "turn9_avg_stats": 303.9, "turn9_avg_buffs": 61.5, "page_url": "turns/silversmith.html"}, {"cid": 1434, "name": "Charon", "card_key": "charon", "slug": "charon", "total_matches": 450, "turn9_avg_stats": 269.8, "turn9_avg_buffs": 43.1, "page_url": "turns/charon.html"}, {"cid": 1436, "name": "Lightning Thief", "card_key": "lightning_thief", "slug": "lightning_thief", "total_matches": 603, "turn9_avg_stats": 417.6, "turn9_avg_buffs": 97.2, "page_url": "turns/lightning_thief.html"}, {"cid": 1437, "name": "Merrily", "card_key": "merrily", "slug": "merrily", "total_matches": 486, "turn9_avg_stats": 343.4, "turn9_avg_buffs": 47.4, "page_url": "turns/merrily.html"}, {"cid": 1964, "name": "Hannibal", "card_key": "hannibal", "slug": "hannibal", "total_matches": 567, "turn9_avg_stats": 354.6, "turn9_avg_buffs": 188.2, "page_url": "turns/hannibal.html"}, {"cid": 1968, "name": "We Are Blorg", "card_key": "we_are_blorg", "slug": "we_are_blorg", "total_matches": 409, "turn9_avg_stats": 227.4, "turn9_avg_buffs": 47.2, "page_url": "turns/we_are_blorg.html"}, {"cid": 1997, "name": "Boy who Cried Werewolf", "card_key": "boy_who_cried_werewolf", "slug": "boy_who_cried_werewolf", "total_matches": 278, "turn9_avg_stats": 328.2, "turn9_avg_buffs": 90.0, "page_url": "turns/boy_who_cried_werewolf.html"}, {"cid": 1998, "name": "Zagreus", "card_key": "zagreus", "slug": "zagreus", "total_matches": 403, "turn9_avg_stats": 290.4, "turn9_avg_buffs": 58.0, "page_url": "turns/zagreus.html"}, {"cid": 2063, "name": "Sweet Tooth", "card_key": "sweet_tooth", "slug": "sweet_tooth", "total_matches": 1287, "turn9_avg_stats": 491.3, "turn9_avg_buffs": 99.1, "page_url": "turns/sweet_tooth.html"}, {"cid": 2064, "name": "Romeo", "card_key": "romeo", "slug": "romeo", "total_matches": 578, "turn9_avg_stats": 350.3, "turn9_avg_buffs": 69.6, "page_url": "turns/romeo.html"}, {"cid": 2065, "name": "Tajima, Patron of Sweets", "card_key": "tajima_patron_of_sweets", "slug": "tajima_patron_of_sweets", "total_matches": 1196, "turn9_avg_stats": 429.3, "turn9_avg_buffs": 96.2, "page_url": "turns/tajima_patron_of_sweets.html"}, {"cid": 2066, "name": "Sorcerous Serena", "card_key": "sorcerous_serena", "slug": "sorcerous_serena", "total_matches": 888, "turn9_avg_stats": 414.6, "turn9_avg_buffs": 107.5, "page_url": "turns/sorcerous_serena.html"}, {"cid": 2067, "name": "Candy Pandy", "card_key": "candy_pandy", "slug": "candy_pandy", "total_matches": 1430, "turn9_avg_stats": 368.5, "turn9_avg_buffs": 125.9, "page_url": "turns/candy_pandy.html"}, {"cid": 2070, "name": "Faker, the Caker Baker", "card_key": "faker_the_caker_baker", "slug": "faker_the_caker_baker", "total_matches": 1220, "turn9_avg_stats": 430.6, "turn9_avg_buffs": 78.1, "page_url": "turns/faker_the_caker_baker.html"}, {"cid": 2084, "name": "Charlie Pots", "card_key": "charlie_pots", "slug": "charlie_pots", "total_matches": 1342, "turn9_avg_stats": 353.3, "turn9_avg_buffs": 68.3, "page_url": "turns/charlie_pots.html"}, {"cid": 2094, "name": "Lady of the Lake", "card_key": "lady_of_the_lake", "slug": "lady_of_the_lake", "total_matches": 980, "turn9_avg_stats": 343.5, "turn9_avg_buffs": 71.4, "page_url": "turns/lady_of_the_lake.html"}, {"cid": 2097, "name": "Queen Harpolia", "card_key": "queen_harpolia", "slug": "queen_harpolia", "total_matches": 894, "turn9_avg_stats": 373.2, "turn9_avg_buffs": 45.2, "page_url": "turns/queen_harpolia.html"}, {"cid": 2098, "name": "Nathaniel Drake", "card_key": "nathaniel_drake", "slug": "nathaniel_drake", "total_matches": 1321, "turn9_avg_stats": 332.8, "turn9_avg_buffs": 108.9, "page_url": "turns/nathaniel_drake.html"}, {"cid": 2107, "name": "The Candyman", "card_key": "the_candyman", "slug": "the_candyman", "total_matches": 1075, "turn9_avg_stats": 285.1, "turn9_avg_buffs": 51.1, "page_url": "turns/the_candyman.html"}, {"cid": 2120, "name": "Sensei", "card_key": "sensei", "slug": "sensei", "total_matches": 245, "turn9_avg_stats": 263.7, "turn9_avg_buffs": 53.7, "page_url": "turns/sensei.html"}, {"cid": 2125, "name": "Preeminent Prodigy", "card_key": "preeminent_prodigy", "slug": "preeminent_prodigy", "total_matches": 791, "turn9_avg_stats": 336.5, "turn9_avg_buffs": 110.3, "page_url": "turns/preeminent_prodigy.html"}, {"cid": 2128, "name": "Double Dealer", "card_key": "double_dealer", "slug": "double_dealer", "total_matches": 1402, "turn9_avg_stats": 434.9, "turn9_avg_buffs": 74.8, "page_url": "turns/double_dealer.html"}, {"cid": 2129, "name": "Goat T", "card_key": "goat_t", "slug": "goat_t", "total_matches": 1564, "turn9_avg_stats": 383.8, "turn9_avg_buffs": 83.5, "page_url": "turns/goat_t.html"}, {"cid": 2131, "name": "Frowny the Clown", "card_key": "frowny_the_clown", "slug": "frowny_the_clown", "total_matches": 1081, "turn9_avg_stats": 339.5, "turn9_avg_buffs": 59.4, "page_url": "turns/frowny_the_clown.html"}, {"cid": 2204, "name": "Gloria Clementine", "card_key": "gloria_clementine", "slug": "gloria_clementine", "total_matches": 591, "turn9_avg_stats": 367.1, "turn9_avg_buffs": 76.6, "page_url": "turns/gloria_clementine.html"}, {"cid": 2205, "name": "Dotty Dawdles", "card_key": "dotty_dawdles", "slug": "dotty_dawdles", "total_matches": 639, "turn9_avg_stats": 407.1, "turn9_avg_buffs": 109.9, "page_url": "turns/dotty_dawdles.html"}, {"cid": 2206, "name": "Luna Girl", "card_key": "luna_girl", "slug": "luna_girl", "total_matches": 1085, "turn9_avg_stats": 259.1, "turn9_avg_buffs": 71.7, "page_url": "turns/luna_girl.html"}, {"cid": 2208, "name": "Mira", "card_key": "mira", "slug": "mira", "total_matches": 1449, "turn9_avg_stats": 600.1, "turn9_avg_buffs": 88.3, "page_url": "turns/mira.html"}, {"cid": 2209, "name": "The Beanstalk", "card_key": "the_beanstalk", "slug": "the_beanstalk", "total_matches": 1163, "turn9_avg_stats": 420.7, "turn9_avg_buffs": 132.6, "page_url": "turns/the_beanstalk.html"}, {"cid": 2210, "name": "Gokatoo", "card_key": "gokatoo", "slug": "gokatoo", "total_matches": 355, "turn9_avg_stats": 356.2, "turn9_avg_buffs": 100.2, "page_url": "turns/gokatoo.html"}, {"cid": 2211, "name": "Old MacDonald", "card_key": "old_macdonald", "slug": "old_macdonald", "total_matches": 976, "turn9_avg_stats": 350.6, "turn9_avg_buffs": 129.5, "page_url": "turns/old_macdonald.html"}, {"cid": 2214, "name": "Cupcup", "card_key": "cupcup", "slug": "cupcup", "total_matches": 845, "turn9_avg_stats": 351.6, "turn9_avg_buffs": 78.4, "page_url": "turns/cupcup.html"}, {"cid": 2218, "name": "Sugar Pops", "card_key": "sugar_pops", "slug": "sugar_pops", "total_matches": 1099, "turn9_avg_stats": 385.3, "turn9_avg_buffs": 110.8, "page_url": "turns/sugar_pops.html"}, {"cid": 2219, "name": "Omniverse Omnivore", "card_key": "omniverse_omnivore", "slug": "omniverse_omnivore", "total_matches": 526, "turn9_avg_stats": 352.8, "turn9_avg_buffs": 54.9, "page_url": "turns/omniverse_omnivore.html"}, {"cid": 2221, "name": "Lucky Leprechaun", "card_key": "lucky_leprechaun", "slug": "lucky_leprechaun", "total_matches": 988, "turn9_avg_stats": 388.3, "turn9_avg_buffs": 90.0, "page_url": "turns/lucky_leprechaun.html"}, {"cid": 2232, "name": "Legend of Loxley", "card_key": "legend_of_loxley", "slug": "legend_of_loxley", "total_matches": 1678, "turn9_avg_stats": 304.0, "turn9_avg_buffs": 63.8, "page_url": "turns/legend_of_loxley.html"}, {"cid": 2233, "name": "Rumpelstiltskin", "card_key": "rumpelstiltskin", "slug": "rumpelstiltskin", "total_matches": 2420, "turn9_avg_stats": 297.9, "turn9_avg_buffs": 58.3, "page_url": "turns/rumpelstiltskin.html"}, {"cid": 2234, "name": "Sapphire", "card_key": "sapphire", "slug": "sapphire", "total_matches": 491, "turn9_avg_stats": 261.8, "turn9_avg_buffs": 44.8, "page_url": "turns/sapphire.html"}, {"cid": 2236, "name": "Toucan Samuel", "card_key": "toucan_samuel", "slug": "toucan_samuel", "total_matches": 1074, "turn9_avg_stats": 402.1, "turn9_avg_buffs": 75.7, "page_url": "turns/toucan_samuel.html"}, {"cid": 2238, "name": "Vena Cava", "card_key": "vena_cava", "slug": "vena_cava", "total_matches": 1350, "turn9_avg_stats": 577.6, "turn9_avg_buffs": 120.8, "page_url": "turns/vena_cava.html"}, {"cid": 2241, "name": "Baba Yaga", "card_key": "baba_yaga", "slug": "baba_yaga", "total_matches": 2282, "turn9_avg_stats": 354.6, "turn9_avg_buffs": 102.8, "page_url": "turns/baba_yaga.html"}, {"cid": 2247, "name": "Con Artist", "card_key": "con_artist", "slug": "con_artist", "total_matches": 1261, "turn9_avg_stats": 317.6, "turn9_avg_buffs": 76.7, "page_url": "turns/con_artist.html"}, {"cid": 2249, "name": "Itty Aerie", "card_key": "itty_aerie", "slug": "itty_aerie", "total_matches": 927, "turn9_avg_stats": 307.4, "turn9_avg_buffs": 77.6, "page_url": "turns/itty_aerie.html"}, {"cid": 2271, "name": "Roulette", "card_key": "roulette", "slug": "roulette", "total_matches": 1265, "turn9_avg_stats": 558.9, "turn9_avg_buffs": 54.5, "page_url": "turns/roulette.html"}, {"cid": 3001, "name": "Anagolay", "card_key": "anagolay", "slug": "anagolay", "total_matches": 1829, "turn9_avg_stats": 345.9, "turn9_avg_buffs": 51.5, "page_url": "turns/anagolay.html"}, {"cid": 3002, "name": "Catkiss Everburn", "card_key": "catkiss_everburn", "slug": "catkiss_everburn", "total_matches": 1698, "turn9_avg_stats": 288.3, "turn9_avg_buffs": 53.8, "page_url": "turns/catkiss_everburn.html"}, {"cid": 3003, "name": "Wayfinder", "card_key": "wayfinder", "slug": "wayfinder", "total_matches": 1035, "turn9_avg_stats": 294.4, "turn9_avg_buffs": 49.7, "page_url": "turns/wayfinder.html"}, {"cid": 3006, "name": "Baldr", "card_key": "baldr", "slug": "baldr", "total_matches": 682, "turn9_avg_stats": 263.4, "turn9_avg_buffs": 43.3, "page_url": "turns/baldr.html"}, {"cid": 3028, "name": "Set", "card_key": "set", "slug": "set", "total_matches": 1370, "turn9_avg_stats": 338.6, "turn9_avg_buffs": 43.8, "page_url": "turns/set.html"}, {"cid": 3038, "name": "Iron Monkey", "card_key": "iron_monkey", "slug": "iron_monkey", "total_matches": 1011, "turn9_avg_stats": 319.3, "turn9_avg_buffs": 76.1, "page_url": "turns/iron_monkey.html"}, {"cid": 3048, "name": "Chicken Bob", "card_key": "chicken_bob", "slug": "chicken_bob", "total_matches": 1024, "turn9_avg_stats": 277.1, "turn9_avg_buffs": 52.0, "page_url": "turns/chicken_bob.html"}, {"cid": 3073, "name": "Galileo Galilei", "card_key": "galileo_galilei", "slug": "galileo_galilei", "total_matches": 2798, "turn9_avg_stats": 330.5, "turn9_avg_buffs": 85.3, "page_url": "turns/galileo_galilei.html"}, {"cid": 3074, "name": "Nemesis", "card_key": "nemesis", "slug": "nemesis", "total_matches": 1830, "turn9_avg_stats": 1674.2, "turn9_avg_buffs": 95.2, "page_url": "turns/nemesis.html"}, {"cid": 3076, "name": "Hecate", "card_key": "hecate", "slug": "hecate", "total_matches": 792, "turn9_avg_stats": 359.8, "turn9_avg_buffs": 72.1, "page_url": "turns/hecate.html"}, {"cid": 3081, "name": "Moonsong", "card_key": "moonsong", "slug": "moonsong", "total_matches": 1516, "turn9_avg_stats": 433.9, "turn9_avg_buffs": 90.5, "page_url": "turns/moonsong.html"}, {"cid": 3082, "name": "Mount Mimic", "card_key": "mount_mimic", "slug": "mount_mimic", "total_matches": 786, "turn9_avg_stats": 299.8, "turn9_avg_buffs": 60.4, "page_url": "turns/mount_mimic.html"}, {"cid": 3104, "name": "Yakety Yak Yak", "card_key": "yakety_yak_yak", "slug": "yakety_yak_yak", "total_matches": 902, "turn9_avg_stats": 356.8, "turn9_avg_buffs": 49.4, "page_url": "turns/yakety_yak_yak.html"}, {"cid": 3105, "name": "Dinonysus", "card_key": "dinonysus", "slug": "dinonysus", "total_matches": 2818, "turn9_avg_stats": 438.1, "turn9_avg_buffs": 87.2, "page_url": "turns/dinonysus.html"}, {"cid": 3106, "name": "Mercury", "card_key": "mercury", "slug": "mercury", "total_matches": 1201, "turn9_avg_stats": 330.5, "turn9_avg_buffs": 51.1, "page_url": "turns/mercury.html"}, {"cid": 3110, "name": "Runefeather", "card_key": "runefeather", "slug": "runefeather", "total_matches": 696, "turn9_avg_stats": 310.4, "turn9_avg_buffs": 48.6, "page_url": "turns/runefeather.html"}, {"cid": 3129, "name": "Styx", "card_key": "styx", "slug": "styx", "total_matches": 846, "turn9_avg_stats": 355.7, "turn9_avg_buffs": 114.0, "page_url": "turns/styx.html"}, {"cid": 3130, "name": "Thanatos", "card_key": "thanatos", "slug": "thanatos", "total_matches": 1668, "turn9_avg_stats": 241.6, "turn9_avg_buffs": 89.9, "page_url": "turns/thanatos.html"}, {"cid": 3136, "name": "Quetzalcoatl", "card_key": "quetzalcoatl", "slug": "quetzalcoatl", "total_matches": 2895, "turn9_avg_stats": 228.6, "turn9_avg_buffs": 34.4, "page_url": "turns/quetzalcoatl.html"}, {"cid": 3216, "name": "Ammit", "card_key": "ammit", "slug": "ammit", "total_matches": 1002, "turn9_avg_stats": 378.2, "turn9_avg_buffs": 60.3, "page_url": "turns/ammit.html"}, {"cid": 3217, "name": "Apollo", "card_key": "apollo", "slug": "apollo", "total_matches": 614, "turn9_avg_stats": 303.9, "turn9_avg_buffs": 71.0, "page_url": "turns/apollo.html"}, {"cid": 3218, "name": "Mami Wata", "card_key": "mami_wata", "slug": "mami_wata", "total_matches": 180, "turn9_avg_stats": 491.7, "turn9_avg_buffs": 250.7, "page_url": "turns/mami_wata.html"}, {"cid": 3219, "name": "Spider Queen", "card_key": "spider_queen", "slug": "spider_queen", "total_matches": 1403, "turn9_avg_stats": 305.0, "turn9_avg_buffs": 66.5, "page_url": "turns/spider_queen.html"}, {"cid": 3221, "name": "Osiris", "card_key": "osiris", "slug": "osiris", "total_matches": 1796, "turn9_avg_stats": 362.2, "turn9_avg_buffs": 62.0, "page_url": "turns/osiris.html"}, {"cid": 3222, "name": "Bo Peep", "card_key": "bo_peep", "slug": "bo_peep", "total_matches": 4114, "turn9_avg_stats": 1061.5, "turn9_avg_buffs": 726.5, "page_url": "turns/bo_peep.html"}, {"cid": 3223, "name": "Dracusmagus", "card_key": "dracusmagus", "slug": "dracusmagus", "total_matches": 1972, "turn9_avg_stats": 252.3, "turn9_avg_buffs": 58.7, "page_url": "turns/dracusmagus.html"}, {"cid": 3224, "name": "Raging Bull", "card_key": "raging_bull", "slug": "raging_bull", "total_matches": 808, "turn9_avg_stats": 421.4, "turn9_avg_buffs": 200.0, "page_url": "turns/raging_bull.html"}, {"cid": 4008, "name": "Chromarian", "card_key": "chromarian", "slug": "chromarian", "total_matches": 1499, "turn9_avg_stats": 460.1, "turn9_avg_buffs": 219.2, "page_url": "turns/chromarian.html"}, {"cid": 4020, "name": "Mr. Monet", "card_key": "mr_monet", "slug": "mr_monet", "total_matches": 2187, "turn9_avg_stats": 484.5, "turn9_avg_buffs": 257.0, "page_url": "turns/mr_monet.html"}, {"cid": 4028, "name": "Remi", "card_key": "remi", "slug": "remi", "total_matches": 1677, "turn9_avg_stats": 654.5, "turn9_avg_buffs": 385.7, "page_url": "turns/remi.html"}, {"cid": 4034, "name": "Swishbuckler", "card_key": "swishbuckler", "slug": "swishbuckler", "total_matches": 2206, "turn9_avg_stats": 530.4, "turn9_avg_buffs": 263.5, "page_url": "turns/swishbuckler.html"}, {"cid": 4052, "name": "Bing Wu", "card_key": "bing_wu", "slug": "bing_wu", "total_matches": 10240, "turn9_avg_stats": 817.6, "turn9_avg_buffs": 324.0, "page_url": "turns/bing_wu.html"}, {"cid": 4056, "name": "Luna", "card_key": "luna", "slug": "luna", "total_matches": 8746, "turn9_avg_stats": 437.3, "turn9_avg_buffs": 191.1, "page_url": "turns/luna.html"}];
+    let filteredCaptains = [];
+
+    function init() {
+      applyFilters();
+      document.getElementById('captain-search').addEventListener('input', applyFilters);
+      document.getElementById('captain-sort').addEventListener('change', applyFilters);
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('captain-search').value.toLowerCase().trim();
+      const sortBy = document.getElementById('captain-sort').value;
+
+      filteredCaptains = allCaptains.filter(c => {
+        if (!query) return true;
+        return c.name.toLowerCase().includes(query) || (c.card_key || '').toLowerCase().includes(query);
+      });
+
+      if (sortBy === 'matches-desc') {
+        filteredCaptains.sort((a, b) => b.total_matches - a.total_matches);
+      } else if (sortBy === 'stats-desc') {
+        filteredCaptains.sort((a, b) => (b.turn9_avg_stats || 0) - (a.turn9_avg_stats || 0));
+      } else if (sortBy === 'name-asc') {
+        filteredCaptains.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      renderCaptains();
+    }
+
+    function renderCaptains() {
+      const container = document.getElementById('captains-container');
+      const badge = document.getElementById('captains-count-badge');
+      badge.textContent = `Showing ${filteredCaptains.length} of ${allCaptains.length} Captains`;
+
+      if (filteredCaptains.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted);">No captains found matching search.</div>';
+        return;
+      }
+
+      let html = '';
+      filteredCaptains.forEach(c => {
+        const targetUrl = c.page_url || `turns/${c.slug}.html`;
+        const t9Stats = c.turn9_avg_stats ? Math.round(c.turn9_avg_stats).toLocaleString() : 'N/A';
+        const t9Buffs = c.turn9_avg_buffs ? '+' + Math.round(c.turn9_avg_buffs) : '+0';
+
+        html += `
+          <a href="${targetUrl}" class="captain-card">
+            <div class="captain-card-head">
+              <div class="cap-thumb-frame">
+                <img src="https://galaxy-overlay.com/api/get-image.php?file=${escapeHtml(c.card_key)}__bronze__240.webp" 
+                     alt="${escapeHtml(c.name)}" 
+                     onerror="this.src='/assets/captain-placeholder.webp'" />
+              </div>
+              <div class="cap-info">
+                <div class="cap-name" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</div>
+                <div class="cap-matches">${c.total_matches.toLocaleString()} Matches</div>
+              </div>
+            </div>
+
+            <div class="cap-metrics-row">
+              <div class="metric-cell">
+                <div class="metric-val" style="color: #38bdf8;">${t9Stats}</div>
+                <div class="metric-lbl">Turn 9 Avg Stats</div>
+              </div>
+              <div class="metric-cell">
+                <div class="metric-val" style="color: var(--buff-green);">${t9Buffs}</div>
+                <div class="metric-lbl">Avg Slot Buffs</div>
+              </div>
+            </div>
+
+            <div class="view-link-btn">View Turn Breakdown →</div>
+          </a>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
