@@ -435,20 +435,20 @@ Its Captain powers are doubled.
           <div class="stat-lbl">Games Analyzed (Turn ${turn})</div>
         </div>
         <div class="stat-card">
-          <div class="stat-val">${bs.avg_total_stats}</div>
-          <div class="stat-lbl">Average Board Stats</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-val">${bs.median_total_stats}</div>
+          <div class="stat-val" style="color: #38bdf8;">${bs.median_total_stats}</div>
           <div class="stat-lbl">Median Board Stats</div>
         </div>
         <div class="stat-card">
-          <div class="stat-val" style="color: #38bdf8;">${bs.p90_total_stats}</div>
+          <div class="stat-val">${bs.avg_total_stats}</div>
+          <div class="stat-lbl">Trimmed Avg Stats (5%)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color: #a855f7;">${bs.p90_total_stats}</div>
           <div class="stat-lbl">90th Percentile</div>
         </div>
         <div class="stat-card">
           <div class="stat-val" style="color: var(--buff-green);">${bs.avg_board_slot_buffs_total}</div>
-          <div class="stat-lbl">Avg Board Slot Buffs</div>
+          <div class="stat-lbl">Avg Slot Buffs (Trimmed)</div>
         </div>
         <div class="stat-card">
           <div class="stat-val" style="color: #fbbf24;">${bs.max_total_stats.toLocaleString()}</div>
@@ -480,7 +480,7 @@ Its Captain powers are doubled.
         html += `
           <div class="slot-avg-card ${s === 1 ? 'top-slot' : ''}">
             <div class="slot-avg-num">Slot ${s}</div>
-            <div class="slot-avg-stat">${sd.avg_total_stats}</div>
+            <div class="slot-avg-stat">${sd.median_total_stats !== undefined ? sd.median_total_stats : sd.avg_total_stats} <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); font-family: 'Inter', sans-serif;">(Avg ${sd.avg_total_stats})</span></div>
             <div class="slot-avg-sub">${sd.avg_final_atk} Atk / ${sd.avg_final_hp} Hp</div>
             <div class="slot-avg-buff">+${sd.avg_slot_buff_atk} / +${sd.avg_slot_buff_hp} Slot Buff</div>
             <div class="slot-avg-units">
