@@ -561,7 +561,6 @@
         .catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-            grid-auto-rows: min-content;
             gap: 16px;
             max-height: 840px;
             overflow-y: auto;
@@ -575,6 +574,7 @@
             border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
+            height: 255px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
         }
@@ -593,8 +593,7 @@
 
         .catalog-card-img {
             width: 100%;
-            height: auto;
-            aspect-ratio: 240 / 337;
+            height: 100%;
             object-fit: cover;
             display: block;
             background: #111;
@@ -1332,7 +1331,7 @@
                 item.title = `${card.name}\n${card.rules_text || ''}`;
 
                 item.innerHTML = `
-                    <img class="catalog-card-img" src="${getCardImageUrl(card)}" alt="${card.name}" loading="lazy" onerror="onCardImgError(this, '${card.card_key || ''}')">
+                    <img class="catalog-card-img" src="${getCardImageUrl(card)}" alt="${card.name}" onerror="onCardImgError(this, '${card.card_key || ''}')">
                 `;
 
                 item.addEventListener('click', () => {
