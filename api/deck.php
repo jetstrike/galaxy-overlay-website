@@ -46,7 +46,7 @@ function is_discord_or_crawler() {
 $conn = get_db_connection();
 
 // --- 1. GET Request: View Single Deck ---
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'HEAD') {
     $deck_id = isset($_GET['id']) ? trim($_GET['id']) : '';
     $deck_id = preg_replace('/[^a-zA-Z0-9_-]/', '', $deck_id);
 
