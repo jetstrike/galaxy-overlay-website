@@ -1492,7 +1492,7 @@
                     inGame.forEach(dk => {
                         const cap = captainsList.find(c => c.cid === dk.captain_cid);
                         const capName = cap ? cap.name : (dk.captain_cid ? `Captain #${dk.captain_cid}` : 'Deck');
-                        let displayName = (dk.name || '').trim();
+                        let displayName = (dk.name || dk.deck_name || '').trim();
                         if (!displayName || displayName === 'Custom Deck' || displayName === 'My Custom Deck' || displayName === 'custom_deck') {
                             displayName = (dk.slot_id && String(dk.slot_id) !== '1') ? `${capName} (Deck ${dk.slot_id})` : capName;
                         }
@@ -1511,6 +1511,8 @@
                         });
                         inGameList.appendChild(row);
                     });
+                } else {
+                    inGameList.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No in-game decks uploaded yet. Drop your <code>_deck_library</code> file above!</p>';
                 }
 
                 // Local drafts
@@ -1855,7 +1857,7 @@
                             }
                         });
 
-                        await DeckStorage.saveImportedDecks(parsed.custom_decks);
+                        await DeckStorage.saveImportedDecks(parsed.custom_decks, parsed.playfab_id);
                         await DeckStorage.syncImportedDecksToCloud(parsed.playfab_id, parsed.custom_decks);
 
                         status.style.color = '#4ecdc4';

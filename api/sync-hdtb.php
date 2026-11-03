@@ -18,8 +18,13 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $playfab_id = isset($_GET['playfab_id']) ? preg_replace('/[^a-zA-Z0-9_-]/', '', $_GET['playfab_id']) : '';
         if (!$playfab_id) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Missing playfab_id parameter']);
+            $p_res = $conn->query("SELECT playfab_id FROM imported_hdtb_decks ORDER BY synced_at DESC LIMIT 1");
+            if ($p_res && $p_row = $p_res->fetch_assoc()) {
+                $playfab_id = $p_row['playfab_id'];
+            }
+        }
+        if (!$playfab_id) {
+            echo json_encode(['success' => true, 'playfab_id' => '', 'decks' => []]);
             exit;
         }
 
@@ -40,7 +45,7 @@ try {
             $decks[] = $row;
         }
 
-        echo json_encode(['success' => true, 'decks' => $decks]);
+        echo json_encode(['success' => true, 'playfab_id' => $playfab_id, 'decks' => $decks]);
         exit;
     }
 

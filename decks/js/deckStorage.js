@@ -4,7 +4,7 @@
  */
 
 const DB_NAME = 'OUAG_DeckBuilder_DB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 class DeckStorage {
     static getAuthorToken() {
@@ -188,23 +188,30 @@ class DeckStorage {
      * Imported In-Game HDTB Decks (IndexedDB)
      */
     static async saveImportedDecks(decks, playfab_id = '') {
+        if (playfab_id) {
+            this.setPlayfabId(playfab_id);
+        }
         const db = await this.getDB();
         return new Promise((resolve, reject) => {
             const tx = db.transaction('imported_hdtb_decks', 'readwrite');
             const store = tx.objectStore('imported_hdtb_decks');
 
             for (const dk of decks) {
-                const id = `hdtb_${dk.captain_cid}_${dk.slot_id}`;
+                const capCid = dk.captain_cid;
+                const slotId = dk.slot_id;
+                const id = `hdtb_${capCid}_${slotId}`;
+                const name = dk.name || dk.deck_name || 'In-Game Deck';
                 store.put({
                     id,
-                    playfab_id,
-                    captain_cid: dk.captain_cid,
-                    slot_id: dk.slot_id,
-                    name: dk.name,
-                    deck_type: dk.deck_type,
-                    card_cids: dk.card_cids,
-                    last_used: dk.last_used,
-                    synced_at: new Date().toISOString()
+                    playfab_id: playfab_id || dk.playfab_id || this.getPlayfabId() || '',
+                    captain_cid: capCid,
+                    slot_id: String(slotId),
+                    name: name,
+                    deck_name: name,
+                    deck_type: dk.deck_type || 'custom',
+                    card_cids: dk.card_cids || [],
+                    last_used: Boolean(dk.last_used),
+                    synced_at: dk.synced_at || new Date().toISOString()
                 });
             }
 
@@ -235,14 +242,56 @@ class DeckStorage {
     }
 
     static async getImportedDecks() {
-        const db = await this.getDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction('imported_hdtb_decks', 'readonly');
-            const store = tx.objectStore('imported_hdtb_decks');
-            const req = store.getAll();
-            req.onsuccess = () => resolve(req.result || []);
-            req.onerror = () => reject(req.error);
-        });
+        try {
+            const db = await this.getDB();
+            if (db.objectStoreNames.contains('imported_hdtb_decks')) {
+                const localDecks = await new Promise((resolve, reject) => {
+                    const tx = db.transaction('imported_hdtb_decks', 'readonly');
+                    const store = tx.objectStore('imported_hdtb_decks');
+                    const req = store.getAll();
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = () => reject(req.error);
+                });
+
+                if (localDecks && localDecks.length > 0) {
+                    return localDecks;
+                }
+            }
+        } catch (e) {
+            console.warn('IndexedDB getImportedDecks error:', e);
+        }
+
+        // Cloud fallback if local storage is empty
+        try {
+            const playfabId = this.getPlayfabId();
+            const url = playfabId ? `/api/sync-hdtb.php?playfab_id=${encodeURIComponent(playfabId)}` : '/api/sync-hdtb.php';
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data && data.success && Array.isArray(data.decks) && data.decks.length > 0) {
+                if (data.playfab_id) {
+                    this.setPlayfabId(data.playfab_id);
+                }
+                const normalized = data.decks.map(d => ({
+                    id: d.id || `hdtb_${d.captain_cid}_${d.slot_id}`,
+                    playfab_id: d.playfab_id || data.playfab_id || '',
+                    captain_cid: d.captain_cid,
+                    slot_id: String(d.slot_id),
+                    name: d.deck_name || d.name || d.captain_name || 'Deck',
+                    deck_name: d.deck_name || d.name || d.captain_name || 'Deck',
+                    deck_type: d.deck_type || 'custom',
+                    card_cids: d.card_cids || [],
+                    last_used: Boolean(d.last_used),
+                    synced_at: d.synced_at || new Date().toISOString()
+                }));
+                // Cache locally for instant next loads
+                this.saveImportedDecks(normalized, data.playfab_id || playfabId).catch(() => {});
+                return normalized;
+            }
+        } catch (netErr) {
+            console.warn('Failed cloud fallback for in-game decks:', netErr);
+        }
+
+        return [];
     }
 }
 
