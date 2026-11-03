@@ -36,7 +36,12 @@ function generate_deck_id($conn) {
 
 function is_discord_or_crawler() {
     $ua = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
-    $crawlers = ['discordbot', 'twitterbot', 'facebookexternalhit', 'telegrambot', 'slackbot', 'whatsapp', 'skypeuripreview'];
+    $crawlers = [
+        'discordbot', 'twitterbot', 'facebookexternalhit', 'telegrambot', 
+        'slackbot', 'whatsapp', 'skypeuripreview', 'linkedinbot', 
+        'redditbot', 'applebot', 'googlebot', 'bingbot', 'embedly', 
+        'quora link preview', 'showyoubot', 'outbrain', 'vkshare', 'w3c_validator'
+    ];
     foreach ($crawlers as $bot) {
         if (strpos($ua, $bot) !== false) return true;
     }
@@ -100,33 +105,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'HEAD
         $cap_name = htmlspecialchars($deck['captain_name'] ?: 'Captain', ENT_QUOTES, 'UTF-8');
         $author = htmlspecialchars($deck['author_name'] ?: 'Anonymous', ENT_QUOTES, 'UTF-8');
         $summary = htmlspecialchars($deck['summary'] ?: "12-card custom Once Upon a Galaxy deck for {$cap_name}.", ENT_QUOTES, 'UTF-8');
-        $share_url = "https://galaxy-overlay.com/d/" . urlencode($deck['id']);
+        $canonical_url = "https://galaxy-overlay.com/decks/view.html?id=" . urlencode($deck['id']);
         $img_url = "https://galaxy-overlay.com/api/deck-image.php?id=" . urlencode($deck['id']);
 
         header('Content-Type: text/html; charset=utf-8');
         echo <<<HTML
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="utf-8">
     <title>{$deck_title} ({$cap_name}) by {$author}</title>
     <meta name="description" content="{$summary}">
+    <meta name="theme-color" content="#4ecdc4">
+
+    <!-- OpenGraph (Discord, Facebook, Telegram, WhatsApp) -->
     <meta property="og:site_name" content="Once Upon a Galaxy Hub">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{$canonical_url}">
     <meta property="og:title" content="{$deck_title} ({$cap_name}) by {$author}">
     <meta property="og:description" content="{$summary}">
     <meta property="og:image" content="{$img_url}">
+    <meta property="og:image:secure_url" content="{$img_url}">
+    <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:url" content="{$share_url}">
-    <meta property="og:type" content="website">
+    <meta property="og:image:alt" content="{$deck_title} Deck Composition">
+
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{$deck_title} ({$cap_name})">
+    <meta name="twitter:url" content="{$canonical_url}">
+    <meta name="twitter:title" content="{$deck_title} ({$cap_name}) by {$author}">
     <meta name="twitter:description" content="{$summary}">
     <meta name="twitter:image" content="{$img_url}">
-    <meta http-equiv="refresh" content="0;url=/decks/view.html?id={$deck['id']}">
+    <meta name="twitter:image:alt" content="{$deck_title} Deck Composition">
 </head>
 <body>
-    <p>Viewing <a href="/decks/view.html?id={$deck['id']}">{$deck_title}</a>...</p>
+    <p>Viewing <a href="{$canonical_url}">{$deck_title}</a></p>
 </body>
 </html>
 HTML;

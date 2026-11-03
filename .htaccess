@@ -1,5 +1,10 @@
 RewriteEngine On
 RewriteBase /
 
-# Route /d/XYZ to api/deck.php?id=XYZ
+# 1. Route social crawlers on /decks/view.html?id=XYZ to api/deck.php?id=XYZ
+RewriteCond %{HTTP_USER_AGENT} (Discordbot|Twitterbot|facebookexternalhit|WhatsApp|TelegramBot|Slackbot|LinkedInBot|redditbot|Applebot|Googlebot|bingbot|Embedly|vkShare|W3C_Validator) [NC]
+RewriteCond %{QUERY_STRING} (?:^|&)id=([a-zA-Z0-9_-]+)
+RewriteRule ^decks/view\.html$ api/deck.php?id=%1 [L,QSA]
+
+# 2. Route /d/XYZ to api/deck.php?id=XYZ
 RewriteRule ^d/([a-zA-Z0-9_-]+)/?$ api/deck.php?id=$1 [L,QSA]
