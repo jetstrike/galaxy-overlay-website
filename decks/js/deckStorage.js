@@ -304,6 +304,64 @@ class DeckStorage {
 
         return [];
     }
+static async deleteImportedDeck(deckId, capCid, slotId) {
+        try {
+            const db = await this.getDB();
+            if (db.objectStoreNames.contains('imported_hdtb_decks')) {
+                const tx = db.transaction('imported_hdtb_decks', 'readwrite');
+                const store = tx.objectStore('imported_hdtb_decks');
+                store.delete(deckId);
+                if (capCid && slotId) {
+                    store.delete(`hdtb_${capCid}_${slotId}`);
+                }
+            }
+        } catch (e) {
+            console.warn('Local delete imported deck error:', e);
+        }
+
+        try {
+            const playfabId = this.getPlayfabId();
+            await fetch('/api/sync-hdtb.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Author-Token': this.getAuthorToken()
+                },
+                body: JSON.stringify({
+                    action: 'delete',
+                    id: deckId,
+                    playfab_id: playfabId,
+                    captain_cid: capCid,
+                    slot_id: slotId
+                })
+            });
+        } catch (netErr) {
+            console.warn('Cloud delete imported deck error:', netErr);
+        }
+
+        return true;
+    }
+
+    static async deleteCommunityDeck(deckId) {
+        const res = await fetch('/api/deck.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Author-Token': this.getAuthorToken()
+            },
+            body: JSON.stringify({
+                action: 'delete',
+                deck_id: deckId,
+                author_id: this.getAuthorToken()
+            })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+            await this.deleteLocalDeck(deckId).catch(() => {});
+            return true;
+        }
+        throw new Error(data.error || 'Failed to delete deck');
+    }
 }
 
 if (typeof window !== 'undefined') {

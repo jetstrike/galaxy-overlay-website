@@ -1003,12 +1003,13 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/decks/js/hdtbClientParser.js?v=12"></script>
-    <script src="/decks/js/deckStorage.js?v=12"></script>
-    <script src="/decks/js/cardSearchEngine.js?v=12"></script>
-    <script src="/decks/js/collectionMatcher.js?v=12"></script>
+    <script src="/decks/js/hdtbClientParser.js?v=13"></script>
+    <script src="/decks/js/deckStorage.js?v=13"></script>
+    <script src="/decks/js/cardSearchEngine.js?v=13"></script>
+    <script src="/decks/js/collectionMatcher.js?v=13"></script>
     <script>
         // State
+        let editingDeckId = null;
         let allCards = [];
         let captainsList = [];
         let currentCaptain = null;
@@ -1101,10 +1102,13 @@
                 applyCatalogFilters();
                 loadStoredDecks();
 
-                // Check Clone URL parameter or existing draft
+                // Check Edit or Clone URL parameter
                 const urlParams = new URLSearchParams(window.location.search);
+                const editId = urlParams.get('edit');
                 const cloneId = urlParams.get('clone');
-                if (cloneId) {
+                if (editId) {
+                    await loadDeckForEditing(editId);
+                } else if (cloneId) {
                     await loadDeckForCloning(cloneId);
                 }
             } catch (err) {
@@ -1512,11 +1516,20 @@
                         <strong style="color: #fff; font-size: 0.9rem;">${displayName}</strong>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">Slot ${dk.slot_id} &bull; ${(dk.card_cids || []).length} Cards</div>
                     </div>
-                    <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button class="btn-action btn-load-ingame" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
+                        <button class="btn-action btn-del-ingame" style="padding: 4px 8px; font-size: 0.78rem; background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444;" title="Remove this imported deck">✕</button>
+                    </div>
                 `;
 
-                row.querySelector('button').addEventListener('click', () => {
+                row.querySelector('.btn-load-ingame').addEventListener('click', () => {
                     populateDeckData(dk, false);
+                });
+                row.querySelector('.btn-del-ingame').addEventListener('click', async () => {
+                    if (confirm(`Remove "${displayName}" from your imported in-game decks?`)) {
+                        await DeckStorage.deleteImportedDeck(dk.id, dk.captain_cid, dk.slot_id);
+                        loadStoredDecks();
+                    }
                 });
                 inGameList.appendChild(row);
             });
@@ -1556,11 +1569,20 @@
                                 <strong style="color: #fff; font-size: 0.9rem;">${dk.name}</strong>
                                 <div style="font-size: 0.75rem; color: var(--text-muted);">${(dk.card_cids || []).length} Cards</div>
                             </div>
-                            <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <button class="btn-action btn-load-local" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
+                                <button class="btn-action btn-del-local" style="padding: 4px 8px; font-size: 0.78rem; background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444;" title="Delete saved draft">✕</button>
+                            </div>
                         `;
 
-                        row.querySelector('button').addEventListener('click', () => {
+                        row.querySelector('.btn-load-local').addEventListener('click', () => {
                             populateDeckData(dk, false);
+                        });
+                        row.querySelector('.btn-del-local').addEventListener('click', async () => {
+                            if (confirm(`Delete saved draft "${dk.name}"?`)) {
+                                await DeckStorage.deleteLocalDeck(dk.id);
+                                loadStoredDecks();
+                            }
                         });
                         localList.appendChild(row);
                     });
@@ -1774,6 +1796,15 @@
                     alert('Please fill all 12 card slots before saving!');
                     return;
                 }
+                const btnConfirm = document.getElementById('btnConfirmSave');
+                const btnCopy = document.getElementById('btnSaveAsNewCopy');
+                if (editingDeckId) {
+                    btnConfirm.textContent = 'Update Existing Deck';
+                    if (btnCopy) btnCopy.style.display = 'inline-block';
+                } else {
+                    btnConfirm.textContent = 'Publish / Save';
+                    if (btnCopy) btnCopy.style.display = 'none';
+                }
                 document.getElementById('saveModal').classList.add('open');
             });
             document.getElementById('btnCloseSaveModal').addEventListener('click', () => {
@@ -1811,6 +1842,10 @@
                     annotations: annotationsList
                 };
 
+                if (editingDeckId) {
+                    payload.id = editingDeckId;
+                }
+
                 try {
                     const res = await fetch('/api/deck.php', {
                         method: 'POST',
@@ -1835,6 +1870,48 @@
                     alert('Network error while saving: ' + e.message);
                 }
             });
+
+            // Save as New Copy button in modal
+            const btnSaveCopy = document.getElementById('btnSaveAsNewCopy');
+            if (btnSaveCopy) {
+                btnSaveCopy.addEventListener('click', async () => {
+                    editingDeckId = null; // Clear so it saves as new
+                    document.getElementById('btnConfirmSave').click();
+                });
+            }
+
+            // Exit edit mode button
+            const btnExitEdit = document.getElementById('btnExitEditMode');
+            if (btnExitEdit) {
+                btnExitEdit.addEventListener('click', () => {
+                    editingDeckId = null;
+                    document.getElementById('editingDeckBanner').style.display = 'none';
+                    document.getElementById('btnConfirmSave').textContent = 'Publish / Save';
+                    window.history.replaceState({}, '', '/decks/builder.html');
+                });
+            }
+
+            // Delete currently editing deck button
+            const btnDelEditing = document.getElementById('btnDeleteEditingDeck');
+            if (btnDelEditing) {
+                btnDelEditing.addEventListener('click', async () => {
+                    if (!editingDeckId) return;
+                    const deckTitle = document.getElementById('inputDeckTitle').value || 'this deck';
+                    if (confirm(`Are you sure you want to delete "${deckTitle}"? This action cannot be undone.`)) {
+                        btnDelEditing.disabled = true;
+                        btnDelEditing.textContent = 'Deleting...';
+                        try {
+                            await DeckStorage.deleteCommunityDeck(editingDeckId);
+                            alert('Deck successfully deleted.');
+                            window.location.href = '/decks/browse.html';
+                        } catch (err) {
+                            alert('Failed to delete deck: ' + err.message);
+                            btnDelEditing.disabled = false;
+                            btnDelEditing.textContent = 'Delete Deck';
+                        }
+                    }
+                });
+            }
 
             document.getElementById('btnCopyShareUrl').addEventListener('click', () => {
                 const inp = document.getElementById('inputShareUrl');

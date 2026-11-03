@@ -49,10 +49,33 @@ try {
         exit;
     }
 
-    // POST: Ingest extracted HDTB decks
+// POST: Ingest extracted HDTB decks
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $raw = file_get_contents('php://input');
         $data = json_decode($raw, true) ?: [];
+        $action = isset($data['action']) ? $data['action'] : '';
+
+        // Handle deck deletion
+        if ($action === 'delete') {
+            $id = !empty($data['id']) ? trim($data['id']) : '';
+            $playfab_id = !empty($data['playfab_id']) ? preg_replace('/[^a-zA-Z0-9_-]/', '', $data['playfab_id']) : '';
+            $captain_cid = intval($data['captain_cid'] ?? 0);
+            $slot_id = strval($data['slot_id'] ?? '');
+
+            if ($id) {
+                $del = $conn->prepare("DELETE FROM imported_hdtb_decks WHERE id = ?");
+                $del->bind_param("s", $id);
+                $del->execute();
+            }
+            if ($playfab_id && $captain_cid && $slot_id) {
+                $del2 = $conn->prepare("DELETE FROM imported_hdtb_decks WHERE playfab_id = ? AND captain_cid = ? AND slot_id = ?");
+                $del2->bind_param("sis", $playfab_id, $captain_cid, $slot_id);
+                $del2->execute();
+            }
+
+            echo json_encode(['success' => true]);
+            exit;
+        }
 
         $playfab_id = !empty($data['playfab_id']) ? preg_replace('/[^a-zA-Z0-9_-]/', '', $data['playfab_id']) : '';
         $decks = is_array($data['decks'] ?? null) ? $data['decks'] : [];

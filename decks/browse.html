@@ -497,8 +497,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/decks/js/deckStorage.js?v=12"></script>
-    <script src="/decks/js/collectionMatcher.js?v=12"></script>
+    <script src="/decks/js/deckStorage.js?v=13"></script>
+    <script src="/decks/js/collectionMatcher.js?v=13"></script>
     <script>
         let allCardsMap = {};
         let activeCaptainCid = 0;
@@ -715,14 +715,25 @@
                     <div class="card-thumb-strip">${stripThumbs}</div>
                     <div class="card-bottom-row">
                         <span style="font-size: 0.78rem; color: #4ecdc4; font-weight: 600;">Imported HDTB</span>
-                        <button class="btn-action btn-primary-action" style="padding: 4px 10px; font-size: 0.78rem;">Load in Builder</button>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <button class="btn-action btn-primary-action btn-load-ingame" style="padding: 4px 10px; font-size: 0.78rem;">Load in Builder</button>
+                            <button class="btn-action btn-del-ingame" style="padding: 4px 8px; font-size: 0.78rem; background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444;" title="Remove this imported deck">✕</button>
+                        </div>
                     </div>
                 `;
 
-                el.querySelector('button').addEventListener('click', (e) => {
+                el.querySelector('.btn-load-ingame').addEventListener('click', (e) => {
                     e.stopPropagation();
                     DeckStorage.saveActiveDraft(dk);
                     window.location.href = '/decks/builder.html';
+                });
+
+                el.querySelector('.btn-del-ingame').addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Remove "${resolvedDeckName}" from your imported in-game decks?`)) {
+                        await DeckStorage.deleteImportedDeck(dk.id, dk.captain_cid, dk.slot_id);
+                        renderInGameDecks();
+                    }
                 });
 
                 grid.appendChild(el);
@@ -761,6 +772,17 @@
 
             const primerBadge = dk.has_primer ? '<span class="primer-pill">📖 Primer</span>' : '';
 
+            const isAuthor = dk.author_id && dk.author_id === DeckStorage.getAuthorToken();
+            let authorActionsHtml = '';
+            if (isAuthor) {
+                authorActionsHtml = `
+                    <div class="deck-author-actions" style="display: flex; gap: 6px; align-items: center; margin-left: auto;">
+                        <button class="btn-action btn-card-edit" style="padding: 2px 8px; font-size: 0.72rem; background: rgba(78, 205, 196, 0.15); border-color: #4ecdc4; color: #4ecdc4;" title="Edit Deck">✏️ Edit</button>
+                        <button class="btn-action btn-card-delete" style="padding: 2px 8px; font-size: 0.72rem; background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444;" title="Delete Deck">🗑️</button>
+                    </div>
+                `;
+            }
+
             el.innerHTML = `
                 <div class="card-top-row">
                     <img class="card-cap-art" src="${capArt}">
@@ -773,13 +795,45 @@
                 <div class="card-deck-summary">${dk.summary || '12-card custom deck. Click to view composition and strategy.'}</div>
                 <div class="card-thumb-strip">${stripThumbs}</div>
                 <div class="card-bottom-row">
-                    <div class="upvote-badge">★ ${dk.upvote_count || 0}</div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <div class="upvote-badge">★ ${dk.upvote_count || 0}</div>
                         ${collBadgeHtml}
                         ${primerBadge}
                     </div>
+                    ${authorActionsHtml}
                 </div>
             `;
+
+            if (isAuthor) {
+                const btnEdit = el.querySelector('.btn-card-edit');
+                if (btnEdit) {
+                    btnEdit.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        window.location.href = `/decks/builder.html?edit=${encodeURIComponent(dk.id)}`;
+                    });
+                }
+                const btnDel = el.querySelector('.btn-card-delete');
+                if (btnDel) {
+                    btnDel.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Delete deck "${dk.name}"? This action cannot be undone.`)) {
+                            btnDel.disabled = true;
+                            btnDel.textContent = '...';
+                            try {
+                                await DeckStorage.deleteCommunityDeck(dk.id);
+                                el.style.transition = 'all 0.3s ease';
+                                el.style.opacity = '0';
+                                el.style.transform = 'scale(0.95)';
+                                setTimeout(() => el.remove(), 300);
+                            } catch (err) {
+                                alert('Error deleting deck: ' + err.message);
+                                btnDel.disabled = false;
+                                btnDel.textContent = '🗑️';
+                            }
+                        }
+                    });
+                }
+            }
 
             el.addEventListener('click', () => {
                 window.location.href = '/decks/view.html?id=' + encodeURIComponent(dk.id);

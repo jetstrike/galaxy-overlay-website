@@ -370,6 +370,8 @@
                 </button>
                 <button class="btn-action" id="btnCopyShare">🔗 Share</button>
                 <button class="btn-action btn-primary-action" id="btnCloneDeck">⚡ Clone to Builder</button>
+                <button class="btn-action" id="btnEditDeck" style="display: none; background: rgba(78, 205, 196, 0.15); border-color: #4ecdc4; color: #4ecdc4;">✏️ Edit Deck</button>
+                <button class="btn-action" id="btnDeleteDeck" style="display: none; background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444;">🗑️ Delete Deck</button>
             </div>
         </div>
 
@@ -394,8 +396,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/decks/js/deckStorage.js?v=12"></script>
-    <script src="/decks/js/collectionMatcher.js?v=12"></script>
+    <script src="/decks/js/deckStorage.js?v=13"></script>
+    <script src="/decks/js/collectionMatcher.js?v=13"></script>
     <script>
         let deckData = null;
         let allCardsMap = {};
@@ -482,6 +484,36 @@
             });
 
             // Share Copy
+            // Author Actions (Edit & Delete)
+            if (deckData.author_id && deckData.author_id === DeckStorage.getAuthorToken()) {
+                const btnEdit = document.getElementById('btnEditDeck');
+                const btnDel = document.getElementById('btnDeleteDeck');
+                if (btnEdit) {
+                    btnEdit.style.display = 'inline-flex';
+                    btnEdit.addEventListener('click', () => {
+                        window.location.href = `/decks/builder.html?edit=${encodeURIComponent(deckData.id)}`;
+                    });
+                }
+                if (btnDel) {
+                    btnDel.style.display = 'inline-flex';
+                    btnDel.addEventListener('click', async () => {
+                        if (confirm(`Are you sure you want to delete "${deckData.name || 'this deck'}"? This action cannot be undone.`)) {
+                            btnDel.disabled = true;
+                            btnDel.textContent = 'Deleting...';
+                            try {
+                                await DeckStorage.deleteCommunityDeck(deckData.id);
+                                alert('Deck successfully deleted.');
+                                window.location.href = '/decks/browse.html';
+                            } catch (err) {
+                                alert('Failed to delete deck: ' + err.message);
+                                btnDel.disabled = false;
+                                btnDel.textContent = '🗑️ Delete Deck';
+                            }
+                        }
+                    });
+                }
+            }
+
             document.getElementById('btnCopyShare').addEventListener('click', () => {
                 const shareUrl = window.location.origin + '/d/' + deckId;
                 navigator.clipboard.writeText(shareUrl);
