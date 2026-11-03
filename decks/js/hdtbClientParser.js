@@ -94,6 +94,35 @@ class HdtbClientParser {
      * Extracts decks from an uploaded _deck_library file
      * Returns { playfab_id, custom_decks, starter_decks, store_decks }
      */
+    // Instance & alias methods
+    parseDeckLibrary(arrayBuffer, filename = '') {
+        return HdtbClientParser.parseDeckLibraryFile(arrayBuffer, filename);
+    }
+
+    parseDeckLibraryFile(arrayBuffer, filename = '') {
+        return HdtbClientParser.parseDeckLibraryFile(arrayBuffer, filename);
+    }
+
+    parseCollection(arrayBuffer, filename = '') {
+        return HdtbClientParser.parseCollectionFile(arrayBuffer, filename);
+    }
+
+    parseCollectionFile(arrayBuffer, filename = '') {
+        return HdtbClientParser.parseCollectionFile(arrayBuffer, filename);
+    }
+
+    parseHdtb(arrayBuffer) {
+        return HdtbClientParser.parseHdtb(arrayBuffer);
+    }
+
+    static parseDeckLibrary(arrayBuffer, filename = '') {
+        return this.parseDeckLibraryFile(arrayBuffer, filename);
+    }
+
+    static parseCollection(arrayBuffer, filename = '') {
+        return this.parseCollectionFile(arrayBuffer, filename);
+    }
+
     static parseDeckLibraryFile(arrayBuffer, filename = '') {
         const raw = this.parseHdtb(arrayBuffer);
         const decksByCaptain = raw.decks_by_captain || {};

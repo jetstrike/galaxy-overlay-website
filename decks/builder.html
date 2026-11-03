@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deck Builder & Primer Hub — Once Upon a Galaxy</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css?v=4">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -445,7 +445,6 @@
             gap: 16px;
         }
 
-        /* Search Header */
         .search-row {
             display: flex;
             gap: 12px;
@@ -542,7 +541,7 @@
             color: var(--text-muted);
             font-size: 0.8rem;
             font-weight: 600;
-            padding: 3px 10px;
+            padding: 4px 12px;
             cursor: pointer;
             transition: all 0.15s;
         }
@@ -587,8 +586,8 @@
         }
 
         .catalog-card-item.in-tray {
-            opacity: 0.6;
-            filter: grayscale(0.4);
+            opacity: 0.55;
+            filter: grayscale(0.5);
         }
 
         .card-img-wrap {
@@ -615,6 +614,7 @@
             display: flex;
             flex-direction: column;
             flex: 1;
+            background: rgba(18, 22, 34, 0.95);
         }
 
         .card-title {
@@ -625,7 +625,7 @@
         }
 
         .card-text {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-muted);
             line-height: 1.4;
             flex: 1;
@@ -849,22 +849,10 @@
                 <div class="facet-row">
                     <span class="facet-label">Type</span>
                     <div class="facet-chips" data-facet="type">
-                        <button class="chip-btn active" data-facet="type" data-val="all">All</button>
-                        <button class="chip-btn" data-facet="type" data-val="character">Character</button>
+                        <button class="chip-btn" data-facet="type" data-val="all">All</button>
+                        <button class="chip-btn active" data-facet="type" data-val="character">Character</button>
                         <button class="chip-btn" data-facet="type" data-val="spell">Spell</button>
                         <button class="chip-btn" data-facet="type" data-val="treasure">Treasure</button>
-                    </div>
-                </div>
-                <div class="facet-row">
-                    <span class="facet-label">Tier</span>
-                    <div class="facet-chips" data-facet="tier">
-                        <button class="chip-btn active" data-facet="tier" data-val="all">All</button>
-                        <button class="chip-btn" data-facet="tier" data-val="1">1</button>
-                        <button class="chip-btn" data-facet="tier" data-val="2">2</button>
-                        <button class="chip-btn" data-facet="tier" data-val="3">3</button>
-                        <button class="chip-btn" data-facet="tier" data-val="4">4</button>
-                        <button class="chip-btn" data-facet="tier" data-val="5">5</button>
-                        <button class="chip-btn" data-facet="tier" data-val="6">6</button>
                     </div>
                 </div>
                 <div class="facet-row">
@@ -882,15 +870,17 @@
                     <span class="facet-label">Faction</span>
                     <div class="facet-chips" data-facet="faction">
                         <button class="chip-btn active" data-facet="faction" data-val="all">All</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Monster">Monster</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Beast">Beast</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Animal">Animal</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Candy">Candy</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Celestial">Celestial</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Dragon">Dragon</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Fae">Fae</button>
                         <button class="chip-btn" data-facet="faction" data-val="Hero">Hero</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Machine">Machine</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Noble">Noble</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Sky">Sky</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Star">Star</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Undead">Undead</button>
-                        <button class="chip-btn" data-facet="faction" data-val="Water">Water</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Mage">Mage</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Paintkin">Paintkin</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Pirate">Pirate</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Toy">Toy</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Villain">Villain</button>
                     </div>
                 </div>
             </div>
@@ -1050,20 +1040,20 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/decks/js/hdtbClientParser.js?v=2"></script>
-    <script src="/decks/js/deckStorage.js?v=2"></script>
-    <script src="/decks/js/cardSearchEngine.js?v=2"></script>
-    <script src="/decks/js/collectionMatcher.js?v=2"></script>
+    <script src="/decks/js/hdtbClientParser.js?v=4"></script>
+    <script src="/decks/js/deckStorage.js?v=4"></script>
+    <script src="/decks/js/cardSearchEngine.js?v=4"></script>
+    <script src="/decks/js/collectionMatcher.js?v=4"></script>
     <script>
         // State
         let allCards = [];
         let captainsList = [];
         let currentCaptain = null;
-        let compatibleCaptains = new Set(); // Set of captain CIDs
+        let compatibleCaptains = new Set();
         let activeDeckCards = []; // array of 12 card objects or null
-        let cardAnnotations = new Map(); // cid => { card_cid, card_note, alternate_cids, substitution_reason }
-        let currentDetailCard = null; // currently opened card in detail modal
-        let tempDetailAlts = []; // currently selected alternate CIDs in modal
+        let cardAnnotations = new Map();
+        let currentDetailCard = null;
+        let tempDetailAlts = [];
         const searchEngine = new CardSearchEngine();
 
         const RARITY_WEIGHT = {
@@ -1071,17 +1061,18 @@
             'uncommon': 2,
             'rare': 3,
             'epic': 4,
-            'legendary': 5
+            'legendary': 5,
+            'secret rare': 6
         };
 
+        // Default Facet: Character selected
         const activeFacets = {
-            types: new Set(),
-            tiers: new Set(),
+            types: new Set(['character']),
             rarities: new Set(),
             factions: new Set()
         };
 
-        // Universal Image URL resolver
+        // Universal Image URL resolver with multi-step fallback
         function getCardImageUrl(card) {
             if (!card || !card.card_key) return '/icon.png';
             const key = card.card_key.toLowerCase().trim();
@@ -1092,11 +1083,20 @@
         }
 
         function onCardImgError(img, cardKey) {
-            if (img.src.includes('__bronze__240.webp')) {
+            if (!img.dataset.step) img.dataset.step = '1';
+            const step = parseInt(img.dataset.step, 10);
+            if (step === 1) {
+                img.dataset.step = '2';
                 img.src = `https://static.galaxy.fun/cards/${cardKey}__300.webp`;
+            } else if (step === 2) {
+                img.dataset.step = '3';
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__240.webp`;
+            } else if (step === 3) {
+                img.dataset.step = '4';
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__default__240.webp`;
             } else {
                 img.onerror = null;
-                img.src = '/icon.png';
+                img.style.display = 'none';
             }
         }
 
@@ -1104,8 +1104,8 @@
         function sortDeckCards(cards) {
             const valid = cards.filter(Boolean);
             valid.sort((a, b) => {
-                const rA = RARITY_WEIGHT[(a.rarity || 'common').toLowerCase()] || 0;
-                const rB = RARITY_WEIGHT[(b.rarity || 'common').toLowerCase()] || 0;
+                const rA = RARITY_WEIGHT[(a.rarity || 'common').toLowerCase()] || 1;
+                const rB = RARITY_WEIGHT[(b.rarity || 'common').toLowerCase()] || 1;
                 if (rA !== rB) return rA - rB;
                 return (a.name || '').localeCompare(b.name || '');
             });
@@ -1154,14 +1154,12 @@
 
         async function loadDeckForCloning(deckId) {
             try {
-                // Check local active draft first
                 const draft = DeckStorage.getActiveDraft();
                 if (draft && String(draft.id) === String(deckId)) {
                     populateDeckData(draft, true);
                     return;
                 }
 
-                // Otherwise fetch from API
                 const res = await fetch(`/api/deck.php?id=${encodeURIComponent(deckId)}`, {
                     headers: { 'X-Author-Token': DeckStorage.getAuthorToken() }
                 });
@@ -1177,12 +1175,10 @@
         function populateDeckData(deck, isClone, primer, annotations) {
             if (!deck) return;
             
-            // Set Captain
             const cap = captainsList.find(c => c.cid === deck.captain_cid);
             if (cap) currentCaptain = cap;
             updateCaptainUI();
 
-            // Set Compatible Captains
             compatibleCaptains.clear();
             const compats = deck.compatible_captain_cids || [];
             compats.forEach(cid => {
@@ -1190,7 +1186,6 @@
             });
             renderCompatCaptainsUI();
 
-            // Set Title & Primer
             document.getElementById('inputDeckTitle').value = isClone ? `${deck.name || 'Deck'} (Copy)` : (deck.name || 'Untitled Deck');
             if (deck.summary) document.getElementById('inputSummary').value = deck.summary;
 
@@ -1200,7 +1195,6 @@
                 document.getElementById('primerTextarea').value = deck.guide_markdown;
             }
 
-            // Set Annotations
             cardAnnotations.clear();
             if (Array.isArray(annotations)) {
                 annotations.forEach(a => {
@@ -1216,7 +1210,6 @@
                 });
             }
 
-            // Set Cards & Sort
             const cids = deck.card_cids || [];
             const loadedCards = cids.map(cid => allCards.find(c => c.cid === cid)).filter(Boolean);
             activeDeckCards = sortDeckCards(loadedCards);
@@ -1345,8 +1338,17 @@
 
         function applyCatalogFilters() {
             const query = document.getElementById('cardSearchInput').value;
-            const filterable = allCards.filter(c => c.card_type !== 'captain');
+            // Exclude captains and non-collectible tokens from deck building catalog
+            const filterable = allCards.filter(c => c.card_type !== 'captain' && !c.token);
             const results = searchEngine.filterCards(filterable, query, activeFacets);
+
+            // Sort catalog cards strictly: Rarity ascending (Common -> Uncommon -> Rare -> Epic -> Legendary), then alphabetically
+            results.sort((a, b) => {
+                const rA = RARITY_WEIGHT[(a.rarity || 'common').toLowerCase()] || 1;
+                const rB = RARITY_WEIGHT[(b.rarity || 'common').toLowerCase()] || 1;
+                if (rA !== rB) return rA - rB;
+                return (a.name || '').localeCompare(b.name || '');
+            });
 
             const badge = document.getElementById('regexBadge');
             if (searchEngine.lastRegexError) {
@@ -1577,7 +1579,7 @@
                 applyCatalogFilters();
             });
 
-            // Facet Chips Toggle (with rarity fix!)
+            // Facet Chips Toggle
             document.querySelectorAll('.chip-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const facet = btn.dataset.facet;
@@ -1591,16 +1593,15 @@
                     } else {
                         btn.parentElement.querySelector('[data-val="all"]').classList.remove('active');
                         const set = activeFacets[facetKey];
-                        const parseVal = (facet === 'tier') ? parseInt(val, 10) : val;
 
-                        if (set.has(parseVal)) {
-                            set.delete(parseVal);
+                        if (set.has(val)) {
+                            set.delete(val);
                             btn.classList.remove('active');
                             if (set.size === 0) {
                                 btn.parentElement.querySelector('[data-val="all"]').classList.add('active');
                             }
                         } else {
-                            set.add(parseVal);
+                            set.add(val);
                             btn.classList.add('active');
                         }
                     }
@@ -1797,7 +1798,6 @@
                         document.getElementById('inputShareUrl').value = data.share_url;
                         document.getElementById('btnConfirmSave').textContent = 'Saved ✓';
 
-                        // Save locally too
                         payload.id = data.id;
                         await DeckStorage.saveLocalDeck(payload);
                     } else {
@@ -1871,7 +1871,7 @@
                     const parser = new HdtbClientParser();
 
                     if (uploadTarget === 'deck_library') {
-                        const parsed = parser.parseDeckLibrary(buffer);
+                        const parsed = parser.parseDeckLibrary(buffer, file.name);
                         if (!parsed.custom_decks || parsed.custom_decks.length === 0) {
                             status.style.color = '#ef4444';
                             status.textContent = 'No custom decks found in this library file.';
@@ -1886,7 +1886,7 @@
                         loadStoredDecks();
                         setTimeout(() => uploadModal.classList.remove('open'), 1500);
                     } else {
-                        const parsed = parser.parseCollection(buffer);
+                        const parsed = parser.parseCollection(buffer, file.name);
                         await DeckStorage.saveUserCollection(parsed.owned_cards);
                         status.style.color = '#4ecdc4';
                         status.textContent = `Successfully imported collection (${Object.keys(parsed.owned_cards).length} unique cards)!`;

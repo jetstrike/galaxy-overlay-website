@@ -330,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $deck_id = generate_deck_id($conn);
                 $ins = $conn->prepare("
                     INSERT INTO website_decks (id, author_id, author_name, captain_cid, compatible_captain_cids, name, summary, card_cids, visibility, has_primer) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
                 $ins->bind_param("sssisssssi", $deck_id, $user_token, $author_name, $captain_cid, $compat_json, $name, $summary, $card_cids_json, $visibility, $has_primer);
                 $ins->execute();
