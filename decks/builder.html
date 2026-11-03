@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deck Builder & Primer Hub — Once Upon a Galaxy</title>
-    <link rel="stylesheet" href="/styles.css?v=4">
+    <link rel="stylesheet" href="/styles.css?v=6">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -286,8 +286,8 @@
         }
 
         .tray-slot-art {
-            width: 50px;
-            height: 58px;
+            width: 44px;
+            height: 60px;
             border-radius: 6px;
             object-fit: cover;
             background: #111;
@@ -557,78 +557,48 @@
             color: #fff;
         }
 
-        /* Card Catalog Grid */
+        /* Card Catalog Grid (Visual Cards) */
         .catalog-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-            gap: 14px;
-            max-height: 820px;
+            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+            gap: 16px;
+            max-height: 840px;
             overflow-y: auto;
             padding-right: 6px;
         }
 
         .catalog-card-item {
             position: relative;
-            background: rgba(22, 27, 42, 0.9);
-            border: 1px solid var(--glass-border);
+            background: #111;
+            border: 2px solid var(--glass-border);
             border-radius: 12px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
             cursor: pointer;
+            aspect-ratio: 240 / 337;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
         }
 
         .catalog-card-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.5);
-            border-color: var(--accent-primary);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+            border-color: var(--accent-primary) !important;
+            z-index: 2;
         }
 
         .catalog-card-item.in-tray {
-            opacity: 0.55;
-            filter: grayscale(0.5);
+            opacity: 0.45;
+            filter: grayscale(0.6);
         }
 
-        .card-img-wrap {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            background: #111;
-            overflow: hidden;
-        }
-
-        .card-img-wrap img {
+        .catalog-card-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .catalog-card-item:hover .card-img-wrap img {
-            transform: scale(1.05);
-        }
-
-        .card-body-wrap {
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            background: rgba(18, 22, 34, 0.95);
-        }
-
-        .card-title {
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
-        .card-text {
-            font-size: 0.76rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-            flex: 1;
+            display: block;
+            background: #111;
         }
 
         /* Modals */
@@ -726,7 +696,7 @@
 
         .alt-card-chip-info img {
             width: 32px;
-            height: 38px;
+            height: 44px;
             border-radius: 4px;
             object-fit: cover;
         }
@@ -839,22 +809,13 @@
             <div class="search-row">
                 <div class="search-field-wrap">
                     <svg class="search-icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                    <input type="text" id="cardSearchInput" class="search-bar-input" placeholder="Search cards by name, text, or regex (e.g. /draw|shop/i)...">
+                    <input type="text" id="cardSearchInput" class="search-bar-input" placeholder="Search collectible cards by name or regex (e.g. /draw|fae/i)...">
                 </div>
                 <div class="regex-badge" id="regexBadge">REGEX READY</div>
             </div>
 
-            <!-- Facet Filters -->
+            <!-- Facet Filters: Rarity and OUAG Unit Factions -->
             <div class="facets-bar">
-                <div class="facet-row">
-                    <span class="facet-label">Type</span>
-                    <div class="facet-chips" data-facet="type">
-                        <button class="chip-btn" data-facet="type" data-val="all">All</button>
-                        <button class="chip-btn active" data-facet="type" data-val="character">Character</button>
-                        <button class="chip-btn" data-facet="type" data-val="spell">Spell</button>
-                        <button class="chip-btn" data-facet="type" data-val="treasure">Treasure</button>
-                    </div>
-                </div>
                 <div class="facet-row">
                     <span class="facet-label">Rarity</span>
                     <div class="facet-chips" data-facet="rarity">
@@ -885,9 +846,9 @@
                 </div>
             </div>
 
-            <!-- Catalog Cards Grid -->
+            <!-- Visual Card Catalog Grid -->
             <div class="catalog-grid" id="catalogGrid">
-                <!-- Cards rendered dynamically -->
+                <!-- Visual Cards rendered dynamically -->
             </div>
         </section>
     </main>
@@ -930,7 +891,7 @@
         <div class="modal-card" style="max-width: 660px; width: 95%;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                 <div style="display: flex; gap: 14px; align-items: center;">
-                    <img id="detailModalCardArt" src="" style="width: 54px; height: 72px; object-fit: cover; border-radius: 8px; border: 2px solid var(--accent-primary);" onerror="this.src='/icon.png'">
+                    <img id="detailModalCardArt" src="" style="width: 54px; height: 75px; object-fit: cover; border-radius: 8px; border: 2px solid var(--accent-primary);" onerror="this.src='/icon.png'">
                     <div>
                         <h3 id="detailModalCardName" style="color: #fff; font-size: 1.25rem; margin: 0 0 4px 0;">Card Name</h3>
                         <div id="detailModalCardRarity" style="font-size: 0.82rem; font-weight: 700;">Common</div>
@@ -1040,10 +1001,10 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/decks/js/hdtbClientParser.js?v=4"></script>
-    <script src="/decks/js/deckStorage.js?v=4"></script>
-    <script src="/decks/js/cardSearchEngine.js?v=4"></script>
-    <script src="/decks/js/collectionMatcher.js?v=4"></script>
+    <script src="/decks/js/hdtbClientParser.js?v=6"></script>
+    <script src="/decks/js/deckStorage.js?v=6"></script>
+    <script src="/decks/js/cardSearchEngine.js?v=6"></script>
+    <script src="/decks/js/collectionMatcher.js?v=6"></script>
     <script>
         // State
         let allCards = [];
@@ -1065,14 +1026,12 @@
             'secret rare': 6
         };
 
-        // Default Facet: Character selected
         const activeFacets = {
-            types: new Set(['character']),
             rarities: new Set(),
             factions: new Set()
         };
 
-        // Universal Image URL resolver with multi-step fallback
+        // Universal Image URL resolver
         function getCardImageUrl(card) {
             if (!card || !card.card_key) return '/icon.png';
             const key = card.card_key.toLowerCase().trim();
@@ -1083,20 +1042,17 @@
         }
 
         function onCardImgError(img, cardKey) {
-            if (!img.dataset.step) img.dataset.step = '1';
-            const step = parseInt(img.dataset.step, 10);
+            const step = parseInt(img.dataset.step || '1', 10);
+            img.dataset.step = String(step + 1);
             if (step === 1) {
-                img.dataset.step = '2';
-                img.src = `https://static.galaxy.fun/cards/${cardKey}__300.webp`;
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__silver__240.webp`;
             } else if (step === 2) {
-                img.dataset.step = '3';
-                img.src = `https://static.galaxy.fun/cards/${cardKey}__240.webp`;
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__300.webp`;
             } else if (step === 3) {
-                img.dataset.step = '4';
                 img.src = `https://static.galaxy.fun/cards/${cardKey}__default__240.webp`;
             } else {
                 img.onerror = null;
-                img.style.display = 'none';
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__bronze__240.webp`;
             }
         }
 
@@ -1338,8 +1294,8 @@
 
         function applyCatalogFilters() {
             const query = document.getElementById('cardSearchInput').value;
-            // Exclude captains and non-collectible tokens from deck building catalog
-            const filterable = allCards.filter(c => c.card_type !== 'captain' && !c.token);
+            // ONLY SHOW COLLECTIBLE CARDS (cards that belong to constructed player decks)
+            const filterable = allCards.filter(c => c && c.is_collectible === true);
             const results = searchEngine.filterCards(filterable, query, activeFacets);
 
             // Sort catalog cards strictly: Rarity ascending (Common -> Uncommon -> Rare -> Epic -> Legendary), then alphabetically
@@ -1367,22 +1323,17 @@
 
             const currentDeckCids = new Set(activeDeckCards.filter(Boolean).map(c => c.cid));
 
-            results.slice(0, 100).forEach(card => {
+            results.forEach(card => {
                 const item = document.createElement('div');
                 const inTray = currentDeckCids.has(card.cid);
                 item.className = 'catalog-card-item' + (inTray ? ' in-tray' : '');
 
                 const rarity = (card.rarity || 'common').toLowerCase();
                 item.style.borderColor = `var(--rarity-${rarity})`;
+                item.title = `${card.name}\n${card.rules_text || ''}`;
 
                 item.innerHTML = `
-                    <div class="card-img-wrap">
-                        <img src="${getCardImageUrl(card)}" loading="lazy" onerror="onCardImgError(this, '${card.card_key || ''}')">
-                    </div>
-                    <div class="card-body-wrap">
-                        <div class="card-title">${card.name}</div>
-                        <div class="card-text">${card.rules_text || card.description || ''}</div>
-                    </div>
+                    <img class="catalog-card-img" src="${getCardImageUrl(card)}" alt="${card.name}" loading="lazy" onerror="onCardImgError(this, '${card.card_key || ''}')">
                 `;
 
                 item.addEventListener('click', () => {
@@ -1546,7 +1497,7 @@
                 }
 
                 // Local drafts
-                const localDecks = await DeckStorage.getAllLocalDecks();
+                const localDecks = await DeckStorage.getLocalDecks();
                 document.getElementById('localDraftCount').textContent = localDecks.length;
                 const localList = document.getElementById('localDecksList');
                 if (localDecks.length > 0) {
@@ -1688,19 +1639,19 @@
                 }
 
                 const matches = allCards
-                    .filter(c => c.card_type !== 'captain' && c.cid !== currentDetailCard.cid && !tempDetailAlts.includes(c.cid))
+                    .filter(c => c.is_collectible === true && c.cid !== currentDetailCard.cid && !tempDetailAlts.includes(c.cid))
                     .filter(c => c.name.toLowerCase().includes(q))
                     .slice(0, 8);
 
                 if (matches.length === 0) {
-                    dropAlt.innerHTML = '<div style="padding: 8px 12px; font-size: 0.8rem; color: var(--text-muted);">No matching cards</div>';
+                    dropAlt.innerHTML = '<div style="padding: 8px 12px; font-size: 0.8rem; color: var(--text-muted);">No matching collectible cards</div>';
                 } else {
                     dropAlt.innerHTML = '';
                     matches.forEach(m => {
                         const row = document.createElement('div');
                         row.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 6px 12px; cursor: pointer; transition: background 0.15s;';
                         row.innerHTML = `
-                            <img src="${getCardImageUrl(m)}" style="width: 24px; height: 30px; object-fit: cover; border-radius: 3px;" onerror="onCardImgError(this, '${m.card_key || ''}')">
+                            <img src="${getCardImageUrl(m)}" style="width: 24px; height: 32px; object-fit: cover; border-radius: 3px;" onerror="onCardImgError(this, '${m.card_key || ''}')">
                             <span style="color: #fff; font-size: 0.85rem;">${m.name}</span>
                         `;
                         row.addEventListener('mouseover', () => row.style.background = 'rgba(99, 102, 241, 0.2)');

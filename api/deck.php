@@ -133,8 +133,10 @@ HTML;
         exit;
     }
 
-    // Check if redirecting human browser to SPA view
-    if (isset($_GET['redirect']) && $_GET['redirect'] === '1') {
+    // If accessed via share route /d/<id> or directly in human browser
+    $req_uri = $_SERVER['REQUEST_URI'] ?? '';
+    $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+    if (strpos($req_uri, '/d/') !== false || (strpos($accept, 'text/html') !== false && !isset($_GET['json']))) {
         header("Location: /decks/view.html?id=" . urlencode($deck['id']), true, 302);
         exit;
     }

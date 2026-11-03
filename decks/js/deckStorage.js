@@ -213,6 +213,27 @@ class DeckStorage {
         });
     }
 
+    static async syncImportedDecksToCloud(playfab_id, decks) {
+        if (!decks || decks.length === 0) return { success: false, message: 'No decks to sync' };
+        try {
+            const res = await fetch('/api/sync-hdtb.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Author-Token': this.getAuthorToken()
+                },
+                body: JSON.stringify({
+                    playfab_id: playfab_id || this.getPlayfabId() || '',
+                    decks: decks
+                })
+            });
+            return await res.json();
+        } catch(err) {
+            console.warn('syncImportedDecksToCloud network error:', err);
+            return { success: false, error: err.message };
+        }
+    }
+
     static async getImportedDecks() {
         const db = await this.getDB();
         return new Promise((resolve, reject) => {
