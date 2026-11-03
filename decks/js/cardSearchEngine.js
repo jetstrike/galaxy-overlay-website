@@ -8,16 +8,8 @@ class CardSearchEngine {
         this.lastRegexError = null;
     }
 
-    /**
-     * Parses search text to extract syntax tokens like f:olympus, t:spell, c<=3, r:epic
-     * Returns { rawText, parsedRegex, tokens, isRegexValid }
-     */
-    parseQuery(queryString) {
-        if (!queryString || typeof queryString !== 'string') {
-            return { cleanText: '', tokens: {}, regex: null, isRegexValid: true };
-        }
-
-        const tokens = {
+    createEmptyTokens() {
+        return {
             factions: [],
             types: [],
             rarities: [],
@@ -27,6 +19,18 @@ class CardSearchEngine {
             costMax: null,
             keywords: []
         };
+    }
+
+    /**
+     * Parses search text to extract syntax tokens like f:olympus, t:spell, c<=3, r:epic
+     * Returns { rawText, parsedRegex, tokens, isRegexValid }
+     */
+    parseQuery(queryString) {
+        const tokens = this.createEmptyTokens();
+
+        if (!queryString || typeof queryString !== 'string') {
+            return { cleanText: '', tokens, regex: null, isRegexValid: true };
+        }
 
         // Extract shorthand tokens
         let cleanText = queryString.replace(/(?:^|\s)([ftrck]|tier|cost)([:<>=]+)([^\s]+)/gi, (match, field, op, val) => {
@@ -37,7 +41,13 @@ class CardSearchEngine {
             if (field === 'f') {
                 tokens.factions.push(val);
             } else if (field === 't') {
-                tokens.types.push(val);
+                // normalize character/unit
+                if (val === 'unit' || val === 'character') {
+                    tokens.types.push('character');
+                    tokens.types.push('unit');
+                } else {
+                    tokens.types.push(val);
+                }
             } else if (field === 'r') {
                 tokens.rarities.push(val);
             } else if (field === 'k') {
@@ -108,11 +118,11 @@ class CardSearchEngine {
             if (!card || !card.cid) return false;
 
             const cName = card.name || '';
-            const cType = (card.type || '').toLowerCase();
+            const rawType = (card.card_type || card.type || '').toLowerCase();
             const cTier = parseInt(card.tier || 1, 10);
             const cCost = parseInt(card.cost || 0, 10);
             const cRarity = (card.rarity || '').toLowerCase();
-            const cDesc = card.description || card.text || card.ability || '';
+            const cDesc = card.rules_text || card.description || card.text || card.ability || '';
 
             // Card Factions (can be array or string)
             let cFactions = [];
@@ -123,7 +133,13 @@ class CardSearchEngine {
             }
 
             // 1. Facet Chips Filters (OR within group, AND across groups)
-            if (fTypes.size > 0 && !fTypes.has(cType)) return false;
+            if (fTypes.size > 0) {
+                const matchType = Array.from(fTypes).some(ft => {
+                    if (ft === 'character' || ft === 'unit') return rawType === 'character' || rawType === 'unit';
+                    return ft === rawType;
+                });
+                if (!matchType) return false;
+            }
             if (fTiers.size > 0 && !fTiers.has(cTier)) return false;
             if (fRarities.size > 0 && !fRarities.has(cRarity)) return false;
             if (fCosts.size > 0) {
@@ -139,24 +155,24 @@ class CardSearchEngine {
             }
 
             // 2. Syntax Shorthand Tokens
-            if (tokens.types.length > 0 && !tokens.types.includes(cType)) return false;
-            if (tokens.rarities.length > 0 && !tokens.rarities.includes(cRarity)) return false;
+            if (Array.isArray(tokens.types) && tokens.types.length > 0 && !tokens.types.includes(rawType)) return false;
+            if (Array.isArray(tokens.rarities) && tokens.rarities.length > 0 && !tokens.rarities.includes(cRarity)) return false;
             if (tokens.tierMin !== null && cTier < tokens.tierMin) return false;
             if (tokens.tierMax !== null && cTier > tokens.tierMax) return false;
             if (tokens.costMin !== null && cCost < tokens.costMin) return false;
             if (tokens.costMax !== null && cCost > tokens.costMax) return false;
 
-            if (tokens.factions.length > 0) {
+            if (Array.isArray(tokens.factions) && tokens.factions.length > 0) {
                 const matchFac = tokens.factions.some(tf => cFactions.some(cf => cf.includes(tf)));
                 if (!matchFac) return false;
             }
 
-            if (tokens.keywords.length > 0) {
+            if (Array.isArray(tokens.keywords) && tokens.keywords.length > 0) {
                 const matchKw = tokens.keywords.every(kw => cDesc.toLowerCase().includes(kw));
                 if (!matchKw) return false;
             }
 
-            // 3. Regular Expression Query (across Name, Description, and Faction)
+            // 3. Regular Expression Query (across Name, Rules Text / Description, and Faction)
             if (regex) {
                 const matchesName = regex.test(cName);
                 const matchesDesc = regex.test(cDesc);
@@ -167,16 +183,8 @@ class CardSearchEngine {
             return true;
         });
 
-        // Sort by Tier ascending, then Cost ascending, then Name alphabetical
+        // Sort by Rarity/Tier ascending, then Name alphabetical
         return results.sort((a, b) => {
-            const tA = a.tier || 1;
-            const tB = b.tier || 1;
-            if (tA !== tB) return tA - tB;
-
-            const cA = a.cost || 0;
-            const cB = b.cost || 0;
-            if (cA !== cB) return cA - cB;
-
             return (a.name || '').localeCompare(b.name || '');
         });
     }
