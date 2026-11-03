@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Deck Primer — Once Upon a Galaxy</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rarity-common: #8e9aaf;
+            --rarity-uncommon: #2ec4b6;
+            --rarity-rare: #3a86ff;
+            --rarity-epic: #9d4edd;
+            --rarity-legendary: #ffb703;
+        }
+
+        .view-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 30px 20px 80px;
+            width: 100%;
+        }
+
+        /* Hero Card */
+        .deck-hero-card {
+            background: rgba(18, 22, 34, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px 32px;
+            backdrop-filter: blur(16px);
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        }
+
+        .hero-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hero-captain-art {
+            width: 90px;
+            height: 90px;
+            border-radius: 16px;
+            border: 3px solid var(--rarity-legendary);
+            object-fit: cover;
+            background: #1e293b;
+            box-shadow: 0 8px 24px rgba(255, 183, 3, 0.3);
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .hero-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .upvote-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upvote-btn:hover {
+            background: rgba(255, 209, 102, 0.2);
+            border-color: #ffd166;
+            color: #ffd166;
+            transform: translateY(-2px);
+        }
+
+        .upvote-btn.upvoted {
+            background: rgba(255, 209, 102, 0.25);
+            border-color: #ffd166;
+            color: #ffd166;
+        }
+
+        /* 12-Card Grid */
+        .cards-grid-card {
+            background: rgba(18, 22, 34, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px 28px;
+            backdrop-filter: blur(16px);
+            margin-bottom: 28px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .cards-12-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 960px) {
+            .cards-12-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 540px) {
+            .cards-12-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .viewer-card-tile {
+            position: relative;
+            background: rgba(24, 28, 43, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .viewer-card-tile:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.5);
+        }
+
+        .viewer-card-art {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #111;
+        }
+
+        .tile-meta-top {
+            position: absolute;
+            top: 6px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(0,0,0,0.85);
+        }
+        .meta-tier { left: 6px; color: #ffd166; }
+        .meta-cost { right: 6px; color: #4ecdc4; }
+
+        .tile-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .tile-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tile-note-snippet {
+            font-size: 0.75rem;
+            color: #ffd166;
+            background: rgba(255, 209, 102, 0.1);
+            padding: 3px 6px;
+            border-radius: 4px;
+            border: 1px dashed rgba(255, 209, 102, 0.3);
+            margin-top: 4px;
+        }
+
+        /* Primer Section */
+        .primer-container {
+            background: rgba(18, 22, 34, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(16px);
+            line-height: 1.7;
+            color: #e2e8f0;
+        }
+
+        .primer-container h1, .primer-container h2, .primer-container h3 {
+            color: #fff;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .primer-container p {
+            margin-bottom: 16px;
+        }
+
+        .primer-container code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0,0,0,0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #4ecdc4;
+        }
+
+        .badge-ready { background: rgba(46, 196, 182, 0.2); color: #2ec4b6; border: 1px solid #2ec4b6; padding: 4px 10px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; }
+        .badge-substitutable { background: rgba(255, 209, 102, 0.2); color: #ffd166; border: 1px solid #ffd166; padding: 4px 10px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; }
+        .badge-warning { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb primary"></div>
+        <div class="glow-orb secondary"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/index.html" class="logo">Galaxy<span>Tracker</span></a>
+        <div class="nav-links">
+            <a href="/index.html">Home</a>
+            <a href="/meta.html">Meta Insights</a>
+            <a href="/tierlist.html">Auto Tier List</a>
+            <a href="/decks.html">Meta Deck Analysis</a>
+            <a href="/turns.html">Turn Breakdowns</a>
+            <a href="/decks/browse.html">Community Decks</a>
+            <a href="/decks/builder.html">Deck Builder</a>
+        </div>
+    </nav>
+
+    <div class="view-container">
+        <!-- Hero Details -->
+        <div class="deck-hero-card">
+            <div class="hero-left">
+                <img id="captainImg" class="hero-captain-art" src="/icon.png" alt="Captain">
+                <div>
+                    <h1 class="hero-title" id="deckTitle">Loading Deck...</h1>
+                    <div class="hero-meta">
+                        <span id="deckAuthor" style="color: #ffd166; font-weight: 600;">Author</span>
+                        <span>•</span>
+                        <span id="deckCaptain">Captain</span>
+                        <span>•</span>
+                        <span id="deckDate">Recently Created</span>
+                        <span id="collectionBadge" style="margin-left: 8px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <button class="upvote-btn" id="btnUpvote">
+                    <span>★</span>
+                    <span id="upvoteCount">0</span>
+                </button>
+                <button class="btn-action" id="btnCopyShare">🔗 Share</button>
+                <button class="btn-action btn-primary-action" id="btnCloneDeck">⚡ Clone to Builder</button>
+            </div>
+        </div>
+
+        <!-- 12 Cards Grid -->
+        <div class="cards-grid-card">
+            <div class="section-header">
+                <div class="section-title">Deck Composition (12 Cards)</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);" id="deckStatsSummary">Avg Tier: - • Avg Cost: -</div>
+            </div>
+            <div class="cards-12-grid" id="deckCardsGrid">
+                <!-- Cards rendered dynamically -->
+            </div>
+        </div>
+
+        <!-- Primer & Strategy Guide -->
+        <div class="primer-container" id="primerContainer">
+            <h2 style="margin-top: 0;">Author Strategy Guide & Primer</h2>
+            <div id="primerContent">
+                <p style="color: var(--text-muted); font-style: italic;">No primer guide was written for this deck.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/decks/js/deckStorage.js"></script>
+    <script src="/decks/js/collectionMatcher.js"></script>
+    <script>
+        let deckData = null;
+        let allCardsMap = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const deckId = urlParams.get('id');
+
+            if (!deckId) {
+                alert('No deck id provided in URL.');
+                window.location.href = '/decks/browse.html';
+                return;
+            }
+
+            try {
+                // Fetch Cards Catalog
+                const cardsRes = await fetch('/api/cards.json');
+                allCardsMap = await cardsRes.json();
+
+                // Fetch Deck
+                const res = await fetch(`/api/deck.php?id=${encodeURIComponent(deckId)}`, {
+                    headers: { 'X-Author-Token': DeckStorage.getAuthorToken() }
+                });
+                const data = await res.json();
+
+                if (!data.success || !data.deck) {
+                    alert('Deck not found or private.');
+                    return;
+                }
+
+                deckData = data;
+                renderDeckView(data);
+                checkCollectionMatch(data.deck, data.annotations || []);
+            } catch (err) {
+                console.error(err);
+                alert('Failed to load deck: ' + err.message);
+            }
+
+            // Upvote Button
+            document.getElementById('btnUpvote').addEventListener('click', async () => {
+                try {
+                    const res = await fetch('/api/deck.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'upvote',
+                            deck_id: deckId,
+                            author_id: DeckStorage.getAuthorToken()
+                        })
+                    });
+                    const resData = await res.json();
+                    if (resData.success) {
+                        document.getElementById('upvoteCount').textContent = resData.upvote_count;
+                        const btn = document.getElementById('btnUpvote');
+                        if (resData.upvoted) btn.classList.add('upvoted');
+                        else btn.classList.remove('upvoted');
+                    }
+                } catch (e) {
+                    console.warn(e);
+                }
+            });
+
+            // Copy Share URL
+            document.getElementById('btnCopyShare').addEventListener('click', () => {
+                navigator.clipboard.writeText(window.location.href);
+                const btn = document.getElementById('btnCopyShare');
+                btn.textContent = 'Copied ✓';
+                setTimeout(() => btn.textContent = '🔗 Share', 2000);
+            });
+
+            // Clone to Builder
+            document.getElementById('btnCloneDeck').addEventListener('click', () => {
+                if (deckData && deckData.deck) {
+                    DeckStorage.saveActiveDraft(deckData.deck);
+                    window.location.href = '/decks/builder.html?clone=' + encodeURIComponent(deckId);
+                }
+            });
+        });
+
+        function renderDeckView(data) {
+            const dk = data.deck;
+            document.getElementById('pageTitle').textContent = `${dk.name} (${dk.captain_name || 'Captain'}) — Deck Primer`;
+            document.getElementById('deckTitle').textContent = dk.name;
+            document.getElementById('deckAuthor').textContent = 'By ' + (dk.author_name || 'Anonymous');
+            document.getElementById('deckCaptain').textContent = 'Captain: ' + (dk.captain_name || 'CID #' + dk.captain_cid);
+            document.getElementById('upvoteCount').textContent = dk.upvote_count || 0;
+
+            if (data.is_upvoted) {
+                document.getElementById('btnUpvote').classList.add('upvoted');
+            }
+
+            // Captain Image
+            const capCard = allCardsMap[String(dk.captain_cid)];
+            if (capCard && capCard.card_key) {
+                document.getElementById('captainImg').src = `https://static.galaxy.fun/cards/${capCard.card_key}__default__240.webp`;
+            }
+
+            // 12 Cards
+            const grid = document.getElementById('deckCardsGrid');
+            grid.innerHTML = '';
+            const cids = dk.card_cids || [];
+            let sumTier = 0;
+            let sumCost = 0;
+
+            const annMap = new Map();
+            (data.annotations || []).forEach(a => annMap.set(a.card_cid, a));
+
+            cids.forEach(cid => {
+                const card = allCardsMap[String(cid)] || { name: `Card #${cid}`, tier: 1, cost: 0, rarity: 'common' };
+                sumTier += (card.tier || 1);
+                sumCost += (card.cost || 0);
+
+                const tile = document.createElement('div');
+                tile.className = 'viewer-card-tile';
+                const rarity = (card.rarity || 'common').toLowerCase();
+                tile.style.borderColor = `var(--rarity-${rarity})`;
+
+                const ann = annMap.get(cid);
+                const noteHtml = ann && ann.card_note ? `<div class="tile-note-snippet">✒️ ${ann.card_note}</div>` : '';
+
+                tile.innerHTML = `
+                    <div style="position: relative;">
+                        <img class="viewer-card-art" src="https://static.galaxy.fun/cards/${card.card_key || ''}__bronze__240.webp" onerror="this.src='/icon.png'">
+                        <span class="tile-meta-top meta-tier">★${card.tier || 1}</span>
+                        <span class="tile-meta-top meta-cost">${card.cost || 0}g</span>
+                    </div>
+                    <div class="tile-body">
+                        <div class="tile-title">${card.name}</div>
+                        ${noteHtml}
+                    </div>
+                `;
+
+                grid.appendChild(tile);
+            });
+
+            if (cids.length > 0) {
+                document.getElementById('deckStatsSummary').textContent = `Avg Tier: ${(sumTier / cids.length).toFixed(1)} • Avg Cost: ${(sumCost / cids.length).toFixed(1)}g`;
+            }
+
+            // Primer Markdown
+            if (data.primer && data.primer.guide_markdown) {
+                // Simple markdown-to-html formatter for sections, bold, and line breaks
+                const md = data.primer.guide_markdown
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+                    .replace(/\n/gim, '<br>');
+
+                document.getElementById('primerContent').innerHTML = md;
+            }
+        }
+
+        async function checkCollectionMatch(deck, annotations) {
+            try {
+                const collectionMap = await DeckStorage.getUserCollection();
+                if (Object.keys(collectionMap).length > 0) {
+                    const evalRes = CollectionMatcher.evaluateDeck(deck, collectionMap, annotations);
+                    document.getElementById('collectionBadge').innerHTML = CollectionMatcher.renderBadgeHtml(evalRes);
+                }
+            } catch(e) {
+                console.warn('Collection check error:', e);
+            }
+        }
+    </script>
+</body>
+</html>

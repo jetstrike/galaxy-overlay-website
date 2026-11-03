@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck Builder & Primer Hub — Once Upon a Galaxy</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rarity-common: #8e9aaf;
+            --rarity-uncommon: #2ec4b6;
+            --rarity-rare: #3a86ff;
+            --rarity-epic: #9d4edd;
+            --rarity-legendary: #ffb703;
+        }
+
+        .builder-layout {
+            display: grid;
+            grid-template-columns: 460px 1fr;
+            gap: 24px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) {
+            .builder-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Top Action Ribbon */
+        .builder-ribbon {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            max-width: 1720px;
+            margin: 16px auto 0;
+            padding: 12px 20px;
+            background: rgba(18, 22, 34, 0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+        }
+
+        .ribbon-left, .ribbon-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.6);
+        }
+
+        .author-tag-input {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 4px 10px;
+        }
+
+        .author-tag-input input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            width: 140px;
+            outline: none;
+        }
+
+        /* Left Column: Deck Tray & Primers */
+        .deck-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .deck-tray-card {
+            background: rgba(18, 22, 34, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .captain-banner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 16px;
+        }
+
+        .captain-thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            border: 2px solid var(--rarity-legendary);
+            object-fit: cover;
+            background: #1e293b;
+        }
+
+        .captain-info {
+            flex: 1;
+        }
+
+        .deck-title-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 4px 0;
+            outline: none;
+            margin-bottom: 4px;
+        }
+
+        .deck-title-input:focus {
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .captain-name-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Tray 12 Slots */
+        .tray-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .tray-slot {
+            position: relative;
+            height: 68px;
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .tray-slot.empty {
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .tray-slot.empty:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--accent-primary);
+        }
+
+        .tray-slot.filled {
+            border-style: solid;
+            background: rgba(26, 31, 48, 0.9);
+        }
+
+        .tray-slot-art {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: #111;
+            flex-shrink: 0;
+        }
+
+        .tray-slot-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tray-slot-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff;
+        }
+
+        .tray-slot-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .tray-badge-tier {
+            color: #ffd166;
+            font-weight: 700;
+        }
+
+        .tray-badge-cost {
+            color: #4ecdc4;
+            font-weight: 700;
+        }
+
+        .tray-slot-remove {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .tray-slot:hover .tray-slot-remove {
+            opacity: 1;
+        }
+
+        .tray-note-icon {
+            color: #ffd166;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        /* Tray Metrics */
+        .tray-metrics-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .metric-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Primer Tabs & Drawer */
+        .tabs-header {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 14px;
+        }
+
+        .tab-btn {
+            padding: 8px 14px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .primer-textarea {
+            width: 100%;
+            height: 220px;
+            background: rgba(12, 15, 24, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+        }
+
+        .primer-textarea:focus {
+            border-color: var(--accent-primary);
+        }
+
+        /* Right Column: Search & Catalog */
+        .catalog-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .search-box-card {
+            background: rgba(18, 22, 34, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 18px 20px;
+            backdrop-filter: blur(16px);
+        }
+
+        .search-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .search-bar-input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            background: rgba(12, 15, 24, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.98rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar-input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .search-icon-left {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .regex-badge {
+            position: absolute;
+            right: 12px;
+            font-size: 0.72rem;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(78, 205, 196, 0.15);
+            color: #4ecdc4;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .regex-badge.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Facets Filter Chips */
+        .facet-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .facet-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            width: 65px;
+        }
+
+        .chip-btn {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .chip-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chip-btn.active {
+            background: var(--accent-primary);
+            color: #fff;
+            border-color: var(--accent-primary);
+        }
+
+        /* Card Catalog Grid */
+        .card-catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+        }
+
+        .catalog-card-item {
+            position: relative;
+            background: rgba(22, 27, 42, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .catalog-card-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+            border-color: var(--accent-primary);
+        }
+
+        .catalog-card-item.in-tray {
+            opacity: 0.65;
+            filter: grayscale(0.3);
+        }
+
+        .card-img-wrap {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            background: #111;
+            overflow: hidden;
+        }
+
+        .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .catalog-card-item:hover .card-img-wrap img {
+            transform: scale(1.05);
+        }
+
+        .card-pill-top {
+            position: absolute;
+            top: 6px;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .pill-tier { left: 6px; color: #ffd166; }
+        .pill-cost { right: 6px; color: #4ecdc4; }
+
+        .card-body-wrap {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .card-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Modal Backdrop */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #141824;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .dropzone-box {
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 36px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 16px 0;
+        }
+
+        .dropzone-box:hover, .dropzone-box.dragover {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb primary"></div>
+        <div class="glow-orb secondary"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="/index.html" class="logo">Galaxy<span>Tracker</span></a>
+        <div class="nav-links">
+            <a href="/index.html">Home</a>
+            <a href="/meta.html">Meta Insights</a>
+            <a href="/tierlist.html">Auto Tier List</a>
+            <a href="/decks.html">Meta Deck Analysis</a>
+            <a href="/turns.html">Turn Breakdowns</a>
+            <a href="/decks/browse.html">Community Decks</a>
+            <a href="/decks/builder.html" class="active">Deck Builder</a>
+        </div>
+    </nav>
+
+    <!-- Ribbon Controls -->
+    <div class="builder-ribbon">
+        <div class="ribbon-left">
+            <a href="/decks/browse.html" class="btn-action">← Browse Decks</a>
+            <button class="btn-action" id="btnUploadDeckLib">📁 Upload In-Game Decks (.hdtb)</button>
+            <button class="btn-action" id="btnUploadCollection">🎴 Upload Collection (.hdtb)</button>
+            <div class="author-tag-input">
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Author:</span>
+                <input type="text" id="inputAuthorName" placeholder="Creator Name" value="Anonymous">
+            </div>
+        </div>
+        <div class="ribbon-right">
+            <button class="btn-action" id="btnClearDeck">Clear</button>
+            <button class="btn-action btn-primary-action" id="btnSaveDeck">💾 Save & Share Deck</button>
+        </div>
+    </div>
+
+    <!-- Main Builder Layout -->
+    <main class="builder-layout">
+        <!-- Left: 12-Card Tray & Primers -->
+        <section class="deck-column">
+            <div class="deck-tray-card">
+                <!-- Captain Selector -->
+                <div class="captain-banner">
+                    <img id="captainImg" class="captain-thumb" src="https://static.galaxy.fun/cards/wizard_headmaster__default__240.webp" alt="Captain">
+                    <div class="captain-info">
+                        <input type="text" id="inputDeckTitle" class="deck-title-input" value="My Custom Deck">
+                        <div class="captain-name-label" id="captainLabel">Captain: Wizard Headmaster</div>
+                    </div>
+                    <button class="btn-action" id="btnChangeCaptain" style="padding: 6px 12px; font-size: 0.8rem;">Change</button>
+                </div>
+
+                <!-- 12 Slot Tray -->
+                <div class="tray-grid" id="trayGrid">
+                    <!-- 12 slots rendered via JS -->
+                </div>
+
+                <!-- Tray Metrics -->
+                <div class="tray-metrics-bar">
+                    <div class="metric-pill">
+                        <span style="color: var(--text-muted);">Cards:</span>
+                        <strong id="metricCardCount" style="color: #ef4444;">0 / 12</strong>
+                    </div>
+                    <div class="metric-pill">
+                        <span style="color: var(--text-muted);">Avg Tier:</span>
+                        <strong id="metricAvgTier" style="color: #ffd166;">-</strong>
+                    </div>
+                    <div class="metric-pill">
+                        <span style="color: var(--text-muted);">Avg Cost:</span>
+                        <strong id="metricAvgCost" style="color: #4ecdc4;">-</strong>
+                    </div>
+                </div>
+
+                <!-- Primer & Guides Tabs -->
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="tabPrimer">Deck Primer</button>
+                    <button class="tab-btn" data-tab="tabInGame">In-Game Decks (<span id="inGameCount">0</span>)</button>
+                    <button class="tab-btn" data-tab="tabLocal">Saved Drafts (<span id="localDraftCount">0</span>)</button>
+                </div>
+
+                <div class="tab-content active" id="tabPrimer">
+                    <textarea class="primer-textarea" id="primerTextarea" placeholder="# Deck Strategy & Primer
+Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and card synergy tips here. Full markdown supported."></textarea>
+                </div>
+
+                <div class="tab-content" id="tabInGame">
+                    <div id="inGameDecksList" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No in-game decks uploaded yet. Drop your <code>_deck_library</code> file above!</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tabLocal">
+                    <div id="localDecksList" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No local drafts saved yet.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right: Search & Card Catalog -->
+        <section class="catalog-column">
+            <div class="search-box-card">
+                <div class="search-input-wrap">
+                    <span class="search-icon-left">🔍</span>
+                    <input type="text" id="cardSearchInput" class="search-bar-input" placeholder="Search cards or full regex (e.g. gain.*shield, f:olympus, t:spell, c<=3)...">
+                    <span class="regex-badge" id="regexBadge">REGEX: OK</span>
+                </div>
+
+                <!-- Facet Chips -->
+                <div class="facet-row">
+                    <span class="facet-label">Type:</span>
+                    <button class="chip-btn active" data-facet="type" data-val="all">All</button>
+                    <button class="chip-btn" data-facet="type" data-val="character">Character</button>
+                    <button class="chip-btn" data-facet="type" data-val="spell">Spell</button>
+                    <button class="chip-btn" data-facet="type" data-val="treasure">Treasure</button>
+                </div>
+                <div class="facet-row">
+                    <span class="facet-label">Tier:</span>
+                    <button class="chip-btn active" data-facet="tier" data-val="all">All</button>
+                    <button class="chip-btn" data-facet="tier" data-val="1">T1</button>
+                    <button class="chip-btn" data-facet="tier" data-val="2">T2</button>
+                    <button class="chip-btn" data-facet="tier" data-val="3">T3</button>
+                    <button class="chip-btn" data-facet="tier" data-val="4">T4</button>
+                    <button class="chip-btn" data-facet="tier" data-val="5">T5</button>
+                    <button class="chip-btn" data-facet="tier" data-val="6">T6</button>
+                </div>
+                <div class="facet-row">
+                    <span class="facet-label">Rarity:</span>
+                    <button class="chip-btn active" data-facet="rarity" data-val="all">All</button>
+                    <button class="chip-btn" data-facet="rarity" data-val="common">Common</button>
+                    <button class="chip-btn" data-facet="rarity" data-val="uncommon">Uncommon</button>
+                    <button class="chip-btn" data-facet="rarity" data-val="rare">Rare</button>
+                    <button class="chip-btn" data-facet="rarity" data-val="epic">Epic</button>
+                    <button class="chip-btn" data-facet="rarity" data-val="legendary">Legendary</button>
+                </div>
+            </div>
+
+            <!-- Card Catalog Grid -->
+            <div class="card-catalog-grid" id="catalogGrid">
+                <!-- Cards rendered dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Captain Picker Modal -->
+    <div class="modal-overlay" id="captainModal">
+        <div class="modal-card" style="max-width: 780px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="color: #fff; font-size: 1.2rem;">Choose Captain</h3>
+                <button class="btn-action" id="btnCloseCaptainModal" style="padding: 4px 10px;">✕</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto;" id="captainPickerGrid">
+                <!-- Captains rendered via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload HDTB File Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 id="uploadModalTitle" style="color: #fff; font-size: 1.15rem;">Upload File</h3>
+                <button class="btn-action" id="btnCloseUploadModal" style="padding: 4px 10px;">✕</button>
+            </div>
+            <p id="uploadModalDesc" style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+                Locate your <code>_deck_library</code> or <code>_collection</code> file inside <code>%AppData%/Galaxy/</code> and drop it here.
+            </p>
+            <div class="dropzone-box" id="dropzoneBox">
+                <div style="font-size: 2rem; margin-bottom: 8px;">📂</div>
+                <div style="font-weight: 600; color: #fff;">Click to select file or drag & drop</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Supports binary HDTB files</div>
+                <input type="file" id="fileInput" style="display: none;">
+            </div>
+            <div id="uploadStatusText" style="font-size: 0.88rem; font-weight: 600; text-align: center; display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Save & Share Modal -->
+    <div class="modal-overlay" id="saveModal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="color: #fff; font-size: 1.2rem;">Save & Share Deck</h3>
+                <button class="btn-action" id="btnCloseSaveModal" style="padding: 4px 10px;">✕</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Deck Summary (Shown on Discord & Previews)</label>
+                    <input type="text" id="inputSummary" class="search-bar-input" style="padding: 8px 12px;" placeholder="Brief strategy / archetype description...">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Visibility</label>
+                    <select id="selectVisibility" class="search-bar-input" style="padding: 8px 12px;">
+                        <option value="public">Public (Listed in Community Directory & Shareable)</option>
+                        <option value="unlisted">Unlisted (Shareable via link only, not in directory)</option>
+                        <option value="private">Private (Only viewable by you)</option>
+                    </select>
+                </div>
+                <div id="saveResultBox" style="display: none; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; margin-top: 8px;">
+                    <label style="font-size: 0.8rem; color: #4ecdc4; font-weight: 600; display: block; margin-bottom: 6px;">Share Link Generated:</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="inputShareUrl" readonly class="search-bar-input" style="padding: 6px 10px; font-size: 0.85rem;" value="">
+                        <button class="btn-action btn-primary-action" id="btnCopyShareUrl" style="padding: 6px 14px; font-size: 0.85rem;">Copy</button>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <button class="btn-action btn-primary-action" id="btnConfirmSave">Save to Cloud</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/decks/js/hdtbClientParser.js"></script>
+    <script src="/decks/js/deckStorage.js"></script>
+    <script src="/decks/js/cardSearchEngine.js"></script>
+    <script src="/decks/js/collectionMatcher.js"></script>
+    <script>
+        // State
+        let allCards = [];
+        let captainsList = [];
+        let currentCaptain = null;
+        let activeDeckCards = []; // array of 12 card objects or null
+        let cardAnnotations = new Map(); // cid => { note, alts, reason }
+        const searchEngine = new CardSearchEngine();
+
+        const activeFacets = {
+            types: new Set(),
+            tiers: new Set(),
+            rarities: new Set(),
+            factions: new Set(),
+            costs: new Set()
+        };
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Restore Author Name
+            const authorInput = document.getElementById('inputAuthorName');
+            authorInput.value = DeckStorage.getAuthorName();
+            authorInput.addEventListener('input', (e) => DeckStorage.setAuthorName(e.target.value));
+
+            // Load Cards Catalog
+            try {
+                const res = await fetch('/api/cards.json');
+                const data = await res.json();
+                allCards = Object.values(data).filter(c => c && c.cid);
+                captainsList = allCards.filter(c => c.card_type === 'captain');
+                
+                // Default captain (Wizard Headmaster: 1001 or first captain)
+                currentCaptain = captainsList.find(c => c.cid === 1001) || captainsList[0];
+                updateCaptainUI();
+
+                // Setup empty 12 tray slots
+                activeDeckCards = new Array(12).fill(null);
+                renderTraySlots();
+
+                // Populate Captain Picker
+                renderCaptainPicker();
+
+                // Render Initial Catalog
+                applyCatalogFilters();
+
+                // Load cached local drafts and in-game decks
+                loadStoredDecks();
+            } catch (err) {
+                console.error('Failed to load cards catalog:', err);
+            }
+
+            setupEventListeners();
+        });
+
+        function updateCaptainUI() {
+            if (!currentCaptain) return;
+            document.getElementById('captainLabel').textContent = 'Captain: ' + currentCaptain.name;
+            const img = document.getElementById('captainImg');
+            img.src = 'https://static.galaxy.fun/cards/' + (currentCaptain.card_key || 'wizard_headmaster') + '__default__240.webp';
+        }
+
+        function renderTraySlots() {
+            const grid = document.getElementById('trayGrid');
+            grid.innerHTML = '';
+
+            let filledCount = 0;
+            let sumTier = 0;
+            let sumCost = 0;
+
+            for (let i = 0; i < 12; i++) {
+                const card = activeDeckCards[i];
+                const slot = document.createElement('div');
+
+                if (card) {
+                    filledCount++;
+                    sumTier += (card.tier || 1);
+                    sumCost += (card.cost || 0);
+
+                    slot.className = 'tray-slot filled';
+                    const rarity = (card.rarity || 'common').toLowerCase();
+                    slot.style.borderColor = 'var(--rarity-' + rarity + ')';
+
+                    const hasNotes = cardAnnotations.has(card.cid);
+                    const noteIcon = hasNotes ? '<span class="tray-note-icon" title="Has Notes / Substitutions">✒️</span>' : '';
+
+                    slot.innerHTML = `
+                        <img class="tray-slot-art" src="https://static.galaxy.fun/cards/${card.card_key || ''}__bronze__240.webp" onerror="this.src='/icon.png'">
+                        <div class="tray-slot-details">
+                            <div class="tray-slot-name">${card.name}</div>
+                            <div class="tray-slot-meta">
+                                <span class="tray-badge-tier">★${card.tier || 1}</span>
+                                <span class="tray-badge-cost">⚡${card.cost || 0}g</span>
+                                ${noteIcon}
+                            </div>
+                        </div>
+                        <button class="tray-slot-remove" data-index="${i}">✕</button>
+                    `;
+
+                    slot.querySelector('.tray-slot-remove').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        activeDeckCards[i] = null;
+                        renderTraySlots();
+                        applyCatalogFilters();
+                    });
+                } else {
+                    slot.className = 'tray-slot empty';
+                    slot.innerHTML = `<span>+ Slot ${i + 1}</span>`;
+                }
+
+                grid.appendChild(slot);
+            }
+
+            // Metrics Update
+            const countLabel = document.getElementById('metricCardCount');
+            countLabel.textContent = `${filledCount} / 12`;
+            countLabel.style.color = filledCount === 12 ? '#4ecdc4' : '#ef4444';
+
+            document.getElementById('metricAvgTier').textContent = filledCount > 0 ? (sumTier / filledCount).toFixed(1) : '-';
+            document.getElementById('metricAvgCost').textContent = filledCount > 0 ? (sumCost / filledCount).toFixed(1) + 'g' : '-';
+        }
+
+        function applyCatalogFilters() {
+            const query = document.getElementById('cardSearchInput').value;
+            const filterable = allCards.filter(c => c.card_type !== 'captain');
+            const results = searchEngine.filterCards(filterable, query, activeFacets);
+
+            // Update Regex status badge
+            const badge = document.getElementById('regexBadge');
+            if (searchEngine.lastRegexError) {
+                badge.className = 'regex-badge error';
+                badge.textContent = 'TEXT MODE (REGEX ERROR)';
+            } else if (query.trim()) {
+                badge.className = 'regex-badge';
+                badge.textContent = 'REGEX: ACTIVE ✓';
+            } else {
+                badge.className = 'regex-badge';
+                badge.textContent = 'REGEX READY';
+            }
+
+            const grid = document.getElementById('catalogGrid');
+            grid.innerHTML = '';
+
+            const currentDeckCids = new Set(activeDeckCards.filter(Boolean).map(c => c.cid));
+
+            results.slice(0, 100).forEach(card => {
+                const item = document.createElement('div');
+                const inTray = currentDeckCids.has(card.cid);
+                item.className = 'catalog-card-item' + (inTray ? ' in-tray' : '');
+
+                const rarity = (card.rarity || 'common').toLowerCase();
+                item.style.borderColor = 'var(--rarity-' + rarity + ')';
+
+                item.innerHTML = `
+                    <div class="card-img-wrap">
+                        <img src="https://static.galaxy.fun/cards/${card.card_key || ''}__bronze__240.webp" loading="lazy" onerror="this.src='/icon.png'">
+                        <span class="card-pill-top pill-tier">★${card.tier || 1}</span>
+                        <span class="card-pill-top pill-cost">${card.cost || 0}g</span>
+                    </div>
+                    <div class="card-body-wrap">
+                        <div class="card-title">${card.name}</div>
+                        <div class="card-text">${card.rules_text || card.description || ''}</div>
+                    </div>
+                `;
+
+                item.addEventListener('click', () => {
+                    addCardToTray(card);
+                });
+
+                grid.appendChild(item);
+            });
+        }
+
+        function addCardToTray(card) {
+            // Find first empty slot
+            const emptyIdx = activeDeckCards.findIndex(c => c === null);
+            if (emptyIdx === -1) {
+                alert('Tray already has 12 cards! Remove a card to add another.');
+                return;
+            }
+            // Check duplicate
+            if (activeDeckCards.some(c => c && c.cid === card.cid)) {
+                alert('This card is already in your 12-card tray!');
+                return;
+            }
+
+            activeDeckCards[emptyIdx] = card;
+            renderTraySlots();
+            applyCatalogFilters();
+        }
+
+        function renderCaptainPicker() {
+            const grid = document.getElementById('captainPickerGrid');
+            grid.innerHTML = '';
+            captainsList.forEach(cap => {
+                const card = document.createElement('div');
+                card.className = 'catalog-card-item';
+                card.style.textAlign = 'center';
+                card.innerHTML = `
+                    <img style="width: 100%; height: 110px; object-fit: cover;" src="https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp" onerror="this.src='/icon.png'">
+                    <div style="padding: 8px 4px; font-size: 0.82rem; font-weight: 600; color: #fff;">${cap.name}</div>
+                `;
+                card.addEventListener('click', () => {
+                    currentCaptain = cap;
+                    updateCaptainUI();
+                    document.getElementById('captainModal').classList.remove('open');
+                });
+                grid.appendChild(card);
+            });
+        }
+
+        async function loadStoredDecks() {
+            try {
+                // In-Game Decks
+                const inGame = await DeckStorage.getImportedDecks();
+                document.getElementById('inGameCount').textContent = inGame.length;
+                const inGameList = document.getElementById('inGameDecksList');
+                if (inGame.length > 0) {
+                    inGameList.innerHTML = '';
+                    inGame.forEach(dk => {
+                        const row = document.createElement('div');
+                        row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid var(--glass-border);';
+                        row.innerHTML = `
+                            <div>
+                                <strong style="color: #fff; font-size: 0.9rem;">${dk.name}</strong>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Slot ${dk.slot_id} • ${(dk.card_cids || []).length} Cards</div>
+                            </div>
+                            <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
+                        `;
+                        row.querySelector('button').addEventListener('click', () => {
+                            loadDeckFromData(dk);
+                        });
+                        inGameList.appendChild(row);
+                    });
+                }
+
+                // Local drafts
+                const localDecks = await DeckStorage.getLocalDecks();
+                document.getElementById('localDraftCount').textContent = localDecks.length;
+            } catch(e) {
+                console.warn(e);
+            }
+        }
+
+        function loadDeckFromData(data) {
+            if (data.captain_cid) {
+                const cap = captainsList.find(c => c.cid === data.captain_cid);
+                if (cap) {
+                    currentCaptain = cap;
+                    updateCaptainUI();
+                }
+            }
+            if (data.name) {
+                document.getElementById('inputDeckTitle').value = data.name;
+            }
+            if (Array.isArray(data.card_cids)) {
+                activeDeckCards = new Array(12).fill(null);
+                data.card_cids.forEach((cid, i) => {
+                    if (i < 12) {
+                        const card = allCards.find(c => c.cid === cid);
+                        if (card) activeDeckCards[i] = card;
+                    }
+                });
+                renderTraySlots();
+                applyCatalogFilters();
+            }
+        }
+
+        function setupEventListeners() {
+            // Search Input with debounce
+            let debounceTimer;
+            document.getElementById('cardSearchInput').addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(applyCatalogFilters, 120);
+            });
+
+            // Facet Chips Toggle
+            document.querySelectorAll('.chip-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const facet = btn.dataset.facet;
+                    const val = btn.dataset.val;
+
+                    if (val === 'all') {
+                        activeFacets[facet + 's'].clear();
+                        btn.parentElement.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    } else {
+                        btn.parentElement.querySelector('[data-val="all"]').classList.remove('active');
+                        const set = activeFacets[facet + 's'];
+                        const parseVal = (facet === 'tier') ? parseInt(val, 10) : val;
+
+                        if (set.has(parseVal)) {
+                            set.delete(parseVal);
+                            btn.classList.remove('active');
+                            if (set.size === 0) {
+                                btn.parentElement.querySelector('[data-val="all"]').classList.add('active');
+                            }
+                        } else {
+                            set.add(parseVal);
+                            btn.classList.add('active');
+                        }
+                    }
+                    applyCatalogFilters();
+                });
+            });
+
+            // Tab Switching
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Modals
+            document.getElementById('btnChangeCaptain').addEventListener('click', () => {
+                document.getElementById('captainModal').classList.add('open');
+            });
+            document.getElementById('btnCloseCaptainModal').addEventListener('click', () => {
+                document.getElementById('captainModal').classList.remove('open');
+            });
+
+            // Clear Deck
+            document.getElementById('btnClearDeck').addEventListener('click', () => {
+                if (confirm('Clear all cards from the tray?')) {
+                    activeDeckCards = new Array(12).fill(null);
+                    renderTraySlots();
+                    applyCatalogFilters();
+                }
+            });
+
+            // Save Deck Modal
+            document.getElementById('btnSaveDeck').addEventListener('click', () => {
+                const filled = activeDeckCards.filter(Boolean);
+                if (filled.length !== 12) {
+                    alert('Please fill all 12 card slots before saving!');
+                    return;
+                }
+                document.getElementById('saveModal').classList.add('open');
+            });
+            document.getElementById('btnCloseSaveModal').addEventListener('click', () => {
+                document.getElementById('saveModal').classList.remove('open');
+            });
+
+            // Confirm Save to Cloud
+            document.getElementById('btnConfirmSave').addEventListener('click', async () => {
+                const title = document.getElementById('inputDeckTitle').value.trim() || 'Untitled Deck';
+                const author = document.getElementById('inputAuthorName').value.trim() || 'Anonymous';
+                const summary = document.getElementById('inputSummary').value.trim();
+                const visibility = document.getElementById('selectVisibility').value;
+                const primerText = document.getElementById('primerTextarea').value;
+
+                const payload = {
+                    action: 'save',
+                    author_id: DeckStorage.getAuthorToken(),
+                    author_name: author,
+                    captain_cid: currentCaptain.cid,
+                    name: title,
+                    summary: summary,
+                    card_cids: activeDeckCards.map(c => c.cid),
+                    visibility: visibility,
+                    primer: {
+                        guide_markdown: primerText
+                    }
+                };
+
+                try {
+                    const res = await fetch('/api/deck.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Author-Token': DeckStorage.getAuthorToken()
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        document.getElementById('saveResultBox').style.display = 'block';
+                        document.getElementById('inputShareUrl').value = data.share_url;
+                        document.getElementById('btnConfirmSave').textContent = 'Saved ✓';
+                    } else {
+                        alert('Save Error: ' + (data.error || 'Unknown error'));
+                    }
+                } catch (e) {
+                    alert('Network error while saving: ' + e.message);
+                }
+            });
+
+            document.getElementById('btnCopyShareUrl').addEventListener('click', () => {
+                const inp = document.getElementById('inputShareUrl');
+                inp.select();
+                navigator.clipboard.writeText(inp.value);
+                document.getElementById('btnCopyShareUrl').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('btnCopyShareUrl').textContent = 'Copy';
+                }, 2000);
+            });
+
+            // File Upload Handlers (Deck Library & Collection)
+            let uploadTarget = 'deck_library';
+            const uploadModal = document.getElementById('uploadModal');
+            const fileInput = document.getElementById('fileInput');
+
+            document.getElementById('btnUploadDeckLib').addEventListener('click', () => {
+                uploadTarget = 'deck_library';
+                document.getElementById('uploadModalTitle').textContent = 'Upload In-Game Decks (_deck_library)';
+                document.getElementById('uploadModalDesc').innerHTML = 'Locate your <code>_deck_library</code> file inside <code>%AppData%/Roaming/Galaxy/</code> and drop it here to import custom decks.';
+                uploadModal.classList.add('open');
+            });
+
+            document.getElementById('btnUploadCollection').addEventListener('click', () => {
+                uploadTarget = 'collection';
+                document.getElementById('uploadModalTitle').textContent = 'Upload Collection (_collection)';
+                document.getElementById('uploadModalDesc').innerHTML = 'Locate your <code>_collection</code> file inside <code>%AppData%/Roaming/Galaxy/</code> and drop it here to evaluate which decks you can build.';
+                uploadModal.classList.add('open');
+            });
+
+            document.getElementById('btnCloseUploadModal').addEventListener('click', () => {
+                uploadModal.classList.remove('open');
+            });
+
+            const dropzone = document.getElementById('dropzoneBox');
+            dropzone.addEventListener('click', () => fileInput.click());
+
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    handleFile(fileInput.files[0]);
+                }
+            });
+
+            async function handleFile(file) {
+                const status = document.getElementById('uploadStatusText');
+                status.style.display = 'block';
+                status.style.color = '#ffd166';
+                status.textContent = 'Parsing binary file...';
+
+                try {
+                    const buffer = await file.arrayBuffer();
+
+                    if (uploadTarget === 'deck_library') {
+                        const parsed = HdtbClientParser.parseDeckLibraryFile(buffer, file.name);
+                        status.style.color = '#4ecdc4';
+                        status.textContent = `Extracted ${parsed.custom_decks.length} custom decks! Caching locally...`;
+
+                        // Cache locally
+                        await DeckStorage.saveImportedDecks(parsed.custom_decks, parsed.playfab_id);
+
+                        // Sync to database
+                        if (parsed.custom_decks.length > 0 && parsed.playfab_id) {
+                            fetch('/api/sync-hdtb.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    playfab_id: parsed.playfab_id,
+                                    decks: parsed.custom_decks
+                                })
+                            }).catch(console.warn);
+                        }
+
+                        setTimeout(() => {
+                            uploadModal.classList.remove('open');
+                            loadStoredDecks();
+                        }, 1200);
+
+                    } else if (uploadTarget === 'collection') {
+                        const parsed = HdtbClientParser.parseCollectionFile(buffer, file.name);
+                        const totalCaptains = Object.keys(parsed.owned_cards).length;
+                        status.style.color = '#4ecdc4';
+                        status.textContent = `Loaded collection for ${totalCaptains} captains (${parsed.infinity_captains.length} Infinity Unlocked)! Saved to local cache.`;
+
+                        await DeckStorage.saveUserCollection(parsed);
+
+                        setTimeout(() => {
+                            uploadModal.classList.remove('open');
+                        }, 1500);
+                    }
+                } catch (err) {
+                    status.style.color = '#ef4444';
+                    status.textContent = 'Error parsing file: ' + err.message;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
