@@ -73,7 +73,22 @@ try {
         foreach ($decks as $d) {
             $cap = intval($d['captain_cid'] ?? ($d['captain'] ?? 0));
             $slot = strval($d['slot_id'] ?? ($d['id'] ?? 'custom'));
-            $name = trim($d['deck_name'] ?? ($d['name'] ?? 'In-Game Deck'));
+            $name = trim($d['deck_name'] ?? ($d['name'] ?? ''));
+            if ($name === 'Custom Deck' || $name === 'My Custom Deck' || empty($name)) {
+                $c_stmt = $conn->prepare("SELECT name FROM analytics_cards WHERE cid = ? AND type = 'captain' LIMIT 1");
+                if ($c_stmt) {
+                    $c_stmt->bind_param("i", $cap);
+                    $c_stmt->execute();
+                    $c_res = $c_stmt->get_result();
+                    if ($c_row = $c_res->fetch_assoc()) {
+                        $name = $c_row['name'];
+                        if (!empty($slot) && $slot !== '1' && $slot !== 'custom') {
+                            $name .= " (Deck {$slot})";
+                        }
+                    }
+                }
+                if (empty($name)) $name = "Captain #{$cap}";
+            }
             $type = trim($d['deck_type'] ?? 'custom');
             $last_used = !empty($d['last_used']) ? 1 : 0;
 

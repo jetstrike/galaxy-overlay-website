@@ -692,7 +692,11 @@
                 const el = document.createElement('div');
                 el.className = 'deck-summary-card';
 
-                const capCard = allCardsMap[String(dk.captain_cid)];
+                const rawName = (dk.name || '').trim();
+                const capObj = allCaptains.find(c => c.cid === dk.captain_cid) || allCardsMap[String(dk.captain_cid)];
+                const capNameStr = capObj ? capObj.name : 'In-Game Deck';
+                const resolvedDeckName = (!rawName || rawName === 'Custom Deck' || rawName === 'My Custom Deck') ? capNameStr : rawName;
+                const capCard = capObj;
                 const capArt = capCard ? `https://static.galaxy.fun/cards/${capCard.card_key || ''}__default__240.webp` : '/icon.png';
 
                 const stripThumbs = (dk.card_cids || []).map(cid => {
@@ -704,7 +708,7 @@
                     <div class="card-top-row">
                         <img class="card-cap-art" src="${capArt}">
                         <div class="card-heading">
-                            <div class="card-deck-name">${dk.name}</div>
+                            <div class="card-deck-name">${resolvedDeckName}</div>
                             <div class="card-sub">In-Game Slot ${dk.slot_id} • ${capCard ? capCard.name : 'Captain #' + dk.captain_cid}</div>
                         </div>
                     </div>

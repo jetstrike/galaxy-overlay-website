@@ -1085,6 +1085,10 @@
                 // Default captain
                 currentCaptain = captainsList.find(c => c.cid === 1001) || captainsList[0];
                 updateCaptainUI();
+                const titleInput = document.getElementById('inputDeckTitle');
+                if (titleInput && (!titleInput.value || titleInput.value === 'My Custom Deck' || titleInput.value === 'Custom Deck')) {
+                    titleInput.value = currentCaptain ? currentCaptain.name : 'My Custom Deck';
+                }
 
                 activeDeckCards = new Array(12).fill(null);
                 renderTraySlots();
@@ -1140,7 +1144,11 @@
             });
             renderCompatCaptainsUI();
 
-            document.getElementById('inputDeckTitle').value = isClone ? `${deck.name || 'Deck'} (Copy)` : (deck.name || 'Untitled Deck');
+            let defaultTitle = (deck.name || '').trim();
+            if (!defaultTitle || defaultTitle === 'Custom Deck' || defaultTitle === 'My Custom Deck' || defaultTitle === 'custom_deck') {
+                defaultTitle = cap ? cap.name : 'Untitled Deck';
+            }
+            document.getElementById('inputDeckTitle').value = isClone ? `${defaultTitle} (Copy)` : defaultTitle;
             if (deck.summary) document.getElementById('inputSummary').value = deck.summary;
 
             if (primer && primer.guide_markdown) {
@@ -1359,6 +1367,11 @@
                     <img src="https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp" onerror="this.src='/icon.png'">
                 `;
                 card.addEventListener('click', () => {
+                    const prevCapName = currentCaptain ? currentCaptain.name : '';
+                    const titleInput = document.getElementById('inputDeckTitle');
+                    if (titleInput && (!titleInput.value || titleInput.value === prevCapName || titleInput.value === 'My Custom Deck' || titleInput.value === 'Custom Deck' || titleInput.value === 'Untitled Deck')) {
+                        titleInput.value = cap.name;
+                    }
                     currentCaptain = cap;
                     compatibleCaptains.delete(cap.cid);
                     updateCaptainUI();
@@ -1477,11 +1490,17 @@
                 if (inGame.length > 0) {
                     inGameList.innerHTML = '';
                     inGame.forEach(dk => {
+                        const cap = captainsList.find(c => c.cid === dk.captain_cid);
+                        const capName = cap ? cap.name : (dk.captain_cid ? `Captain #${dk.captain_cid}` : 'Deck');
+                        let displayName = (dk.name || '').trim();
+                        if (!displayName || displayName === 'Custom Deck' || displayName === 'My Custom Deck' || displayName === 'custom_deck') {
+                            displayName = (dk.slot_id && String(dk.slot_id) !== '1') ? `${capName} (Deck ${dk.slot_id})` : capName;
+                        }
                         const row = document.createElement('div');
                         row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid var(--glass-border);';
                         row.innerHTML = `
                             <div>
-                                <strong style="color: #fff; font-size: 0.9rem;">${dk.name}</strong>
+                                <strong style="color: #fff; font-size: 0.9rem;">${displayName}</strong>
                                 <div style="font-size: 0.75rem; color: var(--text-muted);">Slot ${dk.slot_id} • ${(dk.card_cids || []).length} Cards</div>
                             </div>
                             <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
@@ -1826,6 +1845,15 @@
                             status.textContent = 'No custom decks found in this library file.';
                             return;
                         }
+
+                        parsed.custom_decks.forEach(dk => {
+                            const cap = captainsList.find(c => c.cid === dk.captain_cid);
+                            const capName = cap ? cap.name : (dk.captain_cid ? `Captain #${dk.captain_cid}` : 'Deck');
+                            let raw = (dk.name || '').trim();
+                            if (!raw || raw === 'Custom Deck' || raw === 'My Custom Deck' || raw === 'custom_deck') {
+                                dk.name = (dk.slot_id && String(dk.slot_id) !== '1') ? `${capName} (Deck ${dk.slot_id})` : capName;
+                            }
+                        });
 
                         await DeckStorage.saveImportedDecks(parsed.custom_decks);
                         await DeckStorage.syncImportedDecksToCloud(parsed.playfab_id, parsed.custom_decks);
