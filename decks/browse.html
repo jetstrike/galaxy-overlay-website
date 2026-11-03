@@ -464,7 +464,6 @@
         <div class="directory-tabs">
             <button class="dir-tab-btn active" data-tab="community">Public Community Decks</button>
             <button class="dir-tab-btn" data-tab="my_decks">My Saved Decks</button>
-            <button class="dir-tab-btn" data-tab="ingame">Imported In-Game Decks</button>
         </div>
 
         <!-- Controls Card -->
@@ -497,8 +496,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/decks/js/deckStorage.js?v=13"></script>
-    <script src="/decks/js/collectionMatcher.js?v=13"></script>
+    <script src="/decks/js/deckStorage.js?v=14"></script>
+    <script src="/decks/js/collectionMatcher.js?v=14"></script>
     <script>
         let allCardsMap = {};
         let activeCaptainCid = 0;
@@ -659,7 +658,10 @@
                 }
 
                 if (decks.length === 0) {
-                    grid.innerHTML = '<div style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1 / -1; padding: 40px 0; text-align: center;">No decks found matching your criteria. Try adjusting your filters or build the first one!</div>';
+                    const emptyMsg = currentTab === 'my_decks'
+                        ? '<div style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1 / -1; padding: 60px 0; text-align: center;"><h3>No saved decks found</h3><p style="margin-top: 8px; color: var(--text-muted);">Decks you create or publish in the builder will appear here.</p><a href="/decks/builder.html" class="btn-action btn-primary-action" style="display: inline-block; margin-top: 14px; padding: 8px 18px; text-decoration: none;">Create a Deck in Builder</a></div>'
+                        : '<div style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1 / -1; padding: 60px 0; text-align: center;"><h3>No community decks published yet</h3><p style="margin-top: 8px; color: var(--text-muted);">Be the first to publish a competitive deck and primer!</p><a href="/decks/builder.html" class="btn-action btn-primary-action" style="display: inline-block; margin-top: 14px; padding: 8px 18px; text-decoration: none;">Create a Deck in Builder</a></div>';
+                    grid.innerHTML = emptyMsg;
                     return;
                 }
 
