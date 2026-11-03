@@ -190,8 +190,18 @@ for ($i = 0; $i < 12; $i++) {
     $art_drawn = false;
 
     if ($card_key) {
-        $thumb_url = "https://static.galaxy.fun/cards/{$card_key}__bronze__240.webp";
-        $art_res = load_image_res($thumb_url, "{$card_key}__bronze__240.webp");
+        $c_type = $card_info['card_type'] ?? '';
+        if ($c_type === 'spell' || $c_type === 'treasure') {
+            $thumb_url = "https://static.galaxy.fun/cards/{$card_key}__300.webp";
+            $art_res = load_image_res($thumb_url, "{$card_key}__300.webp");
+        } else {
+            $thumb_url = "https://static.galaxy.fun/cards/{$card_key}__bronze__240.webp";
+            $art_res = load_image_res($thumb_url, "{$card_key}__bronze__240.webp");
+            if (!$art_res) {
+                $thumb_url = "https://static.galaxy.fun/cards/{$card_key}__300.webp";
+                $art_res = load_image_res($thumb_url, "{$card_key}__300.webp");
+            }
+        }
         if ($art_res) {
             imagecopyresampled($im, $art_res, $cx + 4, $cy + 4, 0, 0, $card_w - 8, $card_h - 40, imagesx($art_res), imagesy($art_res));
             imagedestroy($art_res);

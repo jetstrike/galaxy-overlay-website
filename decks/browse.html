@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community Deck Directory — Once Upon a Galaxy</title>
+    <title>Community Decks & Primers — Once Upon a Galaxy</title>
     <link rel="stylesheet" href="/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -16,27 +16,26 @@
         }
 
         .browse-container {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
             padding: 30px 20px 80px;
             width: 100%;
         }
 
-        /* Hub Header */
         .browse-hero {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         .browse-hero h1 {
-            font-size: 2.5rem;
+            font-size: 2.4rem;
             font-weight: 800;
             color: #fff;
             margin-bottom: 8px;
         }
 
         .browse-hero h1 span {
-            background: linear-gradient(135deg, #6366f1, #a855f7);
+            background: linear-gradient(135deg, #a855f7, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -48,73 +47,82 @@
             margin: 0 auto;
         }
 
-        /* Captain Filter Carousel / Strip */
-        .captain-strip-container {
-            margin-bottom: 24px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-
-        .captain-strip {
+        /* Captain Filter Bar */
+        .captain-filter-bar {
             display: flex;
             align-items: center;
             gap: 12px;
-            width: max-content;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .captain-strip-item {
-            display: flex;
+        .btn-captain-filter {
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 14px 6px 6px;
+            gap: 10px;
+            padding: 8px 18px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             border-radius: 30px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
+            color: #fff;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .captain-strip-item:hover {
+        .btn-captain-filter:hover {
             background: rgba(255, 255, 255, 0.1);
-            color: #fff;
+            border-color: var(--accent-primary);
         }
 
-        .captain-strip-item.active {
+        .btn-captain-filter.active {
             background: rgba(99, 102, 241, 0.25);
             border-color: var(--accent-primary);
-            color: #fff;
+            box-shadow: 0 0 14px rgba(99, 102, 241, 0.35);
         }
 
-        .captain-strip-thumb {
-            width: 32px;
-            height: 32px;
+        .captain-filter-thumb {
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             object-fit: cover;
-            background: #111;
         }
 
-        /* Controls Filter Bar */
+        /* Controls Card */
         .filter-controls-card {
             background: rgba(18, 22, 34, 0.85);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
-            padding: 18px 24px;
-            backdrop-filter: blur(16px);
-            margin-bottom: 28px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 16px;
+            backdrop-filter: blur(16px);
         }
 
         .search-field-wrap {
-            position: relative;
             flex: 1;
-            min-width: 260px;
+            min-width: 280px;
+        }
+
+        .search-bar-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(14, 18, 28, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.92rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar-input:focus {
+            border-color: var(--accent-primary);
         }
 
         .filter-toggles-group {
@@ -127,9 +135,9 @@
         .toggle-check-label {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.88rem;
-            color: #fff;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
             cursor: pointer;
             user-select: none;
         }
@@ -140,63 +148,109 @@
         }
 
         .sort-select {
-            background: rgba(12, 15, 24, 0.9);
+            background: rgba(14, 18, 28, 0.8);
             border: 1px solid var(--glass-border);
-            border-radius: 8px;
             color: #fff;
-            padding: 8px 14px;
+            padding: 8px 12px;
+            border-radius: 8px;
             font-size: 0.88rem;
             outline: none;
+            cursor: pointer;
         }
 
-        /* Tabs (Community / My Decks / In-Game Decks) */
+        /* Button Styles */
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            font-weight: 700;
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.6);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        /* Tabs */
         .directory-tabs {
             display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--glass-border);
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .dir-tab-btn {
-            padding: 10px 18px;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
             color: var(--text-muted);
-            font-size: 0.95rem;
+            padding: 8px 18px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .dir-tab-btn.active {
+        .dir-tab-btn:hover {
             color: #fff;
-            border-bottom-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .dir-tab-btn.active {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: var(--accent-primary);
+            color: #fff;
         }
 
         /* Deck Cards Grid */
         .deck-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 20px;
         }
 
         .deck-summary-card {
-            background: rgba(22, 27, 42, 0.9);
+            background: rgba(22, 27, 42, 0.85);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
-            padding: 20px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            gap: 12px;
             cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            backdrop-filter: blur(12px);
         }
 
         .deck-summary-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
             border-color: var(--accent-primary);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
         }
 
         .card-top-row {
@@ -209,7 +263,7 @@
             width: 52px;
             height: 52px;
             border-radius: 12px;
-            border: 2px solid var(--rarity-legendary);
+            border: 2px solid var(--accent-primary);
             object-fit: cover;
             background: #111;
         }
@@ -220,7 +274,7 @@
         }
 
         .card-deck-name {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: #fff;
             white-space: nowrap;
@@ -235,68 +289,118 @@
         }
 
         .card-deck-summary {
-            font-size: 0.84rem;
-            color: #cbd5e1;
-            line-height: 1.45;
+            font-size: 0.82rem;
+            color: #94a3b8;
+            line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            min-height: 34px;
         }
 
-        /* 12-Card Preview Strip */
         .card-thumb-strip {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             gap: 4px;
-            height: 38px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 6px;
-            padding: 3px;
-            overflow: hidden;
+            background: rgba(0,0,0,0.25);
+            padding: 6px;
+            border-radius: 8px;
         }
 
         .strip-thumb {
             width: 100%;
-            height: 100%;
+            aspect-ratio: 1;
             object-fit: cover;
-            border-radius: 3px;
-            background: #1e293b;
+            border-radius: 4px;
+            background: #111;
         }
 
         .card-bottom-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.82rem;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.06);
         }
 
         .upvote-badge {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #ffd166;
-            font-weight: 600;
-        }
-
-        .primer-pill {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #ffd166;
+            font-weight: 700;
         }
 
-        .badge-ready { background: rgba(46, 196, 182, 0.2); color: #2ec4b6; border: 1px solid #2ec4b6; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
-        .badge-substitutable { background: rgba(255, 209, 102, 0.2); color: #ffd166; border: 1px solid #ffd166; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
-        .badge-warning { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        .primer-pill {
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #161b2a;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .captain-select-card {
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            background: #111;
+        }
+
+        .captain-select-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+
+        .captain-select-card.selected {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 14px rgba(78, 205, 196, 0.4);
+        }
+
+        .captain-select-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -307,7 +411,9 @@
 
     <!-- Navigation -->
     <nav class="navbar">
-        <a href="/index.html" class="logo">Galaxy<span>Tracker</span></a>
+        <div class="nav-brand">
+            <span class="logo-text">Galaxy Tracker</span>
+        </div>
         <div class="nav-links">
             <a href="/index.html">Home</a>
             <a href="/meta.html">Meta Insights</a>
@@ -326,10 +432,31 @@
             <p>Explore competitive captain guides, user-created primer articles, and custom decks with collection matching & budget replacements.</p>
         </header>
 
-        <!-- Captain Strip -->
-        <div class="captain-strip-container">
-            <div class="captain-strip" id="captainStrip">
-                <div class="captain-strip-item active" data-cid="0">All Captains</div>
+        <!-- Captain Filter Selector -->
+        <div class="captain-filter-bar">
+            <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">Filter by Captain:</span>
+            <button class="btn-captain-filter" id="btnCaptainFilterTrigger">
+                <img id="selectedCaptainImg" class="captain-filter-thumb" style="display: none;" src="" alt="Captain">
+                <span id="selectedCaptainText">👑 All Captains</span>
+                <span style="font-size: 0.72rem; opacity: 0.7; margin-left: 4px;">▼</span>
+            </button>
+            <button class="btn-action" id="btnClearCaptainFilter" style="display: none; padding: 6px 12px; font-size: 0.8rem;">✕ Show All</button>
+        </div>
+
+        <!-- Captain Selection Modal -->
+        <div class="modal-overlay" id="browseCaptainModal">
+            <div class="modal-card" style="max-width: 860px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h3 style="color: #fff; font-size: 1.2rem; margin: 0;">Filter Decks by Captain</h3>
+                    <button class="btn-action" id="btnCloseBrowseCaptainModal" style="padding: 4px 10px;">✕</button>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+                    <input type="text" id="inputBrowseCapSearch" class="search-bar-input" style="padding: 8px 14px; flex: 1;" placeholder="Search captains...">
+                    <button class="btn-action" id="btnPickAllCaptains" style="padding: 8px 16px;">All Captains</button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto;" id="browseCaptainGrid">
+                    <!-- Captains rendered via JS -->
+                </div>
             </div>
         </div>
 
@@ -343,7 +470,7 @@
         <!-- Controls Card -->
         <div class="filter-controls-card">
             <div class="search-field-wrap">
-                <input type="text" id="browseSearchInput" class="search-bar-input" style="padding-left: 14px;" placeholder="Search deck title, author, or archetype...">
+                <input type="text" id="browseSearchInput" class="search-bar-input" placeholder="Search deck title, author, or archetype...">
             </div>
             <div class="filter-toggles-group">
                 <label class="toggle-check-label">
@@ -378,52 +505,123 @@
         let currentTab = 'community';
         let userCollectionMap = {};
 
+        function getCardImageUrl(card) {
+            if (!card || !card.card_key) return '/icon.png';
+            const key = card.card_key.toLowerCase().trim();
+            if (card.card_type === 'spell' || card.card_type === 'treasure') {
+                return `https://static.galaxy.fun/cards/${key}__300.webp`;
+            }
+            return `https://static.galaxy.fun/cards/${key}__bronze__240.webp`;
+        }
+
+        function onCardImgError(img, cardKey) {
+            if (img.src.includes('__bronze__240.webp')) {
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__300.webp`;
+            } else {
+                img.onerror = null;
+                img.src = '/icon.png';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
-            // Load Collection
             userCollectionMap = await DeckStorage.getUserCollection();
 
-            // Load Cards Catalog
             try {
                 const res = await fetch('/api/cards.json');
                 allCardsMap = await res.json();
-                renderCaptainStrip();
             } catch(e) {
                 console.warn(e);
             }
 
-            // Load Initial Decks
             fetchAndRenderDecks();
-
             setupControls();
+            setupCaptainModal();
         });
 
-        function renderCaptainStrip() {
-            const strip = document.getElementById('captainStrip');
-            const captains = Object.values(allCardsMap).filter(c => c && c.card_type === 'captain');
+        function setupCaptainModal() {
+            const modal = document.getElementById('browseCaptainModal');
+            const trigger = document.getElementById('btnCaptainFilterTrigger');
+            const closeBtn = document.getElementById('btnCloseBrowseCaptainModal');
+            const searchInput = document.getElementById('inputBrowseCapSearch');
+            const clearBtn = document.getElementById('btnClearCaptainFilter');
+            const pickAllBtn = document.getElementById('btnPickAllCaptains');
 
-            captains.forEach(cap => {
-                const item = document.createElement('div');
-                item.className = 'captain-strip-item';
-                item.dataset.cid = cap.cid;
-                item.innerHTML = `
-                    <img class="captain-strip-thumb" src="https://static.galaxy.fun/cards/${cap.card_key || ''}__default__240.webp" onerror="this.src='/icon.png'">
-                    <span>${cap.name}</span>
+            trigger.addEventListener('click', () => {
+                searchInput.value = '';
+                renderBrowseCaptainGrid('');
+                modal.classList.add('open');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('open');
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                renderBrowseCaptainGrid(e.target.value);
+            });
+
+            pickAllBtn.addEventListener('click', () => {
+                selectCaptainFilter(0);
+                modal.classList.remove('open');
+            });
+
+            clearBtn.addEventListener('click', () => {
+                selectCaptainFilter(0);
+            });
+        }
+
+        function renderBrowseCaptainGrid(query = '') {
+            const grid = document.getElementById('browseCaptainGrid');
+            grid.innerHTML = '';
+
+            const captains = Object.values(allCardsMap)
+                .filter(c => c && c.card_type === 'captain')
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            const filtered = query.trim() 
+                ? captains.filter(c => c.name.toLowerCase().includes(query.toLowerCase().trim()))
+                : captains;
+
+            filtered.forEach(cap => {
+                const card = document.createElement('div');
+                card.className = 'captain-select-card';
+                if (activeCaptainCid === cap.cid) card.classList.add('selected');
+                card.title = cap.name;
+                card.innerHTML = `
+                    <img src="https://static.galaxy.fun/cards/${cap.card_key || ''}__default__240.webp" onerror="this.src='/icon.png'">
                 `;
-                item.addEventListener('click', () => {
-                    document.querySelectorAll('.captain-strip-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-                    activeCaptainCid = cap.cid;
-                    fetchAndRenderDecks();
+                card.addEventListener('click', () => {
+                    selectCaptainFilter(cap.cid);
+                    document.getElementById('browseCaptainModal').classList.remove('open');
                 });
-                strip.appendChild(item);
+                grid.appendChild(card);
             });
+        }
 
-            strip.querySelector('[data-cid="0"]').addEventListener('click', (e) => {
-                document.querySelectorAll('.captain-strip-item').forEach(i => i.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-                activeCaptainCid = 0;
-                fetchAndRenderDecks();
-            });
+        function selectCaptainFilter(cid) {
+            activeCaptainCid = cid;
+            const trigger = document.getElementById('btnCaptainFilterTrigger');
+            const img = document.getElementById('selectedCaptainImg');
+            const text = document.getElementById('selectedCaptainText');
+            const clearBtn = document.getElementById('btnClearCaptainFilter');
+
+            if (cid > 0) {
+                const cap = allCardsMap[String(cid)];
+                if (cap) {
+                    img.src = `https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp`;
+                    img.style.display = 'block';
+                    text.textContent = cap.name;
+                    trigger.classList.add('active');
+                    clearBtn.style.display = 'inline-flex';
+                }
+            } else {
+                img.style.display = 'none';
+                text.textContent = '👑 All Captains';
+                trigger.classList.remove('active');
+                clearBtn.style.display = 'none';
+            }
+
+            fetchAndRenderDecks();
         }
 
         async function fetchAndRenderDecks() {
@@ -452,7 +650,6 @@
                 const data = await res.json();
                 let decks = data.decks || [];
 
-                // Filter by Collection if checked
                 const filterCollection = document.getElementById('checkCollectionOnly').checked;
                 if (filterCollection && Object.keys(userCollectionMap).length > 0) {
                     decks = decks.filter(dk => {
@@ -498,10 +695,9 @@
                 const capCard = allCardsMap[String(dk.captain_cid)];
                 const capArt = capCard ? `https://static.galaxy.fun/cards/${capCard.card_key || ''}__default__240.webp` : '/icon.png';
 
-                // Strip
                 const stripThumbs = (dk.card_cids || []).map(cid => {
                     const c = allCardsMap[String(cid)];
-                    return `<img class="strip-thumb" src="https://static.galaxy.fun/cards/${c ? c.card_key : ''}__bronze__240.webp" onerror="this.src='/icon.png'">`;
+                    return `<img class="strip-thumb" src="${getCardImageUrl(c)}" onerror="onCardImgError(this, '${c ? c.card_key : ''}')">`;
                 }).join('');
 
                 el.innerHTML = `
@@ -515,7 +711,7 @@
                     <div class="card-thumb-strip">${stripThumbs}</div>
                     <div class="card-bottom-row">
                         <span style="font-size: 0.78rem; color: #4ecdc4; font-weight: 600;">Imported HDTB</span>
-                        <button class="btn-action btn-primary-action" style="padding: 4px 10px; font-size: 0.78rem;">Promote to Primer</button>
+                        <button class="btn-action btn-primary-action" style="padding: 4px 10px; font-size: 0.78rem;">Load in Builder</button>
                     </div>
                 `;
 
@@ -536,18 +732,28 @@
             const capCard = allCardsMap[String(dk.captain_cid)];
             const capArt = capCard ? `https://static.galaxy.fun/cards/${capCard.card_key || ''}__default__240.webp` : '/icon.png';
 
-            // Collection badge
             let collBadgeHtml = '';
             if (Object.keys(userCollectionMap).length > 0) {
                 const evalRes = CollectionMatcher.evaluateDeck(dk, userCollectionMap);
                 collBadgeHtml = CollectionMatcher.renderBadgeHtml(evalRes);
             }
 
-            // 12-Card Strip
+            // Strip thumbs with universal loader
             const stripThumbs = (dk.card_cids || []).map(cid => {
                 const c = allCardsMap[String(cid)];
-                return `<img class="strip-thumb" src="https://static.galaxy.fun/cards/${c ? c.card_key : ''}__bronze__240.webp" onerror="this.src='/icon.png'">`;
+                return `<img class="strip-thumb" src="${getCardImageUrl(c)}" onerror="onCardImgError(this, '${c ? c.card_key : ''}')">`;
             }).join('');
+
+            // Compatible captains avatars if present
+            let compatHtml = '';
+            const compatList = dk.compatible_captain_cids || [];
+            if (Array.isArray(compatList) && compatList.length > 0) {
+                const avatars = compatList.slice(0, 4).map(cid => {
+                    const c = allCardsMap[String(cid)];
+                    return c ? `<img title="Also compatible with ${c.name}" src="https://static.galaxy.fun/cards/${c.card_key}__default__240.webp" style="width: 18px; height: 18px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.4);">` : '';
+                }).join('');
+                compatHtml = `<div style="display: flex; gap: 4px; align-items: center; margin-top: 3px;" title="Compatible with ${compatList.length} other captains">${avatars}</div>`;
+            }
 
             const primerBadge = dk.has_primer ? '<span class="primer-pill">📖 Primer</span>' : '';
 
@@ -557,6 +763,7 @@
                     <div class="card-heading">
                         <div class="card-deck-name">${dk.name}</div>
                         <div class="card-sub">By ${dk.author_name || 'Anonymous'} • ${capCard ? capCard.name : 'Captain'}</div>
+                        ${compatHtml}
                     </div>
                 </div>
                 <div class="card-deck-summary">${dk.summary || '12-card custom deck. Click to view composition and strategy.'}</div>

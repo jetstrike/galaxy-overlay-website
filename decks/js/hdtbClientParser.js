@@ -132,7 +132,7 @@ class HdtbClientParser {
                     last_used: Boolean(dk.last_used)
                 };
 
-                if (dk.deck_type === 'custom') {
+                if (dk.deck_type === 'custom' || dk.deck_type === 'user' || dk.id === 'user') {
                     custom_decks.push(deckObj);
                 } else if (dk.deck_type === 'starter') {
                     starter_decks.push(deckObj);

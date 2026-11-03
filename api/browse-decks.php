@@ -80,7 +80,7 @@ try {
 
     // Fetch Records
     $sql = "
-        SELECT d.id, d.author_id, d.author_name, d.captain_cid, d.name, d.summary, 
+        SELECT d.id, d.author_id, d.author_name, d.captain_cid, d.compatible_captain_cids, d.name, d.summary, 
                d.card_cids, d.visibility, d.upvote_count, d.has_primer, d.in_game_win_rate, 
                d.created_at, c.name as captain_name
         FROM website_decks d
@@ -102,6 +102,7 @@ try {
     $decks = [];
     while ($row = $res->fetch_assoc()) {
         $row['card_cids'] = json_decode($row['card_cids'], true) ?: [];
+        $row['compatible_captain_cids'] = json_decode($row['compatible_captain_cids'] ?? '[]', true) ?: [];
         $decks[] = $row;
     }
 

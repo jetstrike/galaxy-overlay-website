@@ -66,6 +66,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
+            text-decoration: none;
             transition: all 0.2s ease;
         }
 
@@ -100,13 +101,13 @@
         .author-tag-input input {
             background: transparent;
             border: none;
-            color: var(--text-main);
+            color: #fff;
             font-size: 0.88rem;
-            width: 140px;
             outline: none;
+            width: 130px;
         }
 
-        /* Left Column: Deck Tray & Primers */
+        /* Left Column: Deck Composition */
         .deck-column {
             display: flex;
             flex-direction: column;
@@ -114,47 +115,49 @@
         }
 
         .deck-tray-card {
-            background: rgba(18, 22, 34, 0.85);
+            background: var(--card-bg);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 20px;
             backdrop-filter: blur(16px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .captain-banner {
             display: flex;
             align-items: center;
             gap: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 16px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-bottom: 12px;
         }
 
         .captain-thumb {
-            width: 64px;
-            height: 64px;
-            border-radius: 12px;
-            border: 2px solid var(--rarity-legendary);
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
             object-fit: cover;
-            background: #1e293b;
+            border: 2px solid var(--accent-primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
         .captain-info {
             flex: 1;
+            min-width: 0;
         }
 
         .deck-title-input {
-            width: 100%;
             background: transparent;
             border: none;
             border-bottom: 1px dashed rgba(255,255,255,0.2);
             color: #fff;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            padding: 4px 0;
+            width: 100%;
             outline: none;
-            margin-bottom: 4px;
+            padding-bottom: 4px;
+            transition: border-color 0.2s;
         }
 
         .deck-title-input:focus {
@@ -162,11 +165,82 @@
         }
 
         .captain-name-label {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
+            margin-top: 4px;
         }
 
-        /* Tray 12 Slots */
+        /* Compatible Captains Bar */
+        .compatible-captains-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .compat-captains-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .compat-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .compat-chips-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .compat-cap-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #fff;
+            transition: all 0.2s;
+        }
+
+        .compat-cap-chip:hover {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.35);
+        }
+
+        .compat-cap-chip img {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .compat-cap-chip .chip-del {
+            cursor: pointer;
+            color: #f87171;
+            margin-left: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .compat-cap-chip .chip-del:hover {
+            color: #ef4444;
+        }
+
+        /* 12 Slot Grid */
         .tray-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -176,7 +250,7 @@
 
         .tray-slot {
             position: relative;
-            height: 68px;
+            height: 72px;
             background: rgba(255,255,255,0.03);
             border: 1px dashed rgba(255,255,255,0.15);
             border-radius: 10px;
@@ -205,9 +279,15 @@
             background: rgba(26, 31, 48, 0.9);
         }
 
+        .tray-slot.filled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            border-color: var(--accent-primary) !important;
+        }
+
         .tray-slot-art {
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 58px;
             border-radius: 6px;
             object-fit: cover;
             background: #111;
@@ -233,18 +313,21 @@
             align-items: center;
             gap: 8px;
             font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
-        .tray-badge-tier {
+        .tray-badge-rarity {
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+
+        .tray-note-icon {
             color: #ffd166;
-            font-weight: 700;
-        }
-
-        .tray-badge-cost {
-            color: #4ecdc4;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(255, 209, 102, 0.15);
+            padding: 1px 6px;
+            border-radius: 4px;
         }
 
         .tray-slot-remove {
@@ -253,36 +336,39 @@
             border-radius: 50%;
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
-            border: none;
+            font-size: 0.75rem;
+            font-weight: 700;
             cursor: pointer;
             opacity: 0;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, background 0.2s;
+            position: absolute;
+            top: 6px;
+            right: 6px;
         }
 
         .tray-slot:hover .tray-slot-remove {
             opacity: 1;
         }
 
-        .tray-note-icon {
-            color: #ffd166;
-            font-size: 0.8rem;
-            margin-left: auto;
+        .tray-slot-remove:hover {
+            background: #ef4444;
+            color: #fff;
         }
 
-        /* Tray Metrics */
+        /* Metrics Bar */
         .tray-metrics-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 12px;
-            background: rgba(0,0,0,0.25);
+            padding: 8px 14px;
+            background: rgba(0,0,0,0.3);
             border-radius: 8px;
-            font-size: 0.85rem;
             margin-bottom: 16px;
+            font-size: 0.85rem;
         }
 
         .metric-pill {
@@ -291,7 +377,7 @@
             gap: 6px;
         }
 
-        /* Primer Tabs & Drawer */
+        /* Primer & Guide Tabs */
         .tabs-header {
             display: flex;
             gap: 8px;
@@ -300,19 +386,23 @@
         }
 
         .tab-btn {
-            padding: 8px 14px;
             background: transparent;
             border: none;
-            border-bottom: 2px solid transparent;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 600;
+            padding: 8px 14px;
             cursor: pointer;
+            border-bottom: 2px solid transparent;
             transition: all 0.2s;
         }
 
-        .tab-btn.active {
+        .tab-btn:hover {
             color: #fff;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-primary);
             border-bottom-color: var(--accent-primary);
         }
 
@@ -326,14 +416,14 @@
 
         .primer-textarea {
             width: 100%;
-            height: 220px;
-            background: rgba(12, 15, 24, 0.8);
+            min-height: 220px;
+            background: rgba(14, 18, 28, 0.8);
             border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 12px;
             color: #fff;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
+            font-family: inherit;
+            font-size: 0.88rem;
             line-height: 1.5;
             resize: vertical;
             outline: none;
@@ -345,112 +435,137 @@
 
         /* Right Column: Search & Catalog */
         .catalog-column {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        .search-box-card {
-            background: rgba(18, 22, 34, 0.85);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 18px 20px;
-            backdrop-filter: blur(16px);
+        /* Search Header */
+        .search-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
-        .search-input-wrap {
+        .search-field-wrap {
             position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
+            flex: 1;
         }
 
         .search-bar-input {
             width: 100%;
             padding: 12px 16px 12px 42px;
-            background: rgba(12, 15, 24, 0.9);
+            background: rgba(14, 18, 28, 0.8);
             border: 1px solid var(--glass-border);
             border-radius: 10px;
             color: #fff;
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             outline: none;
             transition: border-color 0.2s;
         }
 
         .search-bar-input:focus {
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
 
-        .search-icon-left {
+        .search-icon-svg {
             position: absolute;
             left: 14px;
-            color: var(--text-muted);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            fill: var(--text-muted);
             pointer-events: none;
         }
 
         .regex-badge {
-            position: absolute;
-            right: 12px;
-            font-size: 0.72rem;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 3px 8px;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 6px;
-            background: rgba(78, 205, 196, 0.15);
-            color: #4ecdc4;
-            border: 1px solid rgba(78, 205, 196, 0.3);
+            color: #818cf8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
         .regex-badge.error {
             background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
             border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
         }
 
-        /* Facets Filter Chips */
+        /* Facet Filters Bar */
+        .facets-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
         .facet-row {
             display: flex;
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
-            margin-top: 10px;
         }
 
         .facet-label {
             font-size: 0.78rem;
+            font-weight: 700;
             color: var(--text-muted);
-            font-weight: 600;
             text-transform: uppercase;
-            width: 65px;
+            width: 60px;
+            flex-shrink: 0;
+        }
+
+        .facet-chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .chip-btn {
-            padding: 4px 10px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
             border-radius: 6px;
             color: var(--text-muted);
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: 600;
+            padding: 3px 10px;
             cursor: pointer;
             transition: all 0.15s;
         }
 
         .chip-btn:hover {
-            color: #fff;
             background: rgba(255, 255, 255, 0.1);
+            color: #fff;
         }
 
         .chip-btn.active {
-            background: var(--accent-primary);
-            color: #fff;
+            background: rgba(99, 102, 241, 0.3);
             border-color: var(--accent-primary);
+            color: #fff;
         }
 
         /* Card Catalog Grid */
-        .card-catalog-grid {
+        .catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 14px;
+            max-height: 820px;
+            overflow-y: auto;
+            padding-right: 6px;
         }
 
         .catalog-card-item {
@@ -472,14 +587,14 @@
         }
 
         .catalog-card-item.in-tray {
-            opacity: 0.65;
-            filter: grayscale(0.3);
+            opacity: 0.6;
+            filter: grayscale(0.4);
         }
 
         .card-img-wrap {
             position: relative;
             width: 100%;
-            height: 160px;
+            height: 220px;
             background: #111;
             overflow: hidden;
         }
@@ -495,20 +610,6 @@
             transform: scale(1.05);
         }
 
-        .card-pill-top {
-            position: absolute;
-            top: 6px;
-            padding: 2px 7px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(4px);
-        }
-
-        .pill-tier { left: 6px; color: #ffd166; }
-        .pill-cost { right: 6px; color: #4ecdc4; }
-
         .card-body-wrap {
             padding: 10px;
             display: flex;
@@ -520,27 +621,24 @@
             font-size: 0.88rem;
             font-weight: 700;
             color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             margin-bottom: 4px;
         }
 
         .card-text {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
-            line-height: 1.35;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            line-height: 1.4;
+            flex: 1;
         }
 
-        /* Modal Backdrop */
+        /* Modals */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.75);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(8px);
             display: none;
             align-items: center;
@@ -554,40 +652,92 @@
         }
 
         .modal-card {
-            background: #141824;
+            background: #161b2a;
             border: 1px solid var(--glass-border);
             border-radius: 16px;
-            width: 100%;
-            max-width: 600px;
             padding: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .dropzone-box {
-            border: 2px dashed rgba(255,255,255,0.2);
+            border: 2px dashed rgba(99, 102, 241, 0.4);
             border-radius: 12px;
-            padding: 36px 20px;
+            padding: 32px 20px;
             text-align: center;
+            background: rgba(99, 102, 241, 0.05);
             cursor: pointer;
             transition: all 0.2s;
             margin: 16px 0;
         }
 
         .dropzone-box:hover, .dropzone-box.dragover {
+            background: rgba(99, 102, 241, 0.15);
             border-color: var(--accent-primary);
-            background: rgba(99, 102, 241, 0.08);
+        }
+
+        /* Captain Selection Item */
+        .captain-select-card {
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            background: #111;
+        }
+
+        .captain-select-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+
+        .captain-select-card.selected {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 14px rgba(78, 205, 196, 0.4);
+        }
+
+        .captain-select-card img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Alternate card chip inside modal */
+        .alt-card-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+        }
+
+        .alt-card-chip-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alt-card-chip-info img {
+            width: 32px;
+            height: 38px;
+            border-radius: 4px;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
-    <div class="background-effects">
-        <div class="glow-orb primary"></div>
-        <div class="glow-orb secondary"></div>
-    </div>
-
-    <!-- Navigation Bar -->
+    <!-- Top Navigation -->
     <nav class="navbar">
-        <a href="/index.html" class="logo">Galaxy<span>Tracker</span></a>
+        <div class="nav-brand">
+            <span class="logo-text">Galaxy Tracker</span>
+        </div>
         <div class="nav-links">
             <a href="/index.html">Home</a>
             <a href="/meta.html">Meta Insights</a>
@@ -628,7 +778,18 @@
                         <input type="text" id="inputDeckTitle" class="deck-title-input" value="My Custom Deck">
                         <div class="captain-name-label" id="captainLabel">Captain: Wizard Headmaster</div>
                     </div>
-                    <button class="btn-action" id="btnChangeCaptain" style="padding: 6px 12px; font-size: 0.8rem;">Change</button>
+                    <button class="btn-action" id="btnChangeCaptain" style="padding: 6px 12px; font-size: 0.8rem;">Change Primary</button>
+                </div>
+
+                <!-- Compatible Captains Row -->
+                <div class="compatible-captains-bar">
+                    <div class="compat-captains-header">
+                        <span class="compat-label">Compatible Captains:</span>
+                        <button class="btn-action" id="btnManageCompatCaptains" style="padding: 3px 10px; font-size: 0.78rem;">+ Edit Compatible</button>
+                    </div>
+                    <div class="compat-chips-wrap" id="compatCaptainsChips">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No secondary captains selected</span>
+                    </div>
                 </div>
 
                 <!-- 12 Slot Tray -->
@@ -642,13 +803,8 @@
                         <span style="color: var(--text-muted);">Cards:</span>
                         <strong id="metricCardCount" style="color: #ef4444;">0 / 12</strong>
                     </div>
-                    <div class="metric-pill">
-                        <span style="color: var(--text-muted);">Avg Tier:</span>
-                        <strong id="metricAvgTier" style="color: #ffd166;">-</strong>
-                    </div>
-                    <div class="metric-pill">
-                        <span style="color: var(--text-muted);">Avg Cost:</span>
-                        <strong id="metricAvgCost" style="color: #4ecdc4;">-</strong>
+                    <div class="metric-pill" id="traySortNotice" style="color: var(--text-muted); font-size: 0.78rem;">
+                        Sorted by Rarity & Alphabetical
                     </div>
                 </div>
 
@@ -660,8 +816,7 @@
                 </div>
 
                 <div class="tab-content active" id="tabPrimer">
-                    <textarea class="primer-textarea" id="primerTextarea" placeholder="# Deck Strategy & Primer
-Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and card synergy tips here. Full markdown supported."></textarea>
+                    <textarea class="primer-textarea" id="primerTextarea" placeholder="# Deck Strategy & Primer&#10;Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and card synergy tips here. Full markdown supported."></textarea>
                 </div>
 
                 <div class="tab-content" id="tabInGame">
@@ -672,66 +827,170 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
 
                 <div class="tab-content" id="tabLocal">
                     <div id="localDecksList" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto;">
-                        <p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No local drafts saved yet.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No locally cached decks yet.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Right: Search & Card Catalog -->
+        <!-- Right: Search & Catalog -->
         <section class="catalog-column">
-            <div class="search-box-card">
-                <div class="search-input-wrap">
-                    <span class="search-icon-left">🔍</span>
-                    <input type="text" id="cardSearchInput" class="search-bar-input" placeholder="Search cards or full regex (e.g. gain.*shield, f:olympus, t:spell, c<=3)...">
-                    <span class="regex-badge" id="regexBadge">REGEX: OK</span>
+            <!-- Search Input -->
+            <div class="search-row">
+                <div class="search-field-wrap">
+                    <svg class="search-icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    <input type="text" id="cardSearchInput" class="search-bar-input" placeholder="Search cards by name, text, or regex (e.g. /draw|shop/i)...">
                 </div>
+                <div class="regex-badge" id="regexBadge">REGEX READY</div>
+            </div>
 
-                <!-- Facet Chips -->
+            <!-- Facet Filters -->
+            <div class="facets-bar">
                 <div class="facet-row">
-                    <span class="facet-label">Type:</span>
-                    <button class="chip-btn active" data-facet="type" data-val="all">All</button>
-                    <button class="chip-btn" data-facet="type" data-val="character">Character</button>
-                    <button class="chip-btn" data-facet="type" data-val="spell">Spell</button>
-                    <button class="chip-btn" data-facet="type" data-val="treasure">Treasure</button>
+                    <span class="facet-label">Type</span>
+                    <div class="facet-chips" data-facet="type">
+                        <button class="chip-btn active" data-facet="type" data-val="all">All</button>
+                        <button class="chip-btn" data-facet="type" data-val="character">Character</button>
+                        <button class="chip-btn" data-facet="type" data-val="spell">Spell</button>
+                        <button class="chip-btn" data-facet="type" data-val="treasure">Treasure</button>
+                    </div>
                 </div>
                 <div class="facet-row">
-                    <span class="facet-label">Tier:</span>
-                    <button class="chip-btn active" data-facet="tier" data-val="all">All</button>
-                    <button class="chip-btn" data-facet="tier" data-val="1">T1</button>
-                    <button class="chip-btn" data-facet="tier" data-val="2">T2</button>
-                    <button class="chip-btn" data-facet="tier" data-val="3">T3</button>
-                    <button class="chip-btn" data-facet="tier" data-val="4">T4</button>
-                    <button class="chip-btn" data-facet="tier" data-val="5">T5</button>
-                    <button class="chip-btn" data-facet="tier" data-val="6">T6</button>
+                    <span class="facet-label">Tier</span>
+                    <div class="facet-chips" data-facet="tier">
+                        <button class="chip-btn active" data-facet="tier" data-val="all">All</button>
+                        <button class="chip-btn" data-facet="tier" data-val="1">1</button>
+                        <button class="chip-btn" data-facet="tier" data-val="2">2</button>
+                        <button class="chip-btn" data-facet="tier" data-val="3">3</button>
+                        <button class="chip-btn" data-facet="tier" data-val="4">4</button>
+                        <button class="chip-btn" data-facet="tier" data-val="5">5</button>
+                        <button class="chip-btn" data-facet="tier" data-val="6">6</button>
+                    </div>
                 </div>
                 <div class="facet-row">
-                    <span class="facet-label">Rarity:</span>
-                    <button class="chip-btn active" data-facet="rarity" data-val="all">All</button>
-                    <button class="chip-btn" data-facet="rarity" data-val="common">Common</button>
-                    <button class="chip-btn" data-facet="rarity" data-val="uncommon">Uncommon</button>
-                    <button class="chip-btn" data-facet="rarity" data-val="rare">Rare</button>
-                    <button class="chip-btn" data-facet="rarity" data-val="epic">Epic</button>
-                    <button class="chip-btn" data-facet="rarity" data-val="legendary">Legendary</button>
+                    <span class="facet-label">Rarity</span>
+                    <div class="facet-chips" data-facet="rarity">
+                        <button class="chip-btn active" data-facet="rarity" data-val="all">All</button>
+                        <button class="chip-btn" data-facet="rarity" data-val="common">Common</button>
+                        <button class="chip-btn" data-facet="rarity" data-val="uncommon">Uncommon</button>
+                        <button class="chip-btn" data-facet="rarity" data-val="rare">Rare</button>
+                        <button class="chip-btn" data-facet="rarity" data-val="epic">Epic</button>
+                        <button class="chip-btn" data-facet="rarity" data-val="legendary">Legendary</button>
+                    </div>
+                </div>
+                <div class="facet-row">
+                    <span class="facet-label">Faction</span>
+                    <div class="facet-chips" data-facet="faction">
+                        <button class="chip-btn active" data-facet="faction" data-val="all">All</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Monster">Monster</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Beast">Beast</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Hero">Hero</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Machine">Machine</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Noble">Noble</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Sky">Sky</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Star">Star</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Undead">Undead</button>
+                        <button class="chip-btn" data-facet="faction" data-val="Water">Water</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Card Catalog Grid -->
-            <div class="card-catalog-grid" id="catalogGrid">
+            <!-- Catalog Cards Grid -->
+            <div class="catalog-grid" id="catalogGrid">
                 <!-- Cards rendered dynamically -->
             </div>
         </section>
     </main>
 
-    <!-- Captain Picker Modal -->
+    <!-- Primary Captain Picker Modal -->
     <div class="modal-overlay" id="captainModal">
-        <div class="modal-card" style="max-width: 780px;">
+        <div class="modal-card" style="max-width: 860px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="color: #fff; font-size: 1.2rem;">Choose Captain</h3>
+                <h3 style="color: #fff; font-size: 1.2rem;">Choose Primary Captain</h3>
                 <button class="btn-action" id="btnCloseCaptainModal" style="padding: 4px 10px;">✕</button>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto;" id="captainPickerGrid">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; max-height: 520px; overflow-y: auto;" id="captainPickerGrid">
                 <!-- Captains rendered via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Compatible Captains Picker Modal -->
+    <div class="modal-overlay" id="compatCaptainsModal">
+        <div class="modal-card" style="max-width: 860px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <div>
+                    <h3 style="color: #fff; font-size: 1.2rem; margin: 0 0 4px 0;">Select Compatible Captains</h3>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Choose other captains that can also successfully run this deck archetype.</div>
+                </div>
+                <button class="btn-action" id="btnCloseCompatModal" style="padding: 4px 10px;">✕</button>
+            </div>
+            <input type="text" id="inputCompatCapSearch" class="search-bar-input" style="padding: 8px 12px; margin-bottom: 14px;" placeholder="Search captains...">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; max-height: 440px; overflow-y: auto;" id="compatCaptainPickerGrid">
+                <!-- Compatible captains rendered via JS -->
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                <button class="btn-action btn-primary-action" id="btnDoneCompatCaptains">Done Selecting</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Strategy & Budget Substitutions Modal -->
+    <div class="modal-overlay" id="cardDetailModal">
+        <div class="modal-card" style="max-width: 660px; width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <div style="display: flex; gap: 14px; align-items: center;">
+                    <img id="detailModalCardArt" src="" style="width: 54px; height: 72px; object-fit: cover; border-radius: 8px; border: 2px solid var(--accent-primary);" onerror="this.src='/icon.png'">
+                    <div>
+                        <h3 id="detailModalCardName" style="color: #fff; font-size: 1.25rem; margin: 0 0 4px 0;">Card Name</h3>
+                        <div id="detailModalCardRarity" style="font-size: 0.82rem; font-weight: 700;">Common</div>
+                    </div>
+                </div>
+                <button class="btn-action" id="btnCloseCardDetailModal" style="padding: 4px 10px;">✕</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- Strategy Notes -->
+                <div>
+                    <label style="font-size: 0.82rem; font-weight: 700; color: #ffd166; display: block; margin-bottom: 6px;">
+                        Strategy / Role Notes (Primer Card Notes)
+                    </label>
+                    <textarea id="detailModalCardNote" class="search-bar-input" style="width: 100%; height: 80px; padding: 10px; resize: vertical; font-size: 0.88rem; font-family: inherit;" placeholder="Why this card is in the deck, scaling synergies, when to buy, or positioning tips..."></textarea>
+                </div>
+
+                <!-- Budget Substitutions -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #4ecdc4;">
+                            Alternate / Budget Substitutions (Up to 3)
+                        </label>
+                        <span id="altCardsCount" style="font-size: 0.78rem; color: var(--text-muted);">0 / 3</span>
+                    </div>
+
+                    <div id="altCardsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+                        <!-- Chosen alternate cards rendered here -->
+                    </div>
+
+                    <div id="altAddPickerWrap" style="position: relative;">
+                        <input type="text" id="inputAltCardSearch" class="search-bar-input" style="padding: 8px 12px; font-size: 0.85rem;" placeholder="Search cards to add as alternate replacement...">
+                        <div id="altSearchDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 100; max-height: 180px; overflow-y: auto; background: #161b2a; border: 1px solid var(--glass-border); border-radius: 8px; margin-top: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
+                            <!-- Dropdown options rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reason / Tradeoff note -->
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                        Substitution Tradeoff / Strategy Notes
+                    </label>
+                    <input type="text" id="detailModalSubReason" class="search-bar-input" style="padding: 8px 12px; font-size: 0.85rem;" placeholder="e.g. Budget option if lacking epic/legendary; run if facing heavy aggro">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+                    <button class="btn-action" id="btnClearCardDetail">Clear Notes</button>
+                    <button class="btn-action btn-primary-action" id="btnSaveCardDetail">Save Notes & Substitutions</button>
+                </div>
             </div>
         </div>
     </div>
@@ -800,48 +1059,92 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
         let allCards = [];
         let captainsList = [];
         let currentCaptain = null;
+        let compatibleCaptains = new Set(); // Set of captain CIDs
         let activeDeckCards = []; // array of 12 card objects or null
-        let cardAnnotations = new Map(); // cid => { note, alts, reason }
+        let cardAnnotations = new Map(); // cid => { card_cid, card_note, alternate_cids, substitution_reason }
+        let currentDetailCard = null; // currently opened card in detail modal
+        let tempDetailAlts = []; // currently selected alternate CIDs in modal
         const searchEngine = new CardSearchEngine();
+
+        const RARITY_WEIGHT = {
+            'common': 1,
+            'uncommon': 2,
+            'rare': 3,
+            'epic': 4,
+            'legendary': 5
+        };
 
         const activeFacets = {
             types: new Set(),
             tiers: new Set(),
             rarities: new Set(),
-            factions: new Set(),
-            costs: new Set()
+            factions: new Set()
         };
+
+        // Universal Image URL resolver
+        function getCardImageUrl(card) {
+            if (!card || !card.card_key) return '/icon.png';
+            const key = card.card_key.toLowerCase().trim();
+            if (card.card_type === 'spell' || card.card_type === 'treasure') {
+                return `https://static.galaxy.fun/cards/${key}__300.webp`;
+            }
+            return `https://static.galaxy.fun/cards/${key}__bronze__240.webp`;
+        }
+
+        function onCardImgError(img, cardKey) {
+            if (img.src.includes('__bronze__240.webp')) {
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__300.webp`;
+            } else {
+                img.onerror = null;
+                img.src = '/icon.png';
+            }
+        }
+
+        // Sorting tray cards: Rarity ascending, then alphabetically by name
+        function sortDeckCards(cards) {
+            const valid = cards.filter(Boolean);
+            valid.sort((a, b) => {
+                const rA = RARITY_WEIGHT[(a.rarity || 'common').toLowerCase()] || 0;
+                const rB = RARITY_WEIGHT[(b.rarity || 'common').toLowerCase()] || 0;
+                if (rA !== rB) return rA - rB;
+                return (a.name || '').localeCompare(b.name || '');
+            });
+            const result = new Array(12).fill(null);
+            for (let i = 0; i < valid.length; i++) {
+                result[i] = valid[i];
+            }
+            return result;
+        }
 
         // Init
         document.addEventListener('DOMContentLoaded', async () => {
-            // Restore Author Name
             const authorInput = document.getElementById('inputAuthorName');
             authorInput.value = DeckStorage.getAuthorName();
             authorInput.addEventListener('input', (e) => DeckStorage.setAuthorName(e.target.value));
 
-            // Load Cards Catalog
             try {
                 const res = await fetch('/api/cards.json');
                 const data = await res.json();
                 allCards = Object.values(data).filter(c => c && c.cid);
                 captainsList = allCards.filter(c => c.card_type === 'captain');
                 
-                // Default captain (Wizard Headmaster: 1001 or first captain)
+                // Default captain
                 currentCaptain = captainsList.find(c => c.cid === 1001) || captainsList[0];
                 updateCaptainUI();
 
-                // Setup empty 12 tray slots
                 activeDeckCards = new Array(12).fill(null);
                 renderTraySlots();
-
-                // Populate Captain Picker
                 renderCaptainPicker();
-
-                // Render Initial Catalog
+                renderCompatCaptainsUI();
                 applyCatalogFilters();
-
-                // Load cached local drafts and in-game decks
                 loadStoredDecks();
+
+                // Check Clone URL parameter or existing draft
+                const urlParams = new URLSearchParams(window.location.search);
+                const cloneId = urlParams.get('clone');
+                if (cloneId) {
+                    await loadDeckForCloning(cloneId);
+                }
             } catch (err) {
                 console.error('Failed to load cards catalog:', err);
             }
@@ -849,11 +1152,115 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
             setupEventListeners();
         });
 
+        async function loadDeckForCloning(deckId) {
+            try {
+                // Check local active draft first
+                const draft = DeckStorage.getActiveDraft();
+                if (draft && String(draft.id) === String(deckId)) {
+                    populateDeckData(draft, true);
+                    return;
+                }
+
+                // Otherwise fetch from API
+                const res = await fetch(`/api/deck.php?id=${encodeURIComponent(deckId)}`, {
+                    headers: { 'X-Author-Token': DeckStorage.getAuthorToken() }
+                });
+                const data = await res.json();
+                if (data && data.success && data.deck) {
+                    populateDeckData(data.deck, true, data.primer, data.annotations);
+                }
+            } catch (e) {
+                console.error('Error cloning deck:', e);
+            }
+        }
+
+        function populateDeckData(deck, isClone, primer, annotations) {
+            if (!deck) return;
+            
+            // Set Captain
+            const cap = captainsList.find(c => c.cid === deck.captain_cid);
+            if (cap) currentCaptain = cap;
+            updateCaptainUI();
+
+            // Set Compatible Captains
+            compatibleCaptains.clear();
+            const compats = deck.compatible_captain_cids || [];
+            compats.forEach(cid => {
+                if (cid !== currentCaptain.cid) compatibleCaptains.add(cid);
+            });
+            renderCompatCaptainsUI();
+
+            // Set Title & Primer
+            document.getElementById('inputDeckTitle').value = isClone ? `${deck.name || 'Deck'} (Copy)` : (deck.name || 'Untitled Deck');
+            if (deck.summary) document.getElementById('inputSummary').value = deck.summary;
+
+            if (primer && primer.guide_markdown) {
+                document.getElementById('primerTextarea').value = primer.guide_markdown;
+            } else if (deck.guide_markdown) {
+                document.getElementById('primerTextarea').value = deck.guide_markdown;
+            }
+
+            // Set Annotations
+            cardAnnotations.clear();
+            if (Array.isArray(annotations)) {
+                annotations.forEach(a => {
+                    const cid = a.card_cid || a.cid;
+                    if (cid) {
+                        cardAnnotations.set(cid, {
+                            card_cid: cid,
+                            card_note: a.card_note || a.note || '',
+                            alternate_cids: Array.isArray(a.alternate_cids) ? a.alternate_cids : (a.alts || []),
+                            substitution_reason: a.substitution_reason || a.reason || ''
+                        });
+                    }
+                });
+            }
+
+            // Set Cards & Sort
+            const cids = deck.card_cids || [];
+            const loadedCards = cids.map(cid => allCards.find(c => c.cid === cid)).filter(Boolean);
+            activeDeckCards = sortDeckCards(loadedCards);
+
+            renderTraySlots();
+            applyCatalogFilters();
+        }
+
         function updateCaptainUI() {
             if (!currentCaptain) return;
             document.getElementById('captainLabel').textContent = 'Captain: ' + currentCaptain.name;
             const img = document.getElementById('captainImg');
-            img.src = 'https://static.galaxy.fun/cards/' + (currentCaptain.card_key || 'wizard_headmaster') + '__default__240.webp';
+            img.src = `https://static.galaxy.fun/cards/${currentCaptain.card_key || 'wizard_headmaster'}__default__240.webp`;
+        }
+
+        function renderCompatCaptainsUI() {
+            const container = document.getElementById('compatCaptainsChips');
+            container.innerHTML = '';
+
+            if (compatibleCaptains.size === 0) {
+                container.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No secondary captains selected</span>';
+                return;
+            }
+
+            compatibleCaptains.forEach(cid => {
+                const cap = captainsList.find(c => c.cid === cid);
+                if (!cap) return;
+
+                const chip = document.createElement('div');
+                chip.className = 'compat-cap-chip';
+                chip.innerHTML = `
+                    <img src="https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp" onerror="this.src='/icon.png'">
+                    <span>${cap.name}</span>
+                    <span class="chip-del" data-cid="${cid}">✕</span>
+                `;
+
+                chip.querySelector('.chip-del').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    compatibleCaptains.delete(cid);
+                    renderCompatCaptainsUI();
+                });
+
+                container.appendChild(chip);
+            });
         }
 
         function renderTraySlots() {
@@ -861,8 +1268,6 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
             grid.innerHTML = '';
 
             let filledCount = 0;
-            let sumTier = 0;
-            let sumCost = 0;
 
             for (let i = 0; i < 12; i++) {
                 const card = activeDeckCards[i];
@@ -870,34 +1275,34 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
 
                 if (card) {
                     filledCount++;
-                    sumTier += (card.tier || 1);
-                    sumCost += (card.cost || 0);
-
                     slot.className = 'tray-slot filled';
                     const rarity = (card.rarity || 'common').toLowerCase();
-                    slot.style.borderColor = 'var(--rarity-' + rarity + ')';
+                    slot.style.borderColor = `var(--rarity-${rarity})`;
 
-                    const hasNotes = cardAnnotations.has(card.cid);
-                    const noteIcon = hasNotes ? '<span class="tray-note-icon" title="Has Notes / Substitutions">✒️</span>' : '';
+                    const ann = cardAnnotations.get(card.cid);
+                    const hasNotes = ann && (ann.card_note || (ann.alternate_cids && ann.alternate_cids.length > 0));
+                    const noteBadge = hasNotes ? '<span class="tray-note-icon" title="Has Strategy Notes / Substitutions">✒️ Notes</span>' : '';
 
                     slot.innerHTML = `
-                        <img class="tray-slot-art" src="https://static.galaxy.fun/cards/${card.card_key || ''}__bronze__240.webp" onerror="this.src='/icon.png'">
+                        <img class="tray-slot-art" src="${getCardImageUrl(card)}" onerror="onCardImgError(this, '${card.card_key || ''}')">
                         <div class="tray-slot-details">
                             <div class="tray-slot-name">${card.name}</div>
                             <div class="tray-slot-meta">
-                                <span class="tray-badge-tier">★${card.tier || 1}</span>
-                                <span class="tray-badge-cost">⚡${card.cost || 0}g</span>
-                                ${noteIcon}
+                                <span class="tray-badge-rarity" style="color: var(--rarity-${rarity});">${rarity}</span>
+                                ${noteBadge}
                             </div>
                         </div>
-                        <button class="tray-slot-remove" data-index="${i}">✕</button>
+                        <button class="tray-slot-remove" data-index="${i}" title="Remove card">✕</button>
                     `;
+
+                    slot.addEventListener('click', (e) => {
+                        if (e.target.closest('.tray-slot-remove')) return;
+                        openCardDetailModal(card);
+                    });
 
                     slot.querySelector('.tray-slot-remove').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        activeDeckCards[i] = null;
-                        renderTraySlots();
-                        applyCatalogFilters();
+                        removeCardFromTray(i);
                     });
                 } else {
                     slot.className = 'tray-slot empty';
@@ -907,13 +1312,35 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
                 grid.appendChild(slot);
             }
 
-            // Metrics Update
             const countLabel = document.getElementById('metricCardCount');
             countLabel.textContent = `${filledCount} / 12`;
             countLabel.style.color = filledCount === 12 ? '#4ecdc4' : '#ef4444';
+        }
 
-            document.getElementById('metricAvgTier').textContent = filledCount > 0 ? (sumTier / filledCount).toFixed(1) : '-';
-            document.getElementById('metricAvgCost').textContent = filledCount > 0 ? (sumCost / filledCount).toFixed(1) + 'g' : '-';
+        function addCardToTray(card) {
+            const filled = activeDeckCards.filter(Boolean);
+            if (filled.length >= 12) {
+                alert('Tray already has 12 cards! Remove a card to add another.');
+                return;
+            }
+            if (filled.some(c => c.cid === card.cid)) {
+                alert('This card is already in your 12-card tray!');
+                return;
+            }
+
+            filled.push(card);
+            activeDeckCards = sortDeckCards(filled);
+            renderTraySlots();
+            applyCatalogFilters();
+        }
+
+        function removeCardFromTray(index) {
+            const card = activeDeckCards[index];
+            if (!card) return;
+            const filled = activeDeckCards.filter(Boolean).filter(c => c.cid !== card.cid);
+            activeDeckCards = sortDeckCards(filled);
+            renderTraySlots();
+            applyCatalogFilters();
         }
 
         function applyCatalogFilters() {
@@ -921,7 +1348,6 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
             const filterable = allCards.filter(c => c.card_type !== 'captain');
             const results = searchEngine.filterCards(filterable, query, activeFacets);
 
-            // Update Regex status badge
             const badge = document.getElementById('regexBadge');
             if (searchEngine.lastRegexError) {
                 badge.className = 'regex-badge error';
@@ -945,13 +1371,11 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
                 item.className = 'catalog-card-item' + (inTray ? ' in-tray' : '');
 
                 const rarity = (card.rarity || 'common').toLowerCase();
-                item.style.borderColor = 'var(--rarity-' + rarity + ')';
+                item.style.borderColor = `var(--rarity-${rarity})`;
 
                 item.innerHTML = `
                     <div class="card-img-wrap">
-                        <img src="https://static.galaxy.fun/cards/${card.card_key || ''}__bronze__240.webp" loading="lazy" onerror="this.src='/icon.png'">
-                        <span class="card-pill-top pill-tier">★${card.tier || 1}</span>
-                        <span class="card-pill-top pill-cost">${card.cost || 0}g</span>
+                        <img src="${getCardImageUrl(card)}" loading="lazy" onerror="onCardImgError(this, '${card.card_key || ''}')">
                     </div>
                     <div class="card-body-wrap">
                         <div class="card-title">${card.name}</div>
@@ -967,47 +1391,135 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
             });
         }
 
-        function addCardToTray(card) {
-            // Find first empty slot
-            const emptyIdx = activeDeckCards.findIndex(c => c === null);
-            if (emptyIdx === -1) {
-                alert('Tray already has 12 cards! Remove a card to add another.');
-                return;
-            }
-            // Check duplicate
-            if (activeDeckCards.some(c => c && c.cid === card.cid)) {
-                alert('This card is already in your 12-card tray!');
-                return;
-            }
-
-            activeDeckCards[emptyIdx] = card;
-            renderTraySlots();
-            applyCatalogFilters();
-        }
-
+        // Captain Pickers
         function renderCaptainPicker() {
             const grid = document.getElementById('captainPickerGrid');
             grid.innerHTML = '';
-            captainsList.forEach(cap => {
+            const sorted = [...captainsList].sort((a, b) => a.name.localeCompare(b.name));
+
+            sorted.forEach(cap => {
                 const card = document.createElement('div');
-                card.className = 'catalog-card-item';
-                card.style.textAlign = 'center';
+                card.className = 'captain-select-card';
+                if (currentCaptain && currentCaptain.cid === cap.cid) {
+                    card.classList.add('selected');
+                }
+                card.title = cap.name;
                 card.innerHTML = `
-                    <img style="width: 100%; height: 110px; object-fit: cover;" src="https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp" onerror="this.src='/icon.png'">
-                    <div style="padding: 8px 4px; font-size: 0.82rem; font-weight: 600; color: #fff;">${cap.name}</div>
+                    <img src="https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp" onerror="this.src='/icon.png'">
                 `;
                 card.addEventListener('click', () => {
                     currentCaptain = cap;
+                    compatibleCaptains.delete(cap.cid);
                     updateCaptainUI();
+                    renderCompatCaptainsUI();
                     document.getElementById('captainModal').classList.remove('open');
                 });
                 grid.appendChild(card);
             });
         }
 
+        function renderCompatCaptainPicker(searchTerm = '') {
+            const grid = document.getElementById('compatCaptainPickerGrid');
+            grid.innerHTML = '';
+            
+            let sorted = [...captainsList]
+                .filter(c => c.cid !== currentCaptain.cid)
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            if (searchTerm.trim()) {
+                const term = searchTerm.toLowerCase().trim();
+                sorted = sorted.filter(c => c.name.toLowerCase().includes(term));
+            }
+
+            sorted.forEach(cap => {
+                const card = document.createElement('div');
+                card.className = 'captain-select-card';
+                const isSelected = compatibleCaptains.has(cap.cid);
+                if (isSelected) card.classList.add('selected');
+                card.title = cap.name;
+
+                card.innerHTML = `
+                    <img src="https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp" onerror="this.src='/icon.png'">
+                    <div style="padding: 4px 6px; font-size: 0.75rem; text-align: center; color: ${isSelected ? '#4ecdc4' : 'var(--text-muted)'}; font-weight: 600;">
+                        ${isSelected ? '✓ Selected' : cap.name}
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    if (compatibleCaptains.has(cap.cid)) {
+                        compatibleCaptains.delete(cap.cid);
+                    } else {
+                        compatibleCaptains.add(cap.cid);
+                    }
+                    renderCompatCaptainPicker(document.getElementById('inputCompatCapSearch').value);
+                    renderCompatCaptainsUI();
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Card Detail & Substitutions Modal
+        function openCardDetailModal(card) {
+            currentDetailCard = card;
+            const ann = cardAnnotations.get(card.cid) || { card_note: '', alternate_cids: [], substitution_reason: '' };
+            tempDetailAlts = Array.isArray(ann.alternate_cids) ? [...ann.alternate_cids] : [];
+
+            document.getElementById('detailModalCardName').textContent = card.name;
+            const rarity = (card.rarity || 'common').toLowerCase();
+            const rElem = document.getElementById('detailModalCardRarity');
+            rElem.textContent = `${card.card_type ? card.card_type.toUpperCase() : 'CARD'} • ${rarity.toUpperCase()}`;
+            rElem.style.color = `var(--rarity-${rarity})`;
+
+            const art = document.getElementById('detailModalCardArt');
+            art.src = getCardImageUrl(card);
+            art.onerror = () => onCardImgError(art, card.card_key || '');
+
+            document.getElementById('detailModalCardNote').value = ann.card_note || '';
+            document.getElementById('detailModalSubReason').value = ann.substitution_reason || '';
+            document.getElementById('inputAltCardSearch').value = '';
+            document.getElementById('altSearchDropdown').style.display = 'none';
+
+            renderDetailAltCardsList();
+            document.getElementById('cardDetailModal').classList.add('open');
+        }
+
+        function renderDetailAltCardsList() {
+            const list = document.getElementById('altCardsList');
+            list.innerHTML = '';
+            document.getElementById('altCardsCount').textContent = `${tempDetailAlts.length} / 3`;
+
+            if (tempDetailAlts.length === 0) {
+                list.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No alternate cards assigned.</div>';
+                return;
+            }
+
+            tempDetailAlts.forEach((altCid, idx) => {
+                const altCard = allCards.find(c => c.cid === altCid) || { name: `Card #${altCid}`, rarity: 'common' };
+                const row = document.createElement('div');
+                row.className = 'alt-card-chip';
+                row.innerHTML = `
+                    <div class="alt-card-chip-info">
+                        <img src="${getCardImageUrl(altCard)}" onerror="onCardImgError(this, '${altCard.card_key || ''}')">
+                        <div>
+                            <strong style="color: #fff; font-size: 0.88rem;">${altCard.name}</strong>
+                            <div style="font-size: 0.75rem; color: var(--rarity-${(altCard.rarity || 'common').toLowerCase()}); text-transform: capitalize;">${altCard.rarity || 'common'}</div>
+                        </div>
+                    </div>
+                    <button class="btn-action" style="padding: 2px 8px; font-size: 0.75rem; color: #ef4444;" data-idx="${idx}">✕</button>
+                `;
+
+                row.querySelector('button').addEventListener('click', () => {
+                    tempDetailAlts.splice(idx, 1);
+                    renderDetailAltCardsList();
+                });
+
+                list.appendChild(row);
+            });
+        }
+
         async function loadStoredDecks() {
             try {
-                // In-Game Decks
                 const inGame = await DeckStorage.getImportedDecks();
                 document.getElementById('inGameCount').textContent = inGame.length;
                 const inGameList = document.getElementById('inGameDecksList');
@@ -1023,66 +1535,62 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
                             </div>
                             <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
                         `;
+
                         row.querySelector('button').addEventListener('click', () => {
-                            loadDeckFromData(dk);
+                            populateDeckData(dk, false);
                         });
                         inGameList.appendChild(row);
                     });
                 }
 
                 // Local drafts
-                const localDecks = await DeckStorage.getLocalDecks();
+                const localDecks = await DeckStorage.getAllLocalDecks();
                 document.getElementById('localDraftCount').textContent = localDecks.length;
-            } catch(e) {
-                console.warn(e);
-            }
-        }
+                const localList = document.getElementById('localDecksList');
+                if (localDecks.length > 0) {
+                    localList.innerHTML = '';
+                    localDecks.forEach(dk => {
+                        const row = document.createElement('div');
+                        row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid var(--glass-border);';
+                        row.innerHTML = `
+                            <div>
+                                <strong style="color: #fff; font-size: 0.9rem;">${dk.name}</strong>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">${(dk.card_cids || []).length} Cards</div>
+                            </div>
+                            <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
+                        `;
 
-        function loadDeckFromData(data) {
-            if (data.captain_cid) {
-                const cap = captainsList.find(c => c.cid === data.captain_cid);
-                if (cap) {
-                    currentCaptain = cap;
-                    updateCaptainUI();
+                        row.querySelector('button').addEventListener('click', () => {
+                            populateDeckData(dk, false);
+                        });
+                        localList.appendChild(row);
+                    });
                 }
-            }
-            if (data.name) {
-                document.getElementById('inputDeckTitle').value = data.name;
-            }
-            if (Array.isArray(data.card_cids)) {
-                activeDeckCards = new Array(12).fill(null);
-                data.card_cids.forEach((cid, i) => {
-                    if (i < 12) {
-                        const card = allCards.find(c => c.cid === cid);
-                        if (card) activeDeckCards[i] = card;
-                    }
-                });
-                renderTraySlots();
-                applyCatalogFilters();
+            } catch (err) {
+                console.warn('Storage load error:', err);
             }
         }
 
         function setupEventListeners() {
-            // Search Input with debounce
-            let debounceTimer;
+            // Search Input
             document.getElementById('cardSearchInput').addEventListener('input', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(applyCatalogFilters, 120);
+                applyCatalogFilters();
             });
 
-            // Facet Chips Toggle
+            // Facet Chips Toggle (with rarity fix!)
             document.querySelectorAll('.chip-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const facet = btn.dataset.facet;
                     const val = btn.dataset.val;
+                    const facetKey = (facet === 'rarity') ? 'rarities' : facet + 's';
 
                     if (val === 'all') {
-                        activeFacets[facet + 's'].clear();
+                        activeFacets[facetKey].clear();
                         btn.parentElement.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                     } else {
                         btn.parentElement.querySelector('[data-val="all"]').classList.remove('active');
-                        const set = activeFacets[facet + 's'];
+                        const set = activeFacets[facetKey];
                         const parseVal = (facet === 'tier') ? parseInt(val, 10) : val;
 
                         if (set.has(parseVal)) {
@@ -1100,7 +1608,7 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
                 });
             });
 
-            // Tab Switching
+            // Tabs
             document.querySelectorAll('.tab-btn').forEach(tab => {
                 tab.addEventListener('click', () => {
                     document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -1110,18 +1618,121 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
                 });
             });
 
-            // Modals
+            // Captain Modals
             document.getElementById('btnChangeCaptain').addEventListener('click', () => {
+                renderCaptainPicker();
                 document.getElementById('captainModal').classList.add('open');
             });
             document.getElementById('btnCloseCaptainModal').addEventListener('click', () => {
                 document.getElementById('captainModal').classList.remove('open');
             });
 
+            // Compatible Captains Modal
+            document.getElementById('btnManageCompatCaptains').addEventListener('click', () => {
+                document.getElementById('inputCompatCapSearch').value = '';
+                renderCompatCaptainPicker('');
+                document.getElementById('compatCaptainsModal').classList.add('open');
+            });
+            document.getElementById('btnCloseCompatModal').addEventListener('click', () => {
+                document.getElementById('compatCaptainsModal').classList.remove('open');
+            });
+            document.getElementById('btnDoneCompatCaptains').addEventListener('click', () => {
+                document.getElementById('compatCaptainsModal').classList.remove('open');
+                renderCompatCaptainsUI();
+            });
+            document.getElementById('inputCompatCapSearch').addEventListener('input', (e) => {
+                renderCompatCaptainPicker(e.target.value);
+            });
+
+            // Card Detail Modal
+            document.getElementById('btnCloseCardDetailModal').addEventListener('click', () => {
+                document.getElementById('cardDetailModal').classList.remove('open');
+            });
+            document.getElementById('btnClearCardDetail').addEventListener('click', () => {
+                if (currentDetailCard) {
+                    cardAnnotations.delete(currentDetailCard.cid);
+                    document.getElementById('cardDetailModal').classList.remove('open');
+                    renderTraySlots();
+                }
+            });
+            document.getElementById('btnSaveCardDetail').addEventListener('click', () => {
+                if (!currentDetailCard) return;
+                const note = document.getElementById('detailModalCardNote').value.trim();
+                const reason = document.getElementById('detailModalSubReason').value.trim();
+
+                if (note || tempDetailAlts.length > 0 || reason) {
+                    cardAnnotations.set(currentDetailCard.cid, {
+                        card_cid: currentDetailCard.cid,
+                        card_note: note,
+                        alternate_cids: [...tempDetailAlts],
+                        substitution_reason: reason
+                    });
+                } else {
+                    cardAnnotations.delete(currentDetailCard.cid);
+                }
+
+                document.getElementById('cardDetailModal').classList.remove('open');
+                renderTraySlots();
+            });
+
+            // Alternate Card Search Dropdown in Detail Modal
+            const inputAlt = document.getElementById('inputAltCardSearch');
+            const dropAlt = document.getElementById('altSearchDropdown');
+
+            inputAlt.addEventListener('input', () => {
+                const q = inputAlt.value.toLowerCase().trim();
+                if (!q) {
+                    dropAlt.style.display = 'none';
+                    return;
+                }
+
+                const matches = allCards
+                    .filter(c => c.card_type !== 'captain' && c.cid !== currentDetailCard.cid && !tempDetailAlts.includes(c.cid))
+                    .filter(c => c.name.toLowerCase().includes(q))
+                    .slice(0, 8);
+
+                if (matches.length === 0) {
+                    dropAlt.innerHTML = '<div style="padding: 8px 12px; font-size: 0.8rem; color: var(--text-muted);">No matching cards</div>';
+                } else {
+                    dropAlt.innerHTML = '';
+                    matches.forEach(m => {
+                        const row = document.createElement('div');
+                        row.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 6px 12px; cursor: pointer; transition: background 0.15s;';
+                        row.innerHTML = `
+                            <img src="${getCardImageUrl(m)}" style="width: 24px; height: 30px; object-fit: cover; border-radius: 3px;" onerror="onCardImgError(this, '${m.card_key || ''}')">
+                            <span style="color: #fff; font-size: 0.85rem;">${m.name}</span>
+                        `;
+                        row.addEventListener('mouseover', () => row.style.background = 'rgba(99, 102, 241, 0.2)');
+                        row.addEventListener('mouseout', () => row.style.background = 'transparent');
+                        row.addEventListener('click', () => {
+                            if (tempDetailAlts.length >= 3) {
+                                alert('Maximum 3 alternate substitutions per card.');
+                                return;
+                            }
+                            tempDetailAlts.push(m.cid);
+                            renderDetailAltCardsList();
+                            inputAlt.value = '';
+                            dropAlt.style.display = 'none';
+                        });
+                        dropAlt.appendChild(row);
+                    });
+                }
+                dropAlt.style.display = 'block';
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#altAddPickerWrap')) {
+                    dropAlt.style.display = 'none';
+                }
+            });
+
             // Clear Deck
             document.getElementById('btnClearDeck').addEventListener('click', () => {
                 if (confirm('Clear all cards from the tray?')) {
                     activeDeckCards = new Array(12).fill(null);
+                    cardAnnotations.clear();
+                    compatibleCaptains.clear();
+                    renderCompatCaptainsUI();
                     renderTraySlots();
                     applyCatalogFilters();
                 }
@@ -1148,18 +1759,27 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
                 const visibility = document.getElementById('selectVisibility').value;
                 const primerText = document.getElementById('primerTextarea').value;
 
+                const annotationsList = Array.from(cardAnnotations.values()).map(a => ({
+                    card_cid: a.card_cid,
+                    card_note: a.card_note || '',
+                    alternate_cids: a.alternate_cids || [],
+                    substitution_reason: a.substitution_reason || ''
+                }));
+
                 const payload = {
                     action: 'save',
                     author_id: DeckStorage.getAuthorToken(),
                     author_name: author,
                     captain_cid: currentCaptain.cid,
+                    compatible_captain_cids: Array.from(compatibleCaptains),
                     name: title,
                     summary: summary,
                     card_cids: activeDeckCards.map(c => c.cid),
                     visibility: visibility,
                     primer: {
                         guide_markdown: primerText
-                    }
+                    },
+                    annotations: annotationsList
                 };
 
                 try {
@@ -1176,6 +1796,10 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
                         document.getElementById('saveResultBox').style.display = 'block';
                         document.getElementById('inputShareUrl').value = data.share_url;
                         document.getElementById('btnConfirmSave').textContent = 'Saved ✓';
+
+                        // Save locally too
+                        payload.id = data.id;
+                        await DeckStorage.saveLocalDeck(payload);
                     } else {
                         alert('Save Error: ' + (data.error || 'Unknown error'));
                     }
@@ -1201,46 +1825,42 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
 
             document.getElementById('btnUploadDeckLib').addEventListener('click', () => {
                 uploadTarget = 'deck_library';
-                document.getElementById('uploadModalTitle').textContent = 'Upload In-Game Decks (_deck_library)';
-                document.getElementById('uploadModalDesc').innerHTML = 'Locate your <code>_deck_library</code> file inside <code>%AppData%/Roaming/Galaxy/</code> and drop it here to import custom decks.';
+                document.getElementById('uploadModalTitle').textContent = 'Upload In-Game Decks';
+                document.getElementById('uploadModalDesc').innerHTML = 'Locate your <code>_deck_library</code> file inside <code>%AppData%/Galaxy/</code> and drop it here to import all in-game custom decks.';
                 uploadModal.classList.add('open');
             });
 
             document.getElementById('btnUploadCollection').addEventListener('click', () => {
                 uploadTarget = 'collection';
-                document.getElementById('uploadModalTitle').textContent = 'Upload Collection (_collection)';
-                document.getElementById('uploadModalDesc').innerHTML = 'Locate your <code>_collection</code> file inside <code>%AppData%/Roaming/Galaxy/</code> and drop it here to evaluate which decks you can build.';
+                document.getElementById('uploadModalTitle').textContent = 'Upload Collection';
+                document.getElementById('uploadModalDesc').innerHTML = 'Locate your <code>_collection</code> file inside <code>%AppData%/Galaxy/</code> and drop it here to track collection completeness across all community decks.';
                 uploadModal.classList.add('open');
             });
 
             document.getElementById('btnCloseUploadModal').addEventListener('click', () => {
                 uploadModal.classList.remove('open');
+                document.getElementById('uploadStatusText').style.display = 'none';
             });
 
             const dropzone = document.getElementById('dropzoneBox');
             dropzone.addEventListener('click', () => fileInput.click());
-
-            dropzone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropzone.classList.add('dragover');
-            });
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
             dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-
             dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 dropzone.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) {
-                    handleFile(e.dataTransfer.files[0]);
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    processFile(e.dataTransfer.files[0]);
                 }
             });
 
-            fileInput.addEventListener('change', () => {
-                if (fileInput.files.length > 0) {
-                    handleFile(fileInput.files[0]);
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    processFile(e.target.files[0]);
                 }
             });
 
-            async function handleFile(file) {
+            async function processFile(file) {
                 const status = document.getElementById('uploadStatusText');
                 status.style.display = 'block';
                 status.style.color = '#ffd166';
@@ -1248,47 +1868,34 @@ Write your mulligan guide, early turn shops (Turns 1-4), power transitions, and 
 
                 try {
                     const buffer = await file.arrayBuffer();
+                    const parser = new HdtbClientParser();
 
                     if (uploadTarget === 'deck_library') {
-                        const parsed = HdtbClientParser.parseDeckLibraryFile(buffer, file.name);
-                        status.style.color = '#4ecdc4';
-                        status.textContent = `Extracted ${parsed.custom_decks.length} custom decks! Caching locally...`;
-
-                        // Cache locally
-                        await DeckStorage.saveImportedDecks(parsed.custom_decks, parsed.playfab_id);
-
-                        // Sync to database
-                        if (parsed.custom_decks.length > 0 && parsed.playfab_id) {
-                            fetch('/api/sync-hdtb.php', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    playfab_id: parsed.playfab_id,
-                                    decks: parsed.custom_decks
-                                })
-                            }).catch(console.warn);
+                        const parsed = parser.parseDeckLibrary(buffer);
+                        if (!parsed.custom_decks || parsed.custom_decks.length === 0) {
+                            status.style.color = '#ef4444';
+                            status.textContent = 'No custom decks found in this library file.';
+                            return;
                         }
 
-                        setTimeout(() => {
-                            uploadModal.classList.remove('open');
-                            loadStoredDecks();
-                        }, 1200);
+                        await DeckStorage.saveImportedDecks(parsed.custom_decks);
+                        await DeckStorage.syncImportedDecksToCloud(parsed.playfab_id, parsed.custom_decks);
 
-                    } else if (uploadTarget === 'collection') {
-                        const parsed = HdtbClientParser.parseCollectionFile(buffer, file.name);
-                        const totalCaptains = Object.keys(parsed.owned_cards).length;
                         status.style.color = '#4ecdc4';
-                        status.textContent = `Loaded collection for ${totalCaptains} captains (${parsed.infinity_captains.length} Infinity Unlocked)! Saved to local cache.`;
-
-                        await DeckStorage.saveUserCollection(parsed);
-
-                        setTimeout(() => {
-                            uploadModal.classList.remove('open');
-                        }, 1500);
+                        status.textContent = `Successfully imported ${parsed.custom_decks.length} in-game decks!`;
+                        loadStoredDecks();
+                        setTimeout(() => uploadModal.classList.remove('open'), 1500);
+                    } else {
+                        const parsed = parser.parseCollection(buffer);
+                        await DeckStorage.saveUserCollection(parsed.owned_cards);
+                        status.style.color = '#4ecdc4';
+                        status.textContent = `Successfully imported collection (${Object.keys(parsed.owned_cards).length} unique cards)!`;
+                        setTimeout(() => uploadModal.classList.remove('open'), 1500);
                     }
                 } catch (err) {
+                    console.error(err);
                     status.style.color = '#ef4444';
-                    status.textContent = 'Error parsing file: ' + err.message;
+                    status.textContent = 'Failed to parse file: ' + err.message;
                 }
             }
         }

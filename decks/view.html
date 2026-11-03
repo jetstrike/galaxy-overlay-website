@@ -48,10 +48,10 @@
             width: 90px;
             height: 90px;
             border-radius: 16px;
-            border: 3px solid var(--rarity-legendary);
+            border: 3px solid var(--accent-primary);
             object-fit: cover;
             background: #1e293b;
-            box-shadow: 0 8px 24px rgba(255, 183, 3, 0.3);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
         }
 
         .hero-title {
@@ -74,18 +74,53 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.6);
         }
 
         .upvote-btn {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 20px;
+            padding: 10px 18px;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid var(--glass-border);
             border-radius: 10px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -102,6 +137,34 @@
             background: rgba(255, 209, 102, 0.25);
             border-color: #ffd166;
             color: #ffd166;
+        }
+
+        /* Compatible Captains Badges in Hero */
+        .hero-compat-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .compat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+
+        .compat-badge img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         /* 12-Card Grid */
@@ -135,12 +198,12 @@
             gap: 16px;
         }
 
-        @media (max-width: 960px) {
+        @media (max-width: 1100px) {
             .cards-12-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
             }
         }
-        @media (max-width: 540px) {
+        @media (max-width: 768px) {
             .cards-12-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -164,28 +227,16 @@
 
         .viewer-card-art {
             width: 100%;
-            height: 150px;
+            height: 220px;
             object-fit: cover;
             background: #111;
         }
-
-        .tile-meta-top {
-            position: absolute;
-            top: 6px;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            background: rgba(0,0,0,0.85);
-        }
-        .meta-tier { left: 6px; color: #ffd166; }
-        .meta-cost { right: 6px; color: #4ecdc4; }
 
         .tile-body {
             padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
 
         .tile-title {
@@ -198,13 +249,39 @@
         }
 
         .tile-note-snippet {
-            font-size: 0.75rem;
+            font-size: 0.76rem;
             color: #ffd166;
             background: rgba(255, 209, 102, 0.1);
-            padding: 3px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
             border: 1px dashed rgba(255, 209, 102, 0.3);
+            line-height: 1.4;
+        }
+
+        .tile-alts-wrap {
             margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .tile-alt-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 6px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid rgba(78, 205, 196, 0.25);
+            border-radius: 6px;
+            font-size: 0.74rem;
+            color: #4ecdc4;
+        }
+
+        .tile-alt-item img {
+            width: 18px;
+            height: 22px;
+            border-radius: 3px;
+            object-fit: cover;
         }
 
         /* Primer Section */
@@ -248,9 +325,11 @@
         <div class="glow-orb secondary"></div>
     </div>
 
-    <!-- Navigation -->
+    <!-- Top Navigation -->
     <nav class="navbar">
-        <a href="/index.html" class="logo">Galaxy<span>Tracker</span></a>
+        <div class="nav-brand">
+            <span class="logo-text">Galaxy Tracker</span>
+        </div>
         <div class="nav-links">
             <a href="/index.html">Home</a>
             <a href="/meta.html">Meta Insights</a>
@@ -262,11 +341,12 @@
         </div>
     </nav>
 
+    <!-- Main Container -->
     <div class="view-container">
-        <!-- Hero Details -->
+        <!-- Hero Header -->
         <div class="deck-hero-card">
             <div class="hero-left">
-                <img id="captainImg" class="hero-captain-art" src="/icon.png" alt="Captain">
+                <img id="captainImg" class="hero-captain-art" src="https://static.galaxy.fun/cards/wizard_headmaster__default__240.webp" alt="Captain">
                 <div>
                     <h1 class="hero-title" id="deckTitle">Loading Deck...</h1>
                     <div class="hero-meta">
@@ -276,6 +356,10 @@
                         <span>•</span>
                         <span id="deckDate">Recently Created</span>
                         <span id="collectionBadge" style="margin-left: 8px;"></span>
+                    </div>
+                    <div class="hero-compat-bar" id="compatBar" style="display: none;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Also Compatible With:</span>
+                        <div id="compatBadgesList" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
                     </div>
                 </div>
             </div>
@@ -293,7 +377,7 @@
         <div class="cards-grid-card">
             <div class="section-header">
                 <div class="section-title">Deck Composition (12 Cards)</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted);" id="deckStatsSummary">Avg Tier: - • Avg Cost: -</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);" id="deckStatsSummary">Sorted by Rarity & Alphabetical</div>
             </div>
             <div class="cards-12-grid" id="deckCardsGrid">
                 <!-- Cards rendered dynamically -->
@@ -316,6 +400,24 @@
         let deckData = null;
         let allCardsMap = {};
 
+        function getCardImageUrl(card) {
+            if (!card || !card.card_key) return '/icon.png';
+            const key = card.card_key.toLowerCase().trim();
+            if (card.card_type === 'spell' || card.card_type === 'treasure') {
+                return `https://static.galaxy.fun/cards/${key}__300.webp`;
+            }
+            return `https://static.galaxy.fun/cards/${key}__bronze__240.webp`;
+        }
+
+        function onCardImgError(img, cardKey) {
+            if (img.src.includes('__bronze__240.webp')) {
+                img.src = `https://static.galaxy.fun/cards/${cardKey}__300.webp`;
+            } else {
+                img.onerror = null;
+                img.src = '/icon.png';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const deckId = urlParams.get('id');
@@ -327,11 +429,9 @@
             }
 
             try {
-                // Fetch Cards Catalog
                 const cardsRes = await fetch('/api/cards.json');
                 allCardsMap = await cardsRes.json();
 
-                // Fetch Deck
                 const res = await fetch(`/api/deck.php?id=${encodeURIComponent(deckId)}`, {
                     headers: { 'X-Author-Token': DeckStorage.getAuthorToken() }
                 });
@@ -350,33 +450,41 @@
                 alert('Failed to load deck: ' + err.message);
             }
 
-            // Upvote Button
+            // Upvote
             document.getElementById('btnUpvote').addEventListener('click', async () => {
                 try {
                     const res = await fetch('/api/deck.php', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Author-Token': DeckStorage.getAuthorToken()
+                        },
                         body: JSON.stringify({
                             action: 'upvote',
-                            deck_id: deckId,
-                            author_id: DeckStorage.getAuthorToken()
+                            deck_id: deckId
                         })
                     });
-                    const resData = await res.json();
-                    if (resData.success) {
-                        document.getElementById('upvoteCount').textContent = resData.upvote_count;
+                    const d = await res.json();
+                    if (d.success) {
+                        const count = document.getElementById('upvoteCount');
                         const btn = document.getElementById('btnUpvote');
-                        if (resData.upvoted) btn.classList.add('upvoted');
-                        else btn.classList.remove('upvoted');
+                        if (d.action === 'upvoted') {
+                            count.textContent = parseInt(count.textContent, 10) + 1;
+                            btn.classList.add('upvoted');
+                        } else {
+                            count.textContent = Math.max(0, parseInt(count.textContent, 10) - 1);
+                            btn.classList.remove('upvoted');
+                        }
                     }
-                } catch (e) {
-                    console.warn(e);
+                } catch(e) {
+                    console.error(e);
                 }
             });
 
-            // Copy Share URL
+            // Share Copy
             document.getElementById('btnCopyShare').addEventListener('click', () => {
-                navigator.clipboard.writeText(window.location.href);
+                const shareUrl = window.location.origin + '/d/' + deckId;
+                navigator.clipboard.writeText(shareUrl);
                 const btn = document.getElementById('btnCopyShare');
                 btn.textContent = 'Copied ✓';
                 setTimeout(() => btn.textContent = '🔗 Share', 2000);
@@ -403,27 +511,43 @@
                 document.getElementById('btnUpvote').classList.add('upvoted');
             }
 
-            // Captain Image
+            // Primary Captain Image
             const capCard = allCardsMap[String(dk.captain_cid)];
             if (capCard && capCard.card_key) {
                 document.getElementById('captainImg').src = `https://static.galaxy.fun/cards/${capCard.card_key}__default__240.webp`;
             }
 
-            // 12 Cards
+            // Compatible Captains Badges
+            const compatList = dk.compatible_captain_cids || [];
+            if (Array.isArray(compatList) && compatList.length > 0) {
+                const compatBar = document.getElementById('compatBar');
+                const listElem = document.getElementById('compatBadgesList');
+                listElem.innerHTML = '';
+                compatList.forEach(cid => {
+                    const cCard = allCardsMap[String(cid)];
+                    if (cCard) {
+                        const badge = document.createElement('div');
+                        badge.className = 'compat-badge';
+                        badge.innerHTML = `
+                            <img src="https://static.galaxy.fun/cards/${cCard.card_key}__default__240.webp" onerror="this.src='/icon.png'">
+                            <span>${cCard.name}</span>
+                        `;
+                        listElem.appendChild(badge);
+                    }
+                });
+                compatBar.style.display = 'flex';
+            }
+
+            // 12 Cards Grid
             const grid = document.getElementById('deckCardsGrid');
             grid.innerHTML = '';
             const cids = dk.card_cids || [];
-            let sumTier = 0;
-            let sumCost = 0;
 
             const annMap = new Map();
             (data.annotations || []).forEach(a => annMap.set(a.card_cid, a));
 
             cids.forEach(cid => {
-                const card = allCardsMap[String(cid)] || { name: `Card #${cid}`, tier: 1, cost: 0, rarity: 'common' };
-                sumTier += (card.tier || 1);
-                sumCost += (card.cost || 0);
-
+                const card = allCardsMap[String(cid)] || { name: `Card #${cid}`, rarity: 'common' };
                 const tile = document.createElement('div');
                 tile.className = 'viewer-card-tile';
                 const rarity = (card.rarity || 'common').toLowerCase();
@@ -432,28 +556,35 @@
                 const ann = annMap.get(cid);
                 const noteHtml = ann && ann.card_note ? `<div class="tile-note-snippet">✒️ ${ann.card_note}</div>` : '';
 
+                // Alternate cards html
+                let altsHtml = '';
+                if (ann && Array.isArray(ann.alternate_cids) && ann.alternate_cids.length > 0) {
+                    const altItems = ann.alternate_cids.map(aCid => {
+                        const altCard = allCardsMap[String(aCid)] || { name: `Card #${aCid}` };
+                        return `
+                            <div class="tile-alt-item" title="${ann.substitution_reason || 'Alternate substitution'}">
+                                <img src="${getCardImageUrl(altCard)}" onerror="onCardImgError(this, '${altCard.card_key || ''}')">
+                                <span>Alt: ${altCard.name}</span>
+                            </div>
+                        `;
+                    }).join('');
+                    altsHtml = `<div class="tile-alts-wrap">${altItems}</div>`;
+                }
+
                 tile.innerHTML = `
-                    <div style="position: relative;">
-                        <img class="viewer-card-art" src="https://static.galaxy.fun/cards/${card.card_key || ''}__bronze__240.webp" onerror="this.src='/icon.png'">
-                        <span class="tile-meta-top meta-tier">★${card.tier || 1}</span>
-                        <span class="tile-meta-top meta-cost">${card.cost || 0}g</span>
-                    </div>
+                    <img class="viewer-card-art" src="${getCardImageUrl(card)}" onerror="onCardImgError(this, '${card.card_key || ''}')">
                     <div class="tile-body">
                         <div class="tile-title">${card.name}</div>
                         ${noteHtml}
+                        ${altsHtml}
                     </div>
                 `;
 
                 grid.appendChild(tile);
             });
 
-            if (cids.length > 0) {
-                document.getElementById('deckStatsSummary').textContent = `Avg Tier: ${(sumTier / cids.length).toFixed(1)} • Avg Cost: ${(sumCost / cids.length).toFixed(1)}g`;
-            }
-
             // Primer Markdown
             if (data.primer && data.primer.guide_markdown) {
-                // Simple markdown-to-html formatter for sections, bold, and line breaks
                 const md = data.primer.guide_markdown
                     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
                     .replace(/^## (.*$)/gim, '<h2>$1</h2>')

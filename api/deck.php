@@ -141,6 +141,7 @@ HTML;
 
     // Regular JSON response for Frontend SPA
     $deck['card_cids'] = json_decode($deck['card_cids'], true) ?: [];
+    $deck['compatible_captain_cids'] = json_decode($deck['compatible_captain_cids'] ?? '[]', true) ?: [];
 
     // Fetch Primer
     $primer = null;
@@ -296,6 +297,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $card_cids_json = json_encode($card_cids);
+        $compatible_captains = is_array($data['compatible_captain_cids'] ?? null) ? array_map('intval', $data['compatible_captain_cids']) : [];
+        $compat_json = json_encode($compatible_captains);
 
         $conn->begin_transaction();
 
@@ -317,19 +320,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $upd = $conn->prepare("
                     UPDATE website_decks 
-                    SET author_name = ?, captain_cid = ?, name = ?, summary = ?, card_cids = ?, visibility = ?, has_primer = ? 
+                    SET author_name = ?, captain_cid = ?, compatible_captain_cids = ?, name = ?, summary = ?, card_cids = ?, visibility = ?, has_primer = ? 
                     WHERE id = ?
                 ");
-                $upd->bind_param("sissssis", $author_name, $captain_cid, $name, $summary, $card_cids_json, $visibility, $has_primer, $deck_id);
+                $upd->bind_param("sisssssis", $author_name, $captain_cid, $compat_json, $name, $summary, $card_cids_json, $visibility, $has_primer, $deck_id);
                 $upd->execute();
             } else {
                 // Creating new deck
                 $deck_id = generate_deck_id($conn);
                 $ins = $conn->prepare("
-                    INSERT INTO website_decks (id, author_id, author_name, captain_cid, name, summary, card_cids, visibility, has_primer) 
+                    INSERT INTO website_decks (id, author_id, author_name, captain_cid, compatible_captain_cids, name, summary, card_cids, visibility, has_primer) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
-                $ins->bind_param("sssissssi", $deck_id, $user_token, $author_name, $captain_cid, $name, $summary, $card_cids_json, $visibility, $has_primer);
+                $ins->bind_param("sssisssssi", $deck_id, $user_token, $author_name, $captain_cid, $compat_json, $name, $summary, $card_cids_json, $visibility, $has_primer);
                 $ins->execute();
             }
 
