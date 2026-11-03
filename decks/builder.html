@@ -788,8 +788,12 @@
                 </div>
 
                 <div class="tab-content" id="tabInGame">
-                    <div id="inGameDecksList" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto;">
-                        <p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No in-game decks uploaded yet. Drop your <code>_deck_library</code> file above!</p>
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center;">
+                        <input type="text" id="inputInGameFilter" placeholder="Search imported decks..." style="flex: 1; padding: 6px 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 6px; color: #fff; font-size: 0.82rem;">
+                        <button id="btnSyncInGameCloud" class="btn-action" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;">↻ Sync Cloud</button>
+                    </div>
+                    <div id="inGameDecksList" style="display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">Loading decks...</p>
                     </div>
                 </div>
 
@@ -999,10 +1003,10 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/decks/js/hdtbClientParser.js?v=6"></script>
-    <script src="/decks/js/deckStorage.js?v=6"></script>
-    <script src="/decks/js/cardSearchEngine.js?v=6"></script>
-    <script src="/decks/js/collectionMatcher.js?v=6"></script>
+    <script src="/decks/js/hdtbClientParser.js?v=12"></script>
+    <script src="/decks/js/deckStorage.js?v=12"></script>
+    <script src="/decks/js/cardSearchEngine.js?v=12"></script>
+    <script src="/decks/js/collectionMatcher.js?v=12"></script>
     <script>
         // State
         let allCards = [];
@@ -1133,7 +1137,7 @@
         function populateDeckData(deck, isClone, primer, annotations) {
             if (!deck) return;
             
-            const cap = captainsList.find(c => c.cid === deck.captain_cid);
+            const cap = captainsList.find(c => c.cid == deck.captain_cid);
             if (cap) currentCaptain = cap;
             updateCaptainUI();
 
@@ -1144,9 +1148,9 @@
             });
             renderCompatCaptainsUI();
 
-            let defaultTitle = (deck.name || '').trim();
+            let defaultTitle = (deck.deck_name || deck.name || '').trim();
             if (!defaultTitle || defaultTitle === 'Custom Deck' || defaultTitle === 'My Custom Deck' || defaultTitle === 'custom_deck') {
-                defaultTitle = cap ? cap.name : 'Untitled Deck';
+                defaultTitle = (deck.slot_id && String(deck.slot_id) !== '1') ? `${cap ? cap.name : 'Deck'} (Deck ${deck.slot_id})` : (cap ? cap.name : 'Untitled Deck');
             }
             document.getElementById('inputDeckTitle').value = isClone ? `${defaultTitle} (Copy)` : defaultTitle;
             if (deck.summary) document.getElementById('inputSummary').value = deck.summary;
@@ -1173,7 +1177,7 @@
             }
 
             const cids = deck.card_cids || [];
-            const loadedCards = cids.map(cid => allCards.find(c => c.cid === cid)).filter(Boolean);
+            const loadedCards = cids.map(cid => allCards.find(c => c.cid == cid)).filter(Boolean);
             activeDeckCards = sortDeckCards(loadedCards);
 
             renderTraySlots();
@@ -1482,38 +1486,61 @@
             });
         }
 
-        async function loadStoredDecks() {
-            try {
-                const inGame = await DeckStorage.getImportedDecks();
-                document.getElementById('inGameCount').textContent = inGame.length;
-                const inGameList = document.getElementById('inGameDecksList');
-                if (inGame.length > 0) {
-                    inGameList.innerHTML = '';
-                    inGame.forEach(dk => {
-                        const cap = captainsList.find(c => c.cid === dk.captain_cid);
-                        const capName = cap ? cap.name : (dk.captain_cid ? `Captain #${dk.captain_cid}` : 'Deck');
-                        let displayName = (dk.name || dk.deck_name || '').trim();
-                        if (!displayName || displayName === 'Custom Deck' || displayName === 'My Custom Deck' || displayName === 'custom_deck') {
-                            displayName = (dk.slot_id && String(dk.slot_id) !== '1') ? `${capName} (Deck ${dk.slot_id})` : capName;
-                        }
-                        const row = document.createElement('div');
-                        row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid var(--glass-border);';
-                        row.innerHTML = `
-                            <div>
-                                <strong style="color: #fff; font-size: 0.9rem;">${displayName}</strong>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Slot ${dk.slot_id} • ${(dk.card_cids || []).length} Cards</div>
-                            </div>
-                            <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
-                        `;
+        let rawImportedDecks = [];
 
-                        row.querySelector('button').addEventListener('click', () => {
-                            populateDeckData(dk, false);
-                        });
-                        inGameList.appendChild(row);
-                    });
-                } else {
-                    inGameList.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No in-game decks uploaded yet. Drop your <code>_deck_library</code> file above!</p>';
+        function renderImportedDecksList(decksToRender) {
+            const inGameList = document.getElementById('inGameDecksList');
+            if (!inGameList) return;
+            inGameList.innerHTML = '';
+
+            if (decksToRender.length === 0) {
+                inGameList.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;">No matching decks found. Drop your <code>_deck_library</code> file above to import!</p>';
+                return;
+            }
+
+            decksToRender.forEach(dk => {
+                const cap = captainsList.find(c => c.cid == dk.captain_cid);
+                const capName = cap ? cap.name : (dk.captain_cid ? `Captain #${dk.captain_cid}` : 'Deck');
+                let displayName = (dk.deck_name || dk.name || '').trim();
+                if (!displayName || displayName === 'Custom Deck' || displayName === 'My Custom Deck' || displayName === 'custom_deck') {
+                    displayName = (dk.slot_id && String(dk.slot_id) !== '1') ? `${capName} (Deck ${dk.slot_id})` : capName;
                 }
+                const row = document.createElement('div');
+                row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid var(--glass-border);';
+                row.innerHTML = `
+                    <div>
+                        <strong style="color: #fff; font-size: 0.9rem;">${displayName}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Slot ${dk.slot_id} &bull; ${(dk.card_cids || []).length} Cards</div>
+                    </div>
+                    <button class="btn-action" style="padding: 4px 10px; font-size: 0.78rem;">Load</button>
+                `;
+
+                row.querySelector('button').addEventListener('click', () => {
+                    populateDeckData(dk, false);
+                });
+                inGameList.appendChild(row);
+            });
+        }
+
+        async function loadStoredDecks(forceCloud = false) {
+            try {
+                const inGameList = document.getElementById('inGameDecksList');
+                if (inGameList && forceCloud) {
+                    inGameList.innerHTML = '<p style="font-size: 0.85rem; color: var(--accent-primary); padding: 12px 0;">Syncing decks from cloud...</p>';
+                }
+
+                const inGame = await DeckStorage.getImportedDecks(forceCloud);
+                rawImportedDecks = inGame || [];
+                document.getElementById('inGameCount').textContent = rawImportedDecks.length;
+
+                // Sort alphabetically by deck name
+                rawImportedDecks.sort((a, b) => {
+                    const nameA = (a.deck_name || a.name || '').toLowerCase();
+                    const nameB = (b.deck_name || b.name || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+
+                renderImportedDecksList(rawImportedDecks);
 
                 // Local drafts
                 const localDecks = await DeckStorage.getLocalDecks();
@@ -1548,6 +1575,37 @@
             document.getElementById('cardSearchInput').addEventListener('input', () => {
                 applyCatalogFilters();
             });
+
+            // Imported In-Game Filter
+            const inGameFilterInput = document.getElementById('inputInGameFilter');
+            if (inGameFilterInput) {
+                inGameFilterInput.addEventListener('input', (e) => {
+                    const q = (e.target.value || '').trim().toLowerCase();
+                    if (!q) {
+                        renderImportedDecksList(rawImportedDecks);
+                    } else {
+                        const filtered = rawImportedDecks.filter(d => {
+                            const name = (d.deck_name || d.name || '').toLowerCase();
+                            const cap = captainsList.find(c => c.cid == d.captain_cid);
+                            const capName = cap ? cap.name.toLowerCase() : '';
+                            return name.includes(q) || capName.includes(q);
+                        });
+                        renderImportedDecksList(filtered);
+                    }
+                });
+            }
+
+            // Sync In-Game Decks from Cloud button
+            const btnSync = document.getElementById('btnSyncInGameCloud');
+            if (btnSync) {
+                btnSync.addEventListener('click', async () => {
+                    btnSync.disabled = true;
+                    btnSync.textContent = 'Syncing...';
+                    await loadStoredDecks(true);
+                    btnSync.disabled = false;
+                    btnSync.textContent = '↻ Sync Cloud';
+                });
+            }
 
             // Facet Chips Toggle
             document.querySelectorAll('.chip-btn').forEach(btn => {
