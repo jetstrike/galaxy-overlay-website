@@ -1,0 +1,1 @@
+<?php header("Content-Type: application/json"); echo json_encode(["gd" => extension_loaded("gd"), "imagick" => extension_loaded("imagick"), "functions" => function_exists("imagecreatetruecolor")]); ?>
