@@ -734,6 +734,21 @@
         </div>
     </div>
 
+    <!-- Editing Deck Banner -->
+    <div id="editingDeckBanner" style="display: none; background: rgba(78, 205, 196, 0.12); border: 1px solid #4ecdc4; border-radius: 12px; margin: 16px 20px 0; padding: 12px 20px; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.4rem;">✏️</span>
+            <div>
+                <strong style="color: #4ecdc4; font-size: 0.95rem;" id="editingDeckTitle">Editing Deck Mode</strong>
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;" id="editingDeckSubtext">Changes will update the existing deck.</div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="btn-action" id="btnExitEditMode" style="padding: 6px 14px; font-size: 0.82rem;">✕ Exit Edit Mode</button>
+            <button class="btn-action" id="btnDeleteEditingDeck" style="padding: 6px 14px; font-size: 0.82rem; background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444;">🗑️ Delete Deck</button>
+        </div>
+    </div>
+
     <!-- Main Builder Layout -->
     <main class="builder-layout">
         <!-- Left: 12-Card Tray & Primers -->
@@ -996,6 +1011,7 @@
                     </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <button class="btn-action" id="btnSaveAsNewCopy" style="display: none; background: rgba(255, 255, 255, 0.08);">Save as New Copy</button>
                     <button class="btn-action btn-primary-action" id="btnConfirmSave">Save to Cloud</button>
                 </div>
             </div>
@@ -1117,6 +1133,96 @@
 
             setupEventListeners();
         });
+
+        function showEditingBanner(subtext, isAuthor = true) {
+            const banner = document.getElementById('editingDeckBanner');
+            if (banner) {
+                banner.style.display = 'flex';
+                const titleEl = document.getElementById('editingDeckTitle');
+                if (titleEl) {
+                    titleEl.textContent = isAuthor ? 'Editing Deck Mode' : 'Viewing / Cloning Deck Mode';
+                }
+                const sub = document.getElementById('editingDeckSubtext');
+                if (sub && subtext) sub.textContent = subtext;
+            }
+            const btnDel = document.getElementById('btnDeleteEditingDeck');
+            if (btnDel) {
+                btnDel.style.display = isAuthor ? 'inline-block' : 'none';
+            }
+            const btnConfirm = document.getElementById('btnConfirmSave');
+            if (btnConfirm) {
+                btnConfirm.textContent = isAuthor ? 'Update Existing Deck' : 'Publish / Save';
+            }
+            const btnCopy = document.getElementById('btnSaveAsNewCopy');
+            if (btnCopy) {
+                btnCopy.style.display = isAuthor ? 'inline-block' : 'none';
+            }
+            const btnSaveTop = document.getElementById('btnSaveDeck');
+            if (btnSaveTop) {
+                btnSaveTop.textContent = isAuthor ? '💾 Update Deck' : '💾 Save & Share Deck';
+            }
+        }
+
+        async function loadDeckForEditing(deckId) {
+            try {
+                // 1. Check local drafts
+                const localDecks = await DeckStorage.getLocalDecks();
+                const localDraft = localDecks.find(d => String(d.id) === String(deckId));
+                if (localDraft) {
+                    editingDeckId = localDraft.id;
+                    populateDeckData(localDraft, false, localDraft.primer, localDraft.annotations);
+                    showEditingBanner(`Editing Local Draft: ${localDraft.name || 'Untitled'}`, true);
+                    return;
+                }
+
+                // 2. Check in-game imported decks
+                const inGameDecks = await DeckStorage.getImportedDecks();
+                const inGame = inGameDecks.find(d => String(d.id) === String(deckId));
+                if (inGame) {
+                    editingDeckId = null;
+                    populateDeckData(inGame, false);
+                    showEditingBanner(`Imported In-Game Deck: ${inGame.name || 'In-Game Deck'} (Saving will publish a new deck)`, false);
+                    return;
+                }
+
+                // 3. Fetch from API
+                const res = await fetch(`/api/deck.php?id=${encodeURIComponent(deckId)}`, {
+                    headers: { 'X-Author-Token': DeckStorage.getAuthorToken() }
+                });
+                const data = await res.json();
+                if (data && data.success && data.deck) {
+                    const isAuthor = Boolean(data.is_author || (data.deck.author_id && data.deck.author_id === DeckStorage.getAuthorToken()));
+                    if (isAuthor) {
+                        editingDeckId = data.deck.id;
+                    } else {
+                        editingDeckId = null;
+                    }
+
+                    populateDeckData(data.deck, false, data.primer, data.annotations);
+
+                    if (data.deck.author_name) {
+                        const authorInp = document.getElementById('inputAuthorName');
+                        if (authorInp) authorInp.value = data.deck.author_name;
+                    }
+                    if (data.deck.visibility) {
+                        const visSelect = document.getElementById('selectVisibility');
+                        if (visSelect) visSelect.value = data.deck.visibility;
+                    }
+
+                    if (isAuthor) {
+                        showEditingBanner(`Editing Published Deck: ${data.deck.name || 'Untitled'}`, true);
+                    } else {
+                        showEditingBanner(`Viewing Deck: ${data.deck.name || 'Untitled'} (Not your deck — saving will create your own copy)`, false);
+                    }
+                } else {
+                    console.warn('Could not load deck for editing:', data ? data.error : 'Unknown error');
+                    alert('Could not find or load deck: ' + (data ? data.error : 'Unknown error'));
+                }
+            } catch (e) {
+                console.error('Error loading deck for editing:', e);
+                alert('Error loading deck: ' + e.message);
+            }
+        }
 
         async function loadDeckForCloning(deckId) {
             try {
@@ -1576,7 +1682,9 @@
                         `;
 
                         row.querySelector('.btn-load-local').addEventListener('click', () => {
-                            populateDeckData(dk, false);
+                            editingDeckId = dk.id;
+                            populateDeckData(dk, false, dk.primer, dk.annotations);
+                            showEditingBanner(`Editing Local Draft: ${dk.name || 'Untitled'}`, true);
                         });
                         row.querySelector('.btn-del-local').addEventListener('click', async () => {
                             if (confirm(`Delete saved draft "${dk.name}"?`)) {
@@ -1863,6 +1971,9 @@
 
                         payload.id = data.id;
                         await DeckStorage.saveLocalDeck(payload);
+
+                        editingDeckId = data.id;
+                        showEditingBanner(`Editing Published Deck: ${payload.name || 'Untitled'}`, true);
                     } else {
                         alert('Save Error: ' + (data.error || 'Unknown error'));
                     }
@@ -1887,6 +1998,8 @@
                     editingDeckId = null;
                     document.getElementById('editingDeckBanner').style.display = 'none';
                     document.getElementById('btnConfirmSave').textContent = 'Publish / Save';
+                    const btnSaveTop = document.getElementById('btnSaveDeck');
+                    if (btnSaveTop) btnSaveTop.textContent = '💾 Save & Share Deck';
                     window.history.replaceState({}, '', '/decks/builder.html');
                 });
             }
