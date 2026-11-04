@@ -52,12 +52,12 @@ const LEADERBOARD_STATS_CONFIG = [
         'desc' => 'Podium finishes achieved during the current season.'
     ],
     [
-        'stat' => 'Wins_v2',
-        'name' => 'All-Time Career Wins',
+        'stat' => 'matches_played_v2',
+        'name' => 'All-Time Matches Played',
         'category' => 'all_time',
         'group' => 'Hall of Fame',
-        'unit' => 'Wins',
-        'desc' => 'Total career 1st place victories across all seasons.'
+        'unit' => 'Matches',
+        'desc' => 'Total lifetime matches played across all seasons.'
     ],
     [
         'stat' => 'top_3s_v2',
@@ -140,7 +140,7 @@ function run_leaderboard_harvest(bool $archive_snapshot = false) {
             ],
             'all_time' => [
                 'title' => 'All-Time Legends',
-                'stats' => ['Wins_v2', 'top_3s_v2']
+                'stats' => ['matches_played_v2', 'top_3s_v2']
             ],
             'archive' => [
                 'title' => 'Previous Season',

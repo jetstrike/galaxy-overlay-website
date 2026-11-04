@@ -374,6 +374,12 @@
             color: #c084fc;
         }
 
+        .score-pill.matches {
+            background: rgba(59, 130, 246, 0.12);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
         .empty-state {
             padding: 50px 20px;
             text-align: center;
@@ -496,7 +502,7 @@
             },
             all_time: {
                 title: 'All-Time Legends',
-                stats: ['Wins_v2', 'top_3s_v2']
+                stats: ['matches_played_v2', 'top_3s_v2']
             },
             archive: {
                 title: 'Previous Season',
@@ -611,6 +617,7 @@
                 let scoreClass = 'score-pill';
                 if (unit.toLowerCase().includes('win')) scoreClass += ' wins';
                 else if (unit.toLowerCase().includes('top')) scoreClass += ' top3';
+                else if (unit.toLowerCase().includes('match')) scoreClass += ' matches';
 
                 tr.innerHTML = `
                     <td class="rank-cell">${rankHtml}</td>
@@ -652,7 +659,7 @@
                 case 'mmr_B': return 'Current Season MMR';
                 case 'Wins_seasonal_B': return 'Current Season Wins';
                 case 'top_3s_seasonal_B': return 'Current Season Top 3s';
-                case 'Wins_v2': return 'All-Time Wins';
+                case 'matches_played_v2': return 'All-Time Matches Played';
                 case 'top_3s_v2': return 'All-Time Top 3s';
                 case 'mmr_A': return 'Previous Season MMR';
                 case 'Wins_seasonal_A': return 'Previous Season Wins';
