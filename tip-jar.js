@@ -21,7 +21,7 @@
 
           <div class="tip-jar-body">
             <p class="tip-jar-note">
-              Galaxy Tracker and its analytics are 100% free and open-source tools created for the <em>Once Upon a Galaxy</em> community. Tips help cover database, server, and domain costs, but are never expected! Thank you for the support. ❤️
+              Galaxy Tracker and its analytics are 100% free tools created for the <em>Once Upon a Galaxy</em> community. Tips help cover database, server, and domain costs, but are never expected! Thank you for the support. ❤️
             </p>
 
             <div class="tip-options-grid">
