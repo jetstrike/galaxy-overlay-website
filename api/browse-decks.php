@@ -82,10 +82,11 @@ try {
     $sql = "
         SELECT d.id, d.author_id, d.author_name, d.captain_cid, d.compatible_captain_cids, d.name, d.summary, 
                d.card_cids, d.visibility, d.upvote_count, d.has_primer, d.in_game_win_rate, 
-               d.created_at, c.name as captain_name
+               d.created_at, MAX(c.name) as captain_name
         FROM website_decks d
         LEFT JOIN analytics_cards c ON (c.cid = d.captain_cid AND c.type = 'captain')
         {$where_sql}
+        GROUP BY d.id
         {$order_sql}
         LIMIT ? OFFSET ?
     ";
