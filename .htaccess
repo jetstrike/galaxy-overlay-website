@@ -8,3 +8,6 @@ RewriteRule ^decks/view\.html$ api/deck.php?id=%1 [L,QSA]
 
 # 2. Route /d/XYZ to api/deck.php?id=XYZ
 RewriteRule ^d/([a-zA-Z0-9_-]+)/?$ api/deck.php?id=$1 [L,QSA]
+
+# 3. Friendly redirects for support / tip jar
+RewriteRule ^(tip|support|donate)/?$ support.html [L]
