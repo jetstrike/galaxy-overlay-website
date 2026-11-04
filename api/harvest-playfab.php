@@ -273,6 +273,21 @@ try {
     $stmt->close();
     $conn->close();
 
+    // Auto-sync leaderboards if cache is older than 30 minutes
+    $lb_cache = __DIR__ . '/leaderboards_cache.json';
+    $lb_synced = false;
+    if (!file_exists($lb_cache) || (time() - filemtime($lb_cache) > 1800)) {
+        try {
+            require_once __DIR__ . '/harvest-leaderboard.php';
+            if (function_exists('run_leaderboard_harvest')) {
+                run_leaderboard_harvest(false);
+                $lb_synced = true;
+            }
+        } catch (Throwable $lb_err) {
+            error_log('Leaderboard auto-sync error: ' . $lb_err->getMessage());
+        }
+    }
+
     $elapsed = round(microtime(true) - $start_time, 2);
 
     echo json_encode([
@@ -280,6 +295,7 @@ try {
         "target_table" => $TARGET_TABLE,
         "inserted_new" => $total_inserted,
         "scanned_runs" => $total_scanned,
+        "leaderboards_synced" => $lb_synced,
         "elapsed_seconds" => $elapsed,
         "timestamp" => date('Y-m-d H:i:s')
     ]);
