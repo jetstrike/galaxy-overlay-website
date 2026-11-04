@@ -31,7 +31,7 @@ const LEADERBOARD_STATS_CONFIG = [
         'stat' => 'mmr_B',
         'name' => 'Current Season MMR',
         'category' => 'current',
-        'group' => 'Season B (Current)',
+        'group' => 'Current Season',
         'unit' => 'MMR',
         'desc' => 'Current seasonal competitive rating.'
     ],
@@ -39,17 +39,17 @@ const LEADERBOARD_STATS_CONFIG = [
         'stat' => 'Wins_seasonal_B',
         'name' => 'Current Season Wins',
         'category' => 'current',
-        'group' => 'Season B (Current)',
+        'group' => 'Current Season',
         'unit' => 'Wins',
-        'desc' => '1st place victories won during Season B.'
+        'desc' => '1st place victories won during the current season.'
     ],
     [
         'stat' => 'top_3s_seasonal_B',
         'name' => 'Current Season Top 3s',
         'category' => 'current',
-        'group' => 'Season B (Current)',
+        'group' => 'Current Season',
         'unit' => 'Top 3s',
-        'desc' => 'Podium finishes achieved during Season B.'
+        'desc' => 'Podium finishes achieved during the current season.'
     ],
     [
         'stat' => 'Wins_v2',
@@ -69,27 +69,27 @@ const LEADERBOARD_STATS_CONFIG = [
     ],
     [
         'stat' => 'mmr_A',
-        'name' => 'Season A Final MMR',
+        'name' => 'Previous Season MMR',
         'category' => 'archive',
-        'group' => 'Season A (Archive)',
+        'group' => 'Previous Season',
         'unit' => 'MMR',
-        'desc' => 'Final competitive MMR rating at Season A conclusion.'
+        'desc' => 'Final competitive MMR rating at the previous season conclusion.'
     ],
     [
         'stat' => 'Wins_seasonal_A',
-        'name' => 'Season A Wins',
+        'name' => 'Previous Season Wins',
         'category' => 'archive',
-        'group' => 'Season A (Archive)',
+        'group' => 'Previous Season',
         'unit' => 'Wins',
-        'desc' => '1st place victories recorded during Season A.'
+        'desc' => '1st place victories recorded during the previous season.'
     ],
     [
         'stat' => 'top_3s_seasonal_A',
-        'name' => 'Season A Top 3s',
+        'name' => 'Previous Season Top 3s',
         'category' => 'archive',
-        'group' => 'Season A (Archive)',
+        'group' => 'Previous Season',
         'unit' => 'Top 3s',
-        'desc' => 'Podium finishes recorded during Season A.'
+        'desc' => 'Podium finishes recorded during the previous season.'
     ]
 ];
 
@@ -135,7 +135,7 @@ function run_leaderboard_harvest(bool $archive_snapshot = false) {
         'updated_at' => gmdate('Y-m-d H:i:s \U\T\C'),
         'categories' => [
             'current' => [
-                'title' => 'Current Season (Season B)',
+                'title' => 'Current Season',
                 'stats' => ['mmr_B', 'Wins_seasonal_B', 'top_3s_seasonal_B']
             ],
             'all_time' => [
@@ -143,7 +143,7 @@ function run_leaderboard_harvest(bool $archive_snapshot = false) {
                 'stats' => ['Wins_v2', 'top_3s_v2']
             ],
             'archive' => [
-                'title' => 'Season A Archive',
+                'title' => 'Previous Season',
                 'stats' => ['mmr_A', 'Wins_seasonal_A', 'top_3s_seasonal_A']
             ]
         ],
