@@ -37,7 +37,7 @@ function compute_and_cache_bracket($conn, $b_idx, $season, $brackets) {
                 $q = "
                     SELECT 
                         m.captain_cid,
-                        c.name as captain_name,
+                        COALESCE(c.name, CONCAT('Captain #', m.captain_cid)) as captain_name,
                         COUNT(m.run_id) as total_picks,
                         (COUNT(m.run_id) / $total_matches) * 100 as pick_rate,
                         AVG(m.placement) as avg_placement,

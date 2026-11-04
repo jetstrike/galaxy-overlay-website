@@ -229,7 +229,9 @@ function renderTable() {
             if (col.format && val !== null && val !== undefined) {
                 val = col.format(val);
             }
-            if (val === null || val === undefined) val = "-";
+            if (val === null || val === undefined || val === 'undefined') {
+                val = (col.id === 'captain_name' && row.captain_cid) ? `Captain #${row.captain_cid}` : "-";
+            }
             
             if (col.align === "left") {
                 const itemType = col.id === 'captain_name' ? 'captain' : 'card';
