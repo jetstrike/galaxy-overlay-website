@@ -489,13 +489,13 @@ footer p {
    Tip Jar Modal & Styling
    ========================================================================== */
 .tip-jar-backdrop {
+    display: none;
     position: fixed;
     inset: 0;
     background: rgba(8, 11, 18, 0.82);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 99999;
-    display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -505,6 +505,7 @@ footer p {
 }
 
 .tip-jar-backdrop.active {
+    display: flex;
     opacity: 1;
     pointer-events: auto;
 }

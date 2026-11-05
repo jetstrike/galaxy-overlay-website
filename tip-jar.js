@@ -1,15 +1,230 @@
 /**
  * Galaxy Tracker — Non-Intrusive Tip Jar Modal
  * Handles PayPal & Cash App support links with zero tracking or clutter.
+ * Fully lazy-loaded and self-contained with inline fallback styles.
  */
 (function () {
   const PAYPAL_URL = 'https://www.paypal.biz/dmillsMTG';
   const CASHAPP_URL = 'https://cash.app/$CruelUltimatum';
   const CASHTAG = '$CruelUltimatum';
 
+  const MODAL_CSS = `
+    .tip-jar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 11, 18, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease-out;
+    }
+    .tip-jar-backdrop.active {
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    body.modal-open {
+      overflow: hidden;
+    }
+    .tip-jar-dialog {
+      background: linear-gradient(145deg, #131926, #0e131d);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 490px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(99, 102, 241, 0.15);
+      padding: 24px 26px;
+      color: #f1f5f9;
+      transform: scale(0.96) translateY(10px);
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .tip-jar-backdrop.active .tip-jar-dialog {
+      transform: scale(1) translateY(0);
+    }
+    .tip-jar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .tip-jar-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tip-jar-emoji {
+      font-size: 1.4rem;
+    }
+    .tip-jar-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+    .tip-jar-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.8rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 4px;
+      border-radius: 6px;
+      transition: color 0.15s;
+    }
+    .tip-jar-close:hover {
+      color: #fff;
+    }
+    .tip-jar-note {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+    .tip-jar-note em {
+      color: #cbd5e1;
+      font-style: normal;
+      font-weight: 600;
+    }
+    .tip-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 520px) {
+      .tip-options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .tip-card {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+      box-sizing: border-box;
+    }
+    .tip-card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.055);
+      transform: translateY(-2px);
+    }
+    .tip-card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tip-provider-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      width: fit-content;
+    }
+    .tip-provider-badge.paypal {
+      background: rgba(0, 112, 186, 0.18);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .tip-provider-badge.cashapp {
+      background: rgba(0, 214, 50, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+    .tip-svg {
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .tip-handle {
+      font-family: 'JetBrains Mono', monospace, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      word-break: break-all;
+    }
+    .tip-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: filter 0.15s, transform 0.15s;
+    }
+    .tip-btn.paypal-btn {
+      background: linear-gradient(135deg, #0070ba, #00508f);
+      color: #fff;
+    }
+    .tip-btn.paypal-btn:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    .tip-btn.cashapp-btn {
+      background: linear-gradient(135deg, #00D632, #009e25);
+      color: #051a0b;
+      font-weight: 700;
+      flex: 1;
+    }
+    .tip-btn.cashapp-btn:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    .tip-arrow {
+      font-size: 1rem;
+    }
+    .tip-dual-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .tip-copy-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 9px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .tip-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+    }
+    .tip-copy-btn.copied {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: #4ade80;
+      color: #4ade80;
+    }
+  `;
+
   function createModalHtml() {
     return `
-      <div id="tipJarModal" class="tip-jar-backdrop" aria-hidden="true" role="dialog" aria-labelledby="tipJarTitle">
+      <div id="tipJarModal" class="tip-jar-backdrop" style="display: none;" aria-hidden="true" role="dialog" aria-labelledby="tipJarTitle">
         <div class="tip-jar-dialog">
           <div class="tip-jar-header">
             <div class="tip-jar-title-wrap">
@@ -69,6 +284,12 @@
   }
 
   function ensureModalInjected() {
+    if (!document.getElementById('tipJarStyles')) {
+      const styleEl = document.createElement('style');
+      styleEl.id = 'tipJarStyles';
+      styleEl.textContent = MODAL_CSS;
+      document.head.appendChild(styleEl);
+    }
     if (!document.getElementById('tipJarModal')) {
       const wrapper = document.createElement('div');
       wrapper.innerHTML = createModalHtml().trim();
@@ -81,6 +302,9 @@
     ensureModalInjected();
     const modal = document.getElementById('tipJarModal');
     if (modal) {
+      modal.style.display = 'flex';
+      // Force reflow for smooth opacity transition
+      void modal.offsetWidth;
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
@@ -93,6 +317,11 @@
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
+      setTimeout(() => {
+        if (!modal.classList.contains('active')) {
+          modal.style.display = 'none';
+        }
+      }, 240);
       if (window.location.hash === '#tip-jar' || window.location.hash === '#tip') {
         history.replaceState(null, document.title, window.location.pathname + window.location.search);
       }
@@ -167,13 +396,10 @@
     }
   }
 
+  // Only check hash on load; NEVER unconditionally inject modal DOM until requested!
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      ensureModalInjected();
-      checkHash();
-    });
+    document.addEventListener('DOMContentLoaded', checkHash);
   } else {
-    ensureModalInjected();
     checkHash();
   }
 
