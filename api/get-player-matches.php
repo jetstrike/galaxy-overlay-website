@@ -19,7 +19,7 @@ require_once __DIR__ . '/db.php';
 
 $player_id = isset($_GET['player_id']) ? trim($_GET['player_id']) : '';
 $player_name = isset($_GET['player_name']) ? trim($_GET['player_name']) : '';
-$limit = isset($_GET['limit']) ? min(1000, max(1, intval($_GET['limit']))) : 500;
+$limit = isset($_GET['limit']) ? min(5000, max(1, intval($_GET['limit']))) : 1000;
 
 if (empty($player_id) && empty($player_name)) {
     http_response_code(400);
