@@ -67,12 +67,16 @@ try {
         
         $deck_cids = [];
         $maxTurn = 0;
+        $normalized_turns = [];
         
         if (is_array($turns)) {
+            $hasZero = isset($turns['0']) || isset($turns[0]);
             foreach ($turns as $turnNumStr => $tData) {
                 $tNum = intval($turnNumStr);
-                if ($tNum > $maxTurn) {
-                    $maxTurn = $tNum;
+                $adjustedTurn = $hasZero ? ($tNum + 1) : $tNum;
+                $normalized_turns[strval($adjustedTurn)] = $tData;
+                if ($adjustedTurn > $maxTurn) {
+                    $maxTurn = $adjustedTurn;
                 }
                 if (isset($tData['crew']) && is_array($tData['crew'])) {
                     foreach ($tData['crew'] as $slot => $unit) {
@@ -102,7 +106,7 @@ try {
             'rank' => $row['rank'],
             'turn' => $maxTurn,
             'deck_cids' => array_values(array_keys($deck_cids)),
-            'turns' => $turns,
+            'turns' => $normalized_turns,
             'duration_seconds' => null,
             'avg_turn_duration_seconds' => null,
             'source' => 'cloud',
