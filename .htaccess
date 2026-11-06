@@ -9,5 +9,9 @@ RewriteRule ^decks/view\.html$ api/deck.php?id=%1 [L,QSA]
 # 2. Route /d/XYZ to api/deck.php?id=XYZ
 RewriteRule ^d/([a-zA-Z0-9_-]+)/?$ api/deck.php?id=$1 [L,QSA]
 
-# 3. Friendly redirects for support / tip jar
+# 3. Dynamic Captain Turn Breakdowns
+RewriteCond %{REQUEST_URI} !^/turns/captain\.html$ [NC]
+RewriteRule ^turns/([a-zA-Z0-9_-]+)\.html$ /turns/captain.html?captain=$1 [QSA,L]
+
+# 4. Friendly redirects for support / tip jar
 RewriteRule ^(tip|support|donate)/?$ support.html [L]
