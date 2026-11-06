@@ -86,6 +86,43 @@ try {
             exit;
         }
 
+        // Ensure custom_deck_history exists
+        $conn->query("CREATE TABLE IF NOT EXISTS custom_deck_history (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            deck_id VARCHAR(64) NOT NULL,
+            playfab_id VARCHAR(32) NOT NULL,
+            player_name VARCHAR(64) DEFAULT NULL,
+            captain_cid INT NOT NULL,
+            captain_name VARCHAR(64) DEFAULT NULL,
+            slot_id VARCHAR(16) NOT NULL,
+            deck_name VARCHAR(100) NOT NULL,
+            deck_type VARCHAR(32) NOT NULL DEFAULT 'user',
+            card_cids JSON NOT NULL,
+            cards_hash VARCHAR(64) NOT NULL,
+            version INT NOT NULL DEFAULT 1,
+            cards_added JSON DEFAULT NULL,
+            cards_removed JSON DEFAULT NULL,
+            change_summary VARCHAR(255) DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_deck_version (deck_id, version),
+            INDEX idx_playfab_captain (playfab_id, captain_cid),
+            INDEX idx_created (created_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $checkHistStmt = $conn->prepare("
+            SELECT id, version, cards_hash, card_cids 
+            FROM custom_deck_history 
+            WHERE deck_id = ? 
+            ORDER BY version DESC 
+            LIMIT 1
+        ");
+
+        $insertHistStmt = $conn->prepare("
+            INSERT INTO custom_deck_history 
+                (deck_id, playfab_id, player_name, captain_cid, captain_name, slot_id, deck_name, deck_type, card_cids, cards_hash, version, cards_added, cards_removed, change_summary)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+
         $stmt = $conn->prepare("
             INSERT INTO imported_hdtb_decks (id, playfab_id, captain_cid, slot_id, deck_name, deck_type, card_cids, last_used)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -97,11 +134,13 @@ try {
                 synced_at = CURRENT_TIMESTAMP
         ");
 
+        $player_name = !empty($data['player_name']) ? trim($data['player_name']) : '';
         $count = 0;
         foreach ($decks as $d) {
             $cap = intval($d['captain_cid'] ?? ($d['captain'] ?? 0));
             $slot = strval($d['slot_id'] ?? ($d['id'] ?? 'custom'));
             $name = trim($d['deck_name'] ?? ($d['name'] ?? ''));
+            $cap_name_found = '';
             if ($name === 'Custom Deck' || $name === 'My Custom Deck' || empty($name)) {
                 $c_stmt = $conn->prepare("SELECT name FROM analytics_cards WHERE cid = ? AND type = 'captain' LIMIT 1");
                 if ($c_stmt) {
@@ -109,6 +148,7 @@ try {
                     $c_stmt->execute();
                     $c_res = $c_stmt->get_result();
                     if ($c_row = $c_res->fetch_assoc()) {
+                        $cap_name_found = $c_row['name'];
                         $name = $c_row['name'];
                         if (!empty($slot) && $slot !== '1' && $slot !== 'custom') {
                             $name .= " (Deck {$slot})";
@@ -134,6 +174,69 @@ try {
 
             $hash_id = hash('sha256', "{$playfab_id}:{$cap}:{$slot}");
             $cards_json = json_encode($cards);
+
+            // History tracking
+            $sorted_cards = $cards;
+            sort($sorted_cards, SORT_NUMERIC);
+            $cards_hash = hash('sha256', implode(',', $sorted_cards));
+
+            $checkHistStmt->bind_param("s", $hash_id);
+            $checkHistStmt->execute();
+            $histRes = $checkHistStmt->get_result();
+            $prevHist = $histRes->fetch_assoc();
+
+            if (!$prevHist) {
+                $v = 1;
+                $added_json = json_encode($cards);
+                $rem_json = json_encode([]);
+                $summary = "Initial deck version";
+                $insertHistStmt->bind_param(
+                    "sssissssssisss",
+                    $hash_id,
+                    $playfab_id,
+                    $player_name,
+                    $cap,
+                    $cap_name_found,
+                    $slot,
+                    $name,
+                    $type,
+                    $cards_json,
+                    $cards_hash,
+                    $v,
+                    $added_json,
+                    $rem_json,
+                    $summary
+                );
+                $insertHistStmt->execute();
+            } elseif ($prevHist['cards_hash'] !== $cards_hash) {
+                $prev_c = json_decode($prevHist['card_cids'], true) ?: [];
+                $added = array_values(array_diff($cards, $prev_c));
+                $removed = array_values(array_diff($prev_c, $cards));
+                $v = intval($prevHist['version']) + 1;
+                $added_cnt = count($added);
+                $rem_cnt = count($removed);
+                $summary = "+{$added_cnt} / -{$rem_cnt} cards";
+                $added_json = json_encode($added);
+                $rem_json = json_encode($removed);
+                $insertHistStmt->bind_param(
+                    "sssissssssisss",
+                    $hash_id,
+                    $playfab_id,
+                    $player_name,
+                    $cap,
+                    $cap_name_found,
+                    $slot,
+                    $name,
+                    $type,
+                    $cards_json,
+                    $cards_hash,
+                    $v,
+                    $added_json,
+                    $rem_json,
+                    $summary
+                );
+                $insertHistStmt->execute();
+            }
 
             $stmt->bind_param("ssissssi", $hash_id, $playfab_id, $cap, $slot, $name, $type, $cards_json, $last_used);
             $stmt->execute();
