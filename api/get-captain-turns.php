@@ -50,15 +50,15 @@ try {
 
     if ($target_cid === null) {
         // Fallback: search in analytics_cards table
-        $stmt = $conn->prepare("SELECT cid, name, card_key FROM analytics_cards WHERE type = 'captain' AND (cid = ? OR name = ? OR card_key = ?)");
+        $stmt = $conn->prepare("SELECT cid, name FROM analytics_cards WHERE type = 'captain' AND (cid = ? OR name = ?)");
         $intParam = is_numeric($capParam) ? (int)$capParam : 0;
-        $stmt->bind_param("iss", $intParam, $capParam, $capParam);
+        $stmt->bind_param("is", $intParam, $capParam);
         $stmt->execute();
         $res = $stmt->get_result();
         if ($row = $res->fetch_assoc()) {
             $target_cid = (int)$row['cid'];
             $target_name = $row['name'];
-            $target_card_key = $row['card_key'];
+            $target_card_key = isset($cards_data[$target_cid]['card_key']) ? $cards_data[$target_cid]['card_key'] : strtolower(preg_replace('/[^a-zA-Z0-9]+/', '_', $target_name));
         }
         $stmt->close();
     }

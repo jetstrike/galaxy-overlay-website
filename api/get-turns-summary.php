@@ -21,8 +21,7 @@ try {
             t.p90_board_stats,
             t.max_board_stats,
             t.avg_slot_buffs,
-            c.name,
-            c.card_key
+            c.name
         FROM analytics_captain_turns t
         LEFT JOIN analytics_cards c ON t.captain_cid = c.cid
         ORDER BY t.captain_cid ASC, t.turn_number ASC
@@ -36,7 +35,7 @@ try {
     $captains_map = [];
     $all_turns = [];
 
-    // Load cards.json for fallback resolution
+    // Load cards.json for card_key and fallback resolution
     $cards_file = __DIR__ . '/cards.json';
     $cards_data = file_exists($cards_file) ? json_decode(file_get_contents($cards_file), true) : [];
 
@@ -47,10 +46,10 @@ try {
 
         if (!isset($captains_map[$cid])) {
             $name = $row['name'];
-            $card_key = $row['card_key'];
+            $card_key = '';
 
-            if (empty($name) && isset($cards_data[$cid])) {
-                $name = $cards_data[$cid]['name'] ?? ("Captain #" . $cid);
+            if (isset($cards_data[$cid])) {
+                if (empty($name)) $name = $cards_data[$cid]['name'] ?? ("Captain #" . $cid);
                 $card_key = $cards_data[$cid]['card_key'] ?? '';
             }
             if (empty($card_key)) {
