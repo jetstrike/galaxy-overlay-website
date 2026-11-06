@@ -2115,9 +2115,10 @@
                         setTimeout(() => uploadModal.classList.remove('open'), 1500);
                     } else {
                         const parsed = parser.parseCollection(buffer, file.name);
-                        await DeckStorage.saveUserCollection(parsed.owned_cards);
+                        await DeckStorage.saveUserCollection(parsed);
                         status.style.color = '#4ecdc4';
-                        status.textContent = `Successfully imported collection (${Object.keys(parsed.owned_cards).length} unique cards)!`;
+                        const totalUniqueCards = new Set(Object.values(parsed.owned_cards || {}).flat()).size;
+                        status.textContent = `Successfully imported collection (${totalUniqueCards} unique cards across ${Object.keys(parsed.owned_cards || {}).length} captains)!`;
                         setTimeout(() => uploadModal.classList.remove('open'), 1500);
                     }
                 } catch (err) {

@@ -614,6 +614,7 @@
                 const card = allCardsMap[String(cid)] || { name: `Card #${cid}`, rarity: 'common' };
                 const tile = document.createElement('div');
                 tile.className = 'viewer-card-tile';
+                tile.dataset.cid = String(cid);
                 const rarity = (card.rarity || 'common').toLowerCase();
                 tile.style.borderColor = `var(--rarity-${rarity})`;
 
@@ -667,6 +668,22 @@
                 if (Object.keys(collectionMap).length > 0) {
                     const evalRes = CollectionMatcher.evaluateDeck(deck, collectionMap, annotations);
                     document.getElementById('collectionBadge').innerHTML = CollectionMatcher.renderBadgeHtml(evalRes);
+
+                    if (evalRes.missing_cards && evalRes.missing_cards.length > 0) {
+                        const missingSet = new Set(evalRes.missing_cards);
+                        document.querySelectorAll('.viewer-card-tile').forEach(tile => {
+                            const tileCid = parseInt(tile.dataset.cid, 10);
+                            if (missingSet.has(tileCid)) {
+                                tile.style.border = '2px dashed #ef4444';
+                                tile.style.opacity = '0.75';
+                                const missingPill = document.createElement('span');
+                                missingPill.style.cssText = 'display: inline-block; background: rgba(239, 68, 68, 0.25); color: #ef4444; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 4px;';
+                                missingPill.textContent = '❌ Uncollected';
+                                const body = tile.querySelector('.tile-body');
+                                if (body) body.appendChild(missingPill);
+                            }
+                        });
+                    }
                 }
             } catch(e) {
                 console.warn('Collection check error:', e);

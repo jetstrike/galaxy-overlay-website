@@ -351,8 +351,11 @@ class HdtbClientParser {
                     owned[cap] = [];
                     if (cardList && typeof cardList === 'object') {
                         for (const [cStr, val] of Object.entries(cardList)) {
-                            if (val === 'INF') inf.add(cap);
-                            owned[cap].push(parseInt(cStr, 10));
+                            if (val === 'INF') {
+                                inf.add(cap);
+                            } else if (val && val !== '?' && val !== '') {
+                                owned[cap].push(parseInt(cStr, 10));
+                            }
                         }
                     }
                 }
@@ -394,10 +397,21 @@ class HdtbClientParser {
                     pos += 2;
                     const unlockedCardCid = view.getUint32(pos, true);
                     pos += 4;
-                    owned.push(unlockedCardCid);
 
                     const valLen = view.getUint32(pos, true);
-                    pos += 4 + valLen;
+                    pos += 4;
+
+                    let val = '';
+                    if (valLen > 0 && pos + valLen <= u8.length) {
+                        const strBytes = new Uint8Array(arrayBuffer, pos, valLen);
+                        val = decoder.decode(strBytes);
+                    }
+                    pos += valLen;
+
+                    // Exclude '?' (uncollected / silhouette preview) and empty values
+                    if (val !== '?' && val !== '') {
+                        owned.push(unlockedCardCid);
+                    }
                 }
                 ownedCardsByCaptain[captainCid] = owned;
 

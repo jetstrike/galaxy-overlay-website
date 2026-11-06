@@ -719,7 +719,16 @@
                 let decks = data.decks || [];
 
                 const filterCollection = document.getElementById('checkCollectionOnly').checked;
-                if (filterCollection && Object.keys(userCollectionMap).length > 0) {
+                if (filterCollection) {
+                    if (Object.keys(userCollectionMap).length === 0) {
+                        grid.innerHTML = `
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 40px 0; color: var(--text-muted);">
+                                <h3>No Collection Uploaded</h3>
+                                <p style="margin-top: 6px;">Upload your <code>_collection</code> file in the <a href="/decks/builder.html" style="color: var(--accent-primary);">Deck Builder</a> to filter decks by your collection.</p>
+                            </div>
+                        `;
+                        return;
+                    }
                     decks = decks.filter(dk => {
                         const evalRes = CollectionMatcher.evaluateDeck(dk, userCollectionMap);
                         return evalRes.status === 'ready' || evalRes.status === 'substitutable';

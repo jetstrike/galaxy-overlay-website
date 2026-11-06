@@ -143,8 +143,11 @@ class DeckStorage {
             const store = tx.objectStore('user_collection');
             store.clear();
 
-            const ownedCards = collectionData.owned_cards || {};
-            const infCaptains = new Set(collectionData.infinity_captains || []);
+            // Defensive: support full parsed object or raw map
+            const ownedCards = (collectionData && collectionData.owned_cards)
+                ? collectionData.owned_cards
+                : (collectionData || {});
+            const infCaptains = new Set((collectionData && collectionData.infinity_captains) || []);
 
             for (const [capStr, cards] of Object.entries(ownedCards)) {
                 const capCid = parseInt(capStr, 10);
@@ -153,6 +156,17 @@ class DeckStorage {
                     owned_cids: cards || [],
                     is_infinity: infCaptains.has(capCid)
                 });
+            }
+
+            // Ensure any infinity captains that had 0 cards in ownedCards are stored with is_infinity = true
+            for (const infCid of infCaptains) {
+                if (!ownedCards[infCid] && !ownedCards[String(infCid)]) {
+                    store.put({
+                        captain_cid: infCid,
+                        owned_cids: [],
+                        is_infinity: true
+                    });
+                }
             }
 
             if (collectionData.playfab_id) {
