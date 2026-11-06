@@ -247,9 +247,15 @@ try {
                        COALESCE(hist.version, 1) as latest_version,
                        hist.change_summary, hist.created_at as version_created_at
                 FROM imported_hdtb_decks h
-                LEFT JOIN custom_deck_history hist ON hist.deck_id = h.id AND hist.version = (
-                    SELECT MAX(sub.version) FROM custom_deck_history sub WHERE sub.deck_id = h.id
-                )
+                LEFT JOIN (
+                    SELECT ch1.deck_id, ch1.version, ch1.change_summary, ch1.created_at
+                    FROM custom_deck_history ch1
+                    INNER JOIN (
+                        SELECT deck_id, MAX(version) AS max_v
+                        FROM custom_deck_history
+                        GROUP BY deck_id
+                    ) ch2 ON ch1.deck_id = ch2.deck_id AND ch1.version = ch2.max_v
+                ) hist ON hist.deck_id = h.id
                 WHERE h.playfab_id = ?
                 ORDER BY h.synced_at DESC
             ");
