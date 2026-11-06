@@ -29,6 +29,7 @@ try {
         if ($c_row = $c_res->fetch_assoc()) {
             $captain_cid = intval($c_row['cid']);
         }
+        $c_stmt->close();
     }
 
     $where = [];
@@ -50,16 +51,14 @@ try {
         $types .= 'i';
     }
 
-    $where[] = "(mmr >= ? OR mmr_start >= ?)";
+    $where[] = "mmr >= ?";
     $params[] = $min_mmr;
-    $params[] = $min_mmr;
-    $types .= 'ii';
+    $types .= 'i';
 
     if ($max_mmr < 99999) {
-        $where[] = "(mmr <= ? AND (mmr_start IS NULL OR mmr_start <= ?))";
+        $where[] = "mmr <= ?";
         $params[] = $max_mmr;
-        $params[] = $max_mmr;
-        $types .= 'ii';
+        $types .= 'i';
     }
 
     // Optional season filter (%Y-%m, e.g. '2026-10' or 'current')
@@ -73,9 +72,9 @@ try {
     }
 
     $where_sql = implode(' AND ', $where);
-    $sql = "SELECT run_id, mmr, mmr_start, mmr_end, placement, deck_cids, captain, captain_cid, date, rules_version 
-            FROM overlay_matches 
-            WHERE $where_sql 
+    $sql = "SELECT run_id, mmr, placement, turns, captain, captain_cid, date, rules_version 
+            FROM playfab_matches 
+            WHERE $where_sql AND placement IS NOT NULL 
             ORDER BY date DESC 
             LIMIT ?";
     $params[] = $limit;
@@ -88,8 +87,29 @@ try {
 
     $matches = [];
     while ($row = $res->fetch_assoc()) {
+        $deck_cids = [];
+        if (!empty($row['turns'])) {
+            $turns = json_decode($row['turns'], true);
+            if (is_array($turns)) {
+                foreach ($turns as $tData) {
+                    if (isset($tData['crew']) && is_array($tData['crew'])) {
+                        foreach ($tData['crew'] as $unit) {
+                            if (isset($unit['cid'])) {
+                                $cid = (int)$unit['cid'];
+                                if ($cid > 0) $deck_cids[$cid] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $row['deck_cids'] = json_encode(array_keys($deck_cids));
+        $row['mmr_start'] = $row['mmr'];
+        $row['mmr_end'] = $row['mmr'];
+        unset($row['turns']);
         $matches[] = $row;
     }
+    $stmt->close();
 
     echo json_encode([
         'captain' => $captain,
@@ -98,10 +118,13 @@ try {
         'max_mmr' => $max_mmr,
         'season' => $season,
         'count' => count($matches),
-        'overlay_matches' => $matches
+        'overlay_matches' => $matches,
+        'matches' => $matches
     ]);
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
 }
+
+if (isset($conn)) $conn->close();
 ?>

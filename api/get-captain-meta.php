@@ -14,7 +14,7 @@ try {
     mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
     $conn = get_db_connection();
 
-    $stmt = $conn->prepare("SELECT deck_cids, turns, placement FROM overlay_matches WHERE captain = ?");
+    $stmt = $conn->prepare("SELECT turns, placement FROM playfab_matches WHERE captain = ? AND placement IS NOT NULL");
     $stmt->bind_param("s", $captain_name);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -27,37 +27,44 @@ try {
         $total_matches++;
         $placement = (int)$row['placement'];
         
-        // Process deck_cids
-        if (!empty($row['deck_cids'])) {
-            $deck = json_decode($row['deck_cids'], true);
-            if (is_array($deck)) {
-                $unique_deck = array_unique($deck);
-                foreach ($unique_deck as $cid) {
-                    $cid = (int)$cid;
-                    if (!isset($deck_stats[$cid])) {
-                        $deck_stats[$cid] = ['count' => 0, 'total_placement' => 0];
-                    }
-                    $deck_stats[$cid]['count']++;
-                    $deck_stats[$cid]['total_placement'] += $placement;
-                }
-            }
-        }
-        
-        // Process final board from turns
+        // Process turns
         if (!empty($row['turns'])) {
             $turns = json_decode($row['turns'], true);
             if (is_array($turns) && count($turns) > 0) {
                 $turnNums = array_keys($turns);
                 sort($turnNums, SORT_NUMERIC);
                 $finalTurnKey = end($turnNums);
-                $finalCrew = $turns[$finalTurnKey]['crew'] ?? [];
                 
+                // Track all cards played in this match for deck stats
+                $seen_deck = [];
+                foreach ($turns as $tData) {
+                    if (isset($tData['crew']) && is_array($tData['crew'])) {
+                        foreach ($tData['crew'] as $unit) {
+                            if (isset($unit['cid'])) {
+                                $cid = (int)$unit['cid'];
+                                if ($cid > 0) {
+                                    $seen_deck[$cid] = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (array_keys($seen_deck) as $cid) {
+                    if (!isset($deck_stats[$cid])) {
+                        $deck_stats[$cid] = ['count' => 0, 'total_placement' => 0];
+                    }
+                    $deck_stats[$cid]['count']++;
+                    $deck_stats[$cid]['total_placement'] += $placement;
+                }
+                
+                // Process final board from last turn
+                $finalCrew = $turns[$finalTurnKey]['crew'] ?? [];
                 if (is_array($finalCrew)) {
                     $seen_cids = [];
                     foreach ($finalCrew as $unit) {
                         if (isset($unit['cid'])) {
                             $cid = (int)$unit['cid'];
-                            if (!isset($seen_cids[$cid])) {
+                            if ($cid > 0 && !isset($seen_cids[$cid])) {
                                 $seen_cids[$cid] = true;
                                 if (!isset($board_stats[$cid])) {
                                     $board_stats[$cid] = ['count' => 0, 'total_placement' => 0];

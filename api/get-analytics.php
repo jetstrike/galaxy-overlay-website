@@ -58,18 +58,11 @@ try {
                     COUNT(m.run_id) as total_picks,
                     (COUNT(m.run_id) / $total_matches) * 100 as pick_rate,
                     AVG(m.placement) as avg_placement,
-                    AVG(t.final_turn) as avg_turns,
+                    AVG(CASE WHEN m.final_turn > 0 THEN m.final_turn ELSE NULL END) as avg_turns,
                     SUM(CASE WHEN m.placement = 1 THEN 1 ELSE 0 END) / COUNT(m.run_id) * 100 as win_rate_1st,
                     SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(m.run_id) * 100 as win_rate_top3
                 FROM analytics_matches m
                 LEFT JOIN analytics_cards c ON m.captain_cid = c.cid
-                LEFT JOIN (
-                    SELECT t.run_id, MAX(t.turn_number) as final_turn 
-                    FROM analytics_match_turns t
-                    JOIN analytics_matches m2 ON t.run_id = m2.run_id
-                    WHERE m2.mmr >= $min_mmr AND m2.mmr < $max_mmr AND " . str_replace('m.date', 'm2.date', $season_cond) . "
-                    GROUP BY t.run_id
-                ) t ON m.run_id = t.run_id
                 WHERE $mmr_cond AND $season_cond AND m.captain_cid > 0
                 GROUP BY m.captain_cid, c.name
                 ORDER BY total_picks DESC
@@ -81,7 +74,7 @@ try {
                     $row['total_picks'] = intval($row['total_picks']);
                     $row['pick_rate'] = floatval($row['pick_rate']);
                     $row['avg_placement'] = floatval($row['avg_placement']);
-                    $row['avg_turns'] = floatval($row['avg_turns']);
+                    $row['avg_turns'] = floatval($row['avg_turns'] ?? 0);
                     $row['win_rate_1st'] = floatval($row['win_rate_1st']);
                     $row['win_rate_top3'] = floatval($row['win_rate_top3']);
                     $data[] = $row;
@@ -97,18 +90,17 @@ try {
                     COUNT(rc.run_id) as games_played,
                     AVG(rc.turns_on_board) as avg_turns_on_board,
                     AVG(rc.first_appearance) as avg_first_appearance,
-                    SUM(CASE WHEN m.placement = 1 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_1st,
-                    SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_top3
+                    SUM(CASE WHEN rc.placement = 1 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_1st,
+                    SUM(CASE WHEN rc.placement <= 3 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_top3
                 FROM (
-                    SELECT t.run_id, t.card_cid, MIN(t.turn_number) as first_appearance, COUNT(DISTINCT t.turn_number) as turns_on_board
+                    SELECT t.run_id, t.card_cid, m.placement, MIN(t.turn_number) as first_appearance, COUNT(DISTINCT t.turn_number) as turns_on_board
                     FROM analytics_match_turns t
-                    JOIN analytics_matches m2 ON t.run_id = m2.run_id
-                    WHERE m2.mmr >= $min_mmr AND m2.mmr < $max_mmr AND " . str_replace('m.date', 'm2.date', $season_cond) . "
-                    GROUP BY t.run_id, t.card_cid
+                    JOIN analytics_matches m ON t.run_id = m.run_id
+                    WHERE $mmr_cond AND $season_cond
+                    GROUP BY t.run_id, t.card_cid, m.placement
                 ) rc
-                JOIN analytics_matches m ON rc.run_id = m.run_id
                 LEFT JOIN analytics_cards c ON rc.card_cid = c.cid
-                WHERE $mmr_cond AND $season_cond AND (c.type IS NULL OR c.type != 'captain')
+                WHERE (c.type IS NULL OR c.type != 'captain')
                 GROUP BY rc.card_cid, c.name, c.rarity, c.is_collectible
                 ORDER BY games_played DESC
             ";

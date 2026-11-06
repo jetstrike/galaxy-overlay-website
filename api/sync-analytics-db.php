@@ -13,7 +13,7 @@ mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 function bulk_insert($conn, $table, $columns, $rows) {
     if (empty($rows)) return;
     $colList = implode(', ', array_map(function($c) { return "`$c`"; }, $columns));
-    $chunks = array_chunk($rows, 200);
+    $chunks = array_chunk($rows, 2000);
     foreach ($chunks as $chunk) {
         $valClauses = [];
         foreach ($chunk as $row) {
@@ -32,13 +32,12 @@ function bulk_insert($conn, $table, $columns, $rows) {
 try {
     $conn = get_db_connection();
 
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 100;
-    if ($limit > 250) $limit = 250;
-    if ($limit < 1) $limit = 100;
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 1000;
+    if ($limit > 5000) $limit = 5000;
+    if ($limit < 1) $limit = 1000;
     $is_full = isset($_GET['full']) && $_GET['full'] == '1';
 
     // Scoped window for auto-sync: last 7 days unless full backfill is requested
-    $date_filter_overlay = $is_full ? "1=1" : "o.created_at >= NOW() - INTERVAL 7 DAY";
     $date_filter_playfab = $is_full ? "1=1" : "p.created_at >= NOW() - INTERVAL 7 DAY";
 
     // Load captain name to cid map for fallback resolution
@@ -63,19 +62,19 @@ try {
     $turns_data = [];
     $processed = 0;
 
-    // 1. Ingest from overlay_matches (Tracker app live matches)
-    $q_overlay = "SELECT o.* FROM overlay_matches o 
-                  LEFT JOIN analytics_matches a ON a.run_id = CONCAT(o.run_id, '_', o.placement) 
-                  WHERE $date_filter_overlay AND a.run_id IS NULL AND o.placement IS NOT NULL 
+    // Ingest exclusively from playfab_matches
+    $q_playfab = "SELECT p.* FROM playfab_matches p 
+                  LEFT JOIN analytics_matches a ON a.run_id = CONCAT(p.run_id, '_', p.placement) 
+                  WHERE $date_filter_playfab AND a.run_id IS NULL AND p.placement IS NOT NULL 
                   LIMIT $limit";
-    $res = $conn->query($q_overlay);
+    $res = $conn->query($q_playfab);
     if ($res) {
         while ($row = $res->fetch_assoc()) {
             $run_id = $row['run_id'];
             $placement = intval($row['placement']);
             $player_run_id = $run_id . '_' . $placement;
             $date = !empty($row['date']) ? $row['date'] : (!empty($row['created_at']) ? $row['created_at'] : date('Y-m-d H:i:s'));
-            $mmr = isset($row['mmr_start']) && $row['mmr_start'] !== null ? intval($row['mmr_start']) : (isset($row['mmr']) ? intval($row['mmr']) : 0);
+            $mmr = isset($row['mmr']) ? intval($row['mmr']) : 0;
             $captain_cid = isset($row['captain_cid']) ? intval($row['captain_cid']) : 0;
             if ($captain_cid === 0 && !empty($row['captain'])) {
                 $capKey = $row['captain'];
@@ -84,34 +83,27 @@ try {
                 }
             }
             $rank = isset($row['rank']) ? $row['rank'] : '';
-            $source = 'overlay';
+            $source = 'playfab';
             $rules_version = isset($row['rules_version']) ? $row['rules_version'] : '';
             
-            $matches_data[] = [$player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version];
-            
-            $deck_cids = [];
-            if (!empty($row['deck_cids'])) {
-                $decoded_decks = json_decode($row['deck_cids'], true);
-                if (is_array($decoded_decks)) {
-                    foreach ($decoded_decks as $cid) {
-                        $cid = intval($cid);
-                        if ($cid > 0) $deck_cids[$cid] = true;
-                    }
-                }
-            }
-
             $turns = !empty($row['turns']) ? json_decode($row['turns'], true) : null;
-            if (is_array($turns)) {
+            $deck_cids = [];
+            $final_turn = 0;
+            
+            if (is_array($turns) && !empty($turns)) {
+                $hasZero = isset($turns[0]) || isset($turns['0']);
                 foreach ($turns as $turnNumStr => $tData) {
-                    $turnNum = intval($turnNumStr);
+                    $tNum = intval($turnNumStr);
+                    $turnNum = $hasZero ? ($tNum + 1) : $tNum;
+                    if ($turnNum > $final_turn) {
+                        $final_turn = $turnNum;
+                    }
                     if (isset($tData['crew']) && is_array($tData['crew'])) {
                         foreach ($tData['crew'] as $slot => $unit) {
                             if (isset($unit['cid'])) {
                                 $cid = intval($unit['cid']);
                                 if ($cid > 0) {
-                                    if (empty($row['deck_cids'])) {
-                                        $deck_cids[$cid] = true;
-                                    }
+                                    $deck_cids[$cid] = true;
                                     $turns_data[] = [$player_run_id, $turnNum, (string)$slot, $cid];
                                 }
                             }
@@ -119,8 +111,13 @@ try {
                     }
                 }
             }
+            if ($final_turn === 0 && is_array($turns) && count($turns) > 0) {
+                $final_turn = count($turns);
+            }
             
-            foreach(array_keys($deck_cids) as $cid) {
+            $matches_data[] = [$player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version, $final_turn];
+            
+            foreach (array_keys($deck_cids) as $cid) {
                 $decks_data[] = [$player_run_id, $cid];
             }
             
@@ -128,68 +125,11 @@ try {
         }
     }
 
-    // 2. Ingest from playfab_matches (if limit remaining)
-    if ($processed < $limit) {
-        $rem_limit = $limit - $processed;
-        $q_playfab = "SELECT p.* FROM playfab_matches p 
-                      LEFT JOIN analytics_matches a ON a.run_id = CONCAT(p.run_id, '_', p.placement) 
-                      WHERE $date_filter_playfab AND a.run_id IS NULL AND p.placement IS NOT NULL 
-                      LIMIT $rem_limit";
-        $res = $conn->query($q_playfab);
-        if ($res) {
-            while ($row = $res->fetch_assoc()) {
-                $run_id = $row['run_id'];
-                $placement = intval($row['placement']);
-                $player_run_id = $run_id . '_' . $placement;
-                $date = !empty($row['date']) ? $row['date'] : (!empty($row['created_at']) ? $row['created_at'] : date('Y-m-d H:i:s'));
-                $mmr = isset($row['mmr']) ? intval($row['mmr']) : 0;
-                $captain_cid = isset($row['captain_cid']) ? intval($row['captain_cid']) : 0;
-                if ($captain_cid === 0 && !empty($row['captain'])) {
-                    $capKey = $row['captain'];
-                    if (isset($captain_name_map[$capKey])) {
-                        $captain_cid = $captain_name_map[$capKey];
-                    }
-                }
-                $rank = isset($row['rank']) ? $row['rank'] : '';
-                $source = 'playfab';
-                $rules_version = isset($row['rules_version']) ? $row['rules_version'] : '';
-                
-                $matches_data[] = [$player_run_id, $date, $mmr, $placement, $captain_cid, $rank, $source, $rules_version];
-                
-                $turns = !empty($row['turns']) ? json_decode($row['turns'], true) : null;
-                $deck_cids = [];
-                
-                if (is_array($turns)) {
-                    foreach ($turns as $turnNumStr => $tData) {
-                        $turnNum = intval($turnNumStr);
-                        if (isset($tData['crew']) && is_array($tData['crew'])) {
-                            foreach ($tData['crew'] as $slot => $unit) {
-                                if (isset($unit['cid'])) {
-                                    $cid = intval($unit['cid']);
-                                    if ($cid > 0) {
-                                        $deck_cids[$cid] = true;
-                                        $turns_data[] = [$player_run_id, $turnNum, (string)$slot, $cid];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                foreach(array_keys($deck_cids) as $cid) {
-                    $decks_data[] = [$player_run_id, $cid];
-                }
-                
-                $processed++;
-            }
-        }
-    }
-
-    // 3. Execute bulk batch inserts in single transaction
+    // Execute bulk batch inserts in single transaction
     if ($processed > 0) {
         $conn->begin_transaction();
         
-        bulk_insert($conn, 'analytics_matches', ['run_id', 'date', 'mmr', 'placement', 'captain_cid', 'rank', 'source', 'rules_version'], $matches_data);
+        bulk_insert($conn, 'analytics_matches', ['run_id', 'date', 'mmr', 'placement', 'captain_cid', 'rank', 'source', 'rules_version', 'final_turn'], $matches_data);
         bulk_insert($conn, 'analytics_match_decks', ['run_id', 'card_cid'], $decks_data);
         bulk_insert($conn, 'analytics_match_turns', ['run_id', 'turn_number', 'slot_id', 'card_cid'], $turns_data);
         

@@ -47,6 +47,22 @@ try {
     } catch (Throwable $e) {
         echo "idx_turns_run: " . $e->getMessage() . "\n";
     }
+
+    // 6. Ensure index on analytics_match_turns (card_cid)
+    try {
+        $conn->query("ALTER TABLE analytics_match_turns ADD INDEX idx_turns_card (card_cid)");
+        echo "Added idx_turns_card to analytics_match_turns.\n";
+    } catch (Throwable $e) {
+        echo "idx_turns_card: " . $e->getMessage() . "\n";
+    }
+
+    // 7. Ensure final_turn column on analytics_matches
+    try {
+        $conn->query("ALTER TABLE analytics_matches ADD COLUMN final_turn INT DEFAULT 0");
+        echo "Added final_turn to analytics_matches.\n";
+    } catch (Throwable $e) {
+        echo "final_turn: " . $e->getMessage() . "\n";
+    }
     
     echo "Schema update completed.\n";
 } catch (Throwable $e) {
