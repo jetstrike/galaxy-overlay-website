@@ -242,22 +242,10 @@ try {
             }
 
             $stmt = $conn->prepare("
-                SELECT h.id, h.playfab_id, h.captain_cid, h.slot_id, h.deck_name, h.deck_type,
-                       h.card_cids, h.last_used, h.synced_at,
-                       COALESCE(hist.version, 1) as latest_version,
-                       hist.change_summary, hist.created_at as version_created_at
-                FROM imported_hdtb_decks h
-                LEFT JOIN (
-                    SELECT ch1.deck_id, ch1.version, ch1.change_summary, ch1.created_at
-                    FROM custom_deck_history ch1
-                    INNER JOIN (
-                        SELECT deck_id, MAX(version) AS max_v
-                        FROM custom_deck_history
-                        GROUP BY deck_id
-                    ) ch2 ON ch1.deck_id = ch2.deck_id AND ch1.version = ch2.max_v
-                ) hist ON hist.deck_id = h.id
-                WHERE h.playfab_id = ?
-                ORDER BY h.synced_at DESC
+                SELECT id, playfab_id, captain_cid, slot_id, deck_name, deck_type, card_cids, last_used, synced_at
+                FROM imported_hdtb_decks
+                WHERE playfab_id = ?
+                ORDER BY synced_at DESC
             ");
             $stmt->bind_param("s", $playfab_id);
             $stmt->execute();
@@ -268,15 +256,33 @@ try {
                 $row['captain_cid'] = intval($row['captain_cid']);
                 $row['card_cids'] = json_decode($row['card_cids'], true) ?: [];
                 $row['captain_name'] = $catalog[strval($row['captain_cid'])]['name'] ?? "Captain #{$row['captain_cid']}";
-                $row['latest_version'] = intval($row['latest_version']);
+                $row['latest_version'] = 1;
                 $row['last_used'] = (bool)$row['last_used'];
-                $decks[] = $row;
+                $decks[$row['id']] = $row;
+            }
+
+            if (!empty($decks)) {
+                $vstmt = $conn->prepare("
+                    SELECT deck_id, MAX(version) as max_v, MAX(created_at) as version_created_at
+                    FROM custom_deck_history
+                    WHERE playfab_id = ?
+                    GROUP BY deck_id
+                ");
+                $vstmt->bind_param("s", $playfab_id);
+                $vstmt->execute();
+                $vres = $vstmt->get_result();
+                while ($vrow = $vres->fetch_assoc()) {
+                    if (isset($decks[$vrow['deck_id']])) {
+                        $decks[$vrow['deck_id']]['latest_version'] = intval($vrow['max_v']);
+                        $decks[$vrow['deck_id']]['version_created_at'] = $vrow['version_created_at'];
+                    }
+                }
             }
 
             echo json_encode([
                 'success' => true,
                 'playfab_id' => $playfab_id,
-                'decks' => $decks
+                'decks' => array_values($decks)
             ]);
             exit;
         }
