@@ -91,7 +91,8 @@ try {
             }
         }
 
-        $dateStr = !empty($row['date']) ? $row['date'] : (!empty($row['created_at']) ? $row['created_at'] : date('Y-m-d H:i:s'));
+        $rawDate = !empty($row['date']) ? $row['date'] : (!empty($row['created_at']) ? $row['created_at'] : null);
+        $dateStr = $rawDate ? gmdate('Y-m-d\TH:i:s\Z', strtotime($rawDate . ' UTC')) : gmdate('Y-m-d\TH:i:s\Z');
 
         $matches[] = [
             'run_id' => $run_id,
