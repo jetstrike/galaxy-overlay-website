@@ -14,6 +14,9 @@ if (file_exists($local_config)) {
     require_once $local_config;
 }
 
+// Master Admin Passphrase for moderation dashboard
+$admin_secret = (isset($admin_secret) && !empty($admin_secret)) ? $admin_secret : (getenv('ADMIN_SECRET') ?: 'galaxy_admin_2026');
+
 // Compatibility aliases for legacy scripts
 $host       = $db_host;
 $servername = $db_host;

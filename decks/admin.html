@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck Moderation Dashboard — Once Upon a Galaxy</title>
+    <link rel="stylesheet" href="/styles.css?v=1.0.22">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0c0f14;
+            --text-main: #f0f2f5;
+            --text-muted: #94a3b8;
+            --accent-primary: #6366f1;
+            --accent-primary-hover: #4f46e5;
+            --accent-secondary: #a855f7;
+            --glass-bg: rgba(22, 27, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .admin-container {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 30px 24px 60px;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Auth Screen */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .auth-card {
+            background: rgba(22, 27, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px 36px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+        }
+
+        .auth-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .auth-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(12, 15, 20, 0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .toggle-pwd-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+        }
+
+        .toggle-pwd-btn:hover {
+            color: #fff;
+        }
+
+        .btn-submit-auth {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 13px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn-submit-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+        }
+
+        .auth-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        /* Top Admin Bar */
+        .admin-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .admin-title-group h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .admin-title-group p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .admin-top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-admin-session {
+            background: rgba(99, 102, 241, 0.2);
+            color: #c7d2fe;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            background: rgba(51, 65, 85, 0.9);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        .btn-danger-outline {
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-danger-outline:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+            color: #fca5a5;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Filter Controls */
+        .controls-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(12, 15, 20, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 9px 34px 9px 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .btn-clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.88rem;
+            display: none;
+        }
+
+        .filter-selects {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            background: rgba(12, 15, 20, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: #fff;
+            font-size: 0.88rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Decks Moderation Table */
+        .table-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(14px);
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            margin-bottom: 24px;
+        }
+
+        .deck-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .deck-table th {
+            background: rgba(12, 15, 20, 0.6);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--glass-border);
+            white-space: nowrap;
+        }
+
+        .deck-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+
+        .deck-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .deck-info-cell {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 280px;
+        }
+
+        .cap-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            flex-shrink: 0;
+        }
+
+        .deck-meta-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .deck-link-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .deck-link-title:hover {
+            color: #a855f7;
+            text-decoration: underline;
+        }
+
+        .deck-id-pill {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: fit-content;
+        }
+
+        .deck-id-pill:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-primary);
+            color: #fff;
+        }
+
+        .card-mini-strip {
+            display: flex;
+            gap: 3px;
+            margin-top: 6px;
+        }
+
+        .card-mini-strip img {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            object-fit: cover;
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Visibility Badges */
+        .vis-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vis-public {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+
+        .vis-unlisted {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: #fbbf24;
+        }
+
+        .vis-private {
+            background: rgba(148, 163, 184, 0.15);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            color: #94a3b8;
+        }
+
+        .primer-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(168, 85, 247, 0.18);
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            color: #c084fc;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        /* Row Actions */
+        .row-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .btn-row-action {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--glass-border);
+            background: rgba(30, 41, 59, 0.6);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+        }
+
+        .btn-row-action:hover {
+            background: rgba(51, 65, 85, 0.9);
+            color: #fff;
+        }
+
+        .btn-toggle-vis {
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-toggle-vis:hover {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fde68a;
+        }
+
+        .btn-delete-row {
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
+        .btn-delete-row:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fff;
+            border-color: var(--danger);
+        }
+
+        /* Pagination */
+        .pagination-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 8px 4px;
+        }
+
+        .page-info {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        .page-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-page {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-page:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-page:not(:disabled):hover {
+            background: rgba(51, 65, 85, 0.9);
+            color: #fff;
+        }
+
+        /* Danger Confirmation Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #161b2a;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 18px;
+            padding: 28px 26px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-header-danger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .modal-header-danger h3 {
+            color: #f87171;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .modal-body p {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-danger-confirm {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-danger-confirm:hover {
+            background: var(--danger-hover);
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Floating Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: rgba(22, 27, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px 18px;
+            color: #fff;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.25s ease-out;
+            max-width: 380px;
+        }
+
+        .toast.success {
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .deck-table th:nth-child(3),
+            .deck-table td:nth-child(3),
+            .deck-table th:nth-child(4),
+            .deck-table td:nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb primary"></div>
+        <div class="glow-orb secondary"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-text">Galaxy Tracker</span>
+        </div>
+        <div class="nav-links">
+            <a href="/index.html">Home</a>
+            <a href="/meta.html">Meta Insights</a>
+            <a href="/tierlist.html">Auto Tier List</a>
+            <a href="/decks.html">Meta Deck Analysis</a>
+            <a href="/turns.html">Turn Breakdowns</a>
+            <a href="/leaderboard.html">Leaderboards</a>
+            <a href="/decks/browse.html">Community Decks</a>
+            <a href="/decks/builder.html">Deck Builder</a>
+        </div>
+    </nav>
+
+    <!-- 1. Authentication View -->
+    <div class="auth-container" id="authSection">
+        <div class="auth-card">
+            <span class="auth-icon">🛡️</span>
+            <h2>Deck Moderation</h2>
+            <p>Enter the master administration passphrase to manage, unlist, and delete community decks.</p>
+            
+            <div class="auth-error" id="authErrorMsg"></div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div class="form-group">
+                    <label for="adminKeyInput">Master Admin Passphrase</label>
+                    <div class="input-wrap">
+                        <input type="password" id="adminKeyInput" class="input-field" placeholder="Enter admin passphrase..." autocomplete="current-password" required>
+                        <button type="button" class="toggle-pwd-btn" id="btnTogglePwd" title="Show/Hide">👁️</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 0.88rem; color: var(--text-muted); cursor: pointer;">
+                    <input type="checkbox" id="rememberSession" checked style="cursor: pointer;">
+                    <label for="rememberSession" style="cursor: pointer; margin: 0; text-transform: none;">Remember passphrase in this browser</label>
+                </div>
+
+                <button type="submit" class="btn-submit-auth" id="btnAuthSubmit">
+                    Unlock Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Main Dashboard View -->
+    <div class="admin-container" id="dashboardSection" style="display: none;">
+        <!-- Header Row -->
+        <header class="admin-header-row">
+            <div class="admin-title-group">
+                <h1>🛡️ Deck Moderation Dashboard</h1>
+                <p>Review community decks, modify visibility flags, or permanently purge unacceptable submissions.</p>
+            </div>
+            <div class="admin-top-actions">
+                <span class="badge-admin-session">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #34d399; border-radius: 50%;"></span>
+                    Active Master Session
+                </span>
+                <a href="/decks/browse.html" class="btn-action">← Community Decks</a>
+                <button class="btn-action btn-danger-outline" onclick="lockAdminSession()">🔒 Lock / Exit</button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Decks</div>
+                <div class="stat-val" id="statTotalDecks">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Public Decks</div>
+                <div class="stat-val" style="color: #34d399;" id="statPublicDecks">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Unlisted Decks</div>
+                <div class="stat-val" style="color: #fbbf24;" id="statUnlistedDecks">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Private Decks</div>
+                <div class="stat-val" style="color: #94a3b8;" id="statPrivateDecks">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">With Primers</div>
+                <div class="stat-val" style="color: #c084fc;" id="statPrimerDecks">-</div>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="controls-card">
+            <div class="search-wrap">
+                <input type="text" class="search-input" id="searchQueryInput" placeholder="Search by title, author, or deck ID...">
+                <button class="btn-clear-search" id="btnClearSearch" onclick="clearSearch()">✕</button>
+            </div>
+
+            <div class="filter-selects">
+                <select class="filter-select" id="visFilterSelect" onchange="onFilterChange()">
+                    <option value="all">All Visibilities</option>
+                    <option value="public">🟢 Public Only</option>
+                    <option value="unlisted">🟡 Unlisted Only</option>
+                    <option value="private">⚪ Private Only</option>
+                </select>
+
+                <select class="filter-select" id="primerFilterSelect" onchange="onFilterChange()">
+                    <option value="all">All Deck Types</option>
+                    <option value="1">📖 With Primer Only</option>
+                    <option value="0">Cards Only (No Primer)</option>
+                </select>
+
+                <select class="filter-select" id="sortFilterSelect" onchange="onFilterChange()">
+                    <option value="newest">🕒 Newest First</option>
+                    <option value="oldest">⏳ Oldest First</option>
+                    <option value="upvotes">⭐ Most Upvoted</option>
+                    <option value="winrate">🏆 In-Game Win Rate</option>
+                    <option value="name">🔤 Deck Name (A-Z)</option>
+                </select>
+
+                <select class="filter-select" id="limitFilterSelect" onchange="onFilterChange()">
+                    <option value="15">15 per page</option>
+                    <option value="25" selected>25 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                </select>
+
+                <button class="btn-action" id="btnRefresh" onclick="loadDashboardData()" title="Refresh List">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div class="table-card">
+            <table class="deck-table">
+                <thead>
+                    <tr>
+                        <th>Deck & Captain</th>
+                        <th>Author</th>
+                        <th>Visibility</th>
+                        <th>Metrics</th>
+                        <th>Created</th>
+                        <th style="text-align: right;">Moderation Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="deckTableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 36px;">
+                            Loading community decks...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Bar -->
+        <div class="pagination-bar">
+            <div class="page-info" id="paginationInfo">Showing 0 to 0 of 0 decks</div>
+            <div class="page-buttons">
+                <button class="btn-page" id="btnPrevPage" onclick="changePage(-1)" disabled>« Previous</button>
+                <span id="pageNumbersSpan" style="font-size: 0.88rem; font-weight: 600; color: #fff;">Page 1</span>
+                <button class="btn-page" id="btnNextPage" onclick="changePage(1)" disabled>Next »</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danger Confirmation Modal -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-card">
+            <div class="modal-header-danger">
+                <span style="font-size: 1.8rem;">⚠️</span>
+                <h3>Confirm Permanent Deletion</h3>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Are you sure you want to permanently delete deck <strong id="deleteModalDeckTitle" style="color: #fff;"></strong> 
+                    (<code id="deleteModalDeckId" style="color: #f87171; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;"></code>) 
+                    by <span id="deleteModalDeckAuthor" style="color: #93c5fd; font-weight: 600;"></span>?
+                </p>
+                <p style="font-size: 0.88rem; color: #fca5a5; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 10px;">
+                    This action will completely erase the deck, all upvotes, community primers, and card substitutions from the database. <strong>This cannot be undone.</strong>
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-action" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-danger-confirm" id="btnConfirmDeleteAction" onclick="executeDeleteDeck()">
+                    Permanently Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const API_ADMIN = '/api/admin-decks.php';
+        let currentAdminKey = '';
+        let allCardsMap = {};
+        let currentPage = 1;
+        let totalPages = 1;
+        let pendingDeleteId = null;
+        let searchTimeout = null;
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Preload card metadata
+            try {
+                const res = await fetch('/api/cards.json');
+                allCardsMap = await res.json();
+            } catch (e) {
+                console.warn('Failed to load cards.json:', e);
+            }
+
+            // Password toggle
+            const btnTogglePwd = document.getElementById('btnTogglePwd');
+            const pwdInput = document.getElementById('adminKeyInput');
+            btnTogglePwd.addEventListener('click', () => {
+                if (pwdInput.type === 'password') {
+                    pwdInput.type = 'text';
+                    btnTogglePwd.textContent = '🔒';
+                } else {
+                    pwdInput.type = 'password';
+                    btnTogglePwd.textContent = '👁️';
+                }
+            });
+
+            // Live search
+            const searchInput = document.getElementById('searchQueryInput');
+            const clearBtn = document.getElementById('btnClearSearch');
+            searchInput.addEventListener('input', (e) => {
+                clearBtn.style.display = e.target.value.trim() ? 'block' : 'none';
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    currentPage = 1;
+                    loadDashboardData();
+                }, 350);
+            });
+
+            // Auto-check stored session
+            const savedKey = localStorage.getItem('galaxy_admin_key') || sessionStorage.getItem('galaxy_admin_key');
+            if (savedKey) {
+                currentAdminKey = savedKey;
+                const verified = await verifyAdminSession(savedKey);
+                if (verified) {
+                    showDashboard();
+                    return;
+                } else {
+                    localStorage.removeItem('galaxy_admin_key');
+                    sessionStorage.removeItem('galaxy_admin_key');
+                    currentAdminKey = '';
+                }
+            }
+
+            showAuthPrompt();
+        });
+
+        // --- Auth Handlers ---
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('adminKeyInput');
+            const remember = document.getElementById('rememberSession').checked;
+            const errBox = document.getElementById('authErrorMsg');
+            const btn = document.getElementById('btnAuthSubmit');
+            const val = input.value.trim();
+
+            if (!val) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Verifying...';
+            errBox.style.display = 'none';
+
+            try {
+                const ok = await verifyAdminSession(val);
+                if (ok) {
+                    currentAdminKey = val;
+                    if (remember) {
+                        localStorage.setItem('galaxy_admin_key', val);
+                    } else {
+                        sessionStorage.setItem('galaxy_admin_key', val);
+                    }
+                    showDashboard();
+                } else {
+                    errBox.textContent = 'Invalid administrator passphrase. Access denied.';
+                    errBox.style.display = 'block';
+                }
+            } catch (err) {
+                errBox.textContent = 'Server connection error. Please try again.';
+                errBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Unlock Dashboard';
+            }
+        }
+
+        async function verifyAdminSession(key) {
+            try {
+                const res = await fetch(`${API_ADMIN}?action=verify`, {
+                    headers: { 'X-Admin-Key': key }
+                });
+                return res.ok;
+            } catch {
+                return false;
+            }
+        }
+
+        function showAuthPrompt() {
+            document.getElementById('authSection').style.display = 'flex';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('adminKeyInput').focus();
+        }
+
+        function showDashboard() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'flex';
+            loadDashboardData();
+        }
+
+        function lockAdminSession() {
+            localStorage.removeItem('galaxy_admin_key');
+            sessionStorage.removeItem('galaxy_admin_key');
+            currentAdminKey = '';
+            document.getElementById('adminKeyInput').value = '';
+            showAuthPrompt();
+            showToast('Admin session locked.', 'info');
+        }
+
+        // --- Data Loading ---
+        async function loadDashboardData() {
+            const tbody = document.getElementById('deckTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 36px;">
+                        Loading community decks...
+                    </td>
+                </tr>
+            `;
+
+            loadStats();
+
+            const q = document.getElementById('searchQueryInput').value.trim();
+            const vis = document.getElementById('visFilterSelect').value;
+            const primer = document.getElementById('primerFilterSelect').value;
+            const sort = document.getElementById('sortFilterSelect').value;
+            const limit = document.getElementById('limitFilterSelect').value;
+
+            const params = new URLSearchParams({
+                action: 'list',
+                page: currentPage,
+                limit: limit,
+                sort: sort
+            });
+            if (q) params.set('q', q);
+            if (vis !== 'all') params.set('visibility', vis);
+            if (primer !== 'all') params.set('has_primer', primer);
+
+            try {
+                const res = await fetch(`${API_ADMIN}?${params.toString()}`, {
+                    headers: { 'X-Admin-Key': currentAdminKey }
+                });
+
+                if (res.status === 401) {
+                    lockAdminSession();
+                    return;
+                }
+
+                const data = await res.json();
+                if (!data.success) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171; padding: 24px;">${data.error || 'Failed to load decks'}</td></tr>`;
+                    return;
+                }
+
+                totalPages = data.pages || 1;
+                renderDeckTable(data.decks || []);
+                renderPagination(data.total, data.page, data.limit);
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171; padding: 24px;">Network Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API_ADMIN}?action=stats`, {
+                    headers: { 'X-Admin-Key': currentAdminKey }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data.success && data.stats) {
+                    document.getElementById('statTotalDecks').textContent = data.stats.total.toLocaleString();
+                    document.getElementById('statPublicDecks').textContent = data.stats.public.toLocaleString();
+                    document.getElementById('statUnlistedDecks').textContent = data.stats.unlisted.toLocaleString();
+                    document.getElementById('statPrivateDecks').textContent = data.stats.private.toLocaleString();
+                    document.getElementById('statPrimerDecks').textContent = data.stats.primers.toLocaleString();
+                }
+            } catch (e) {
+                console.warn('Failed to load stats:', e);
+            }
+        }
+
+        // --- Table Rendering ---
+        function renderDeckTable(decks) {
+            const tbody = document.getElementById('deckTableBody');
+            tbody.innerHTML = '';
+
+            if (decks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                            No community decks found matching your filters.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            decks.forEach(deck => {
+                const tr = document.createElement('tr');
+                const cap = allCardsMap[String(deck.captain_cid)] || {};
+                const capName = deck.captain_name || cap.name || 'Unknown Captain';
+                const capImg = cap.card_key 
+                    ? `https://static.galaxy.fun/cards/${cap.card_key}__default__240.webp`
+                    : `https://galaxy-cards.b-cdn.net/webps/${deck.captain_cid}.webp`;
+
+                // Mini cards strip
+                const cardCids = Array.isArray(deck.card_cids) ? deck.card_cids : [];
+                let miniStripHtml = '<div class="card-mini-strip">';
+                cardCids.slice(0, 12).forEach(cid => {
+                    const c = allCardsMap[String(cid)] || {};
+                    const cName = c.name || `Card ${cid}`;
+                    const cImg = c.card_key 
+                        ? `https://static.galaxy.fun/cards/${c.card_key}__default__240.webp`
+                        : `https://galaxy-cards.b-cdn.net/webps/${cid}.webp`;
+                    miniStripHtml += `<img src="${cImg}" title="${escapeHtml(cName)}" onerror="this.src='/icon.png'">`;
+                });
+                miniStripHtml += '</div>';
+
+                // Visibility badge
+                const visClass = `vis-${deck.visibility}`;
+                const visLabel = deck.visibility.charAt(0).toUpperCase() + deck.visibility.slice(1);
+
+                // Date
+                const dateStr = deck.created_at ? new Date(deck.created_at).toLocaleDateString(undefined, {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                }) : '-';
+
+                // Next toggle visibility
+                const nextVis = (deck.visibility === 'public') ? 'unlisted' : 'public';
+                const toggleIcon = (deck.visibility === 'public') ? '🟡 Unlist' : '🌐 Publish';
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="deck-info-cell">
+                            <img class="cap-thumb" src="${capImg}" onerror="this.src='/icon.png'" alt="${escapeHtml(capName)}">
+                            <div class="deck-meta-info">
+                                <a href="/d/${deck.id}" target="_blank" class="deck-link-title">
+                                    ${escapeHtml(deck.name)} ↗
+                                </a>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span class="deck-id-pill" onclick="copyDeckLink('${deck.id}')" title="Click to copy share link">
+                                        #${deck.id} 📋
+                                    </span>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(capName)}</span>
+                                </div>
+                                ${miniStripHtml}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: #fff;">${escapeHtml(deck.author_name || 'Anonymous')}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">${escapeHtml(deck.author_id.slice(0, 14))}...</div>
+                    </td>
+                    <td>
+                        <span class="vis-badge ${visClass}">
+                            ● ${visLabel}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span style="color: #ffd166; font-weight: 700; font-size: 0.86rem;">⭐ ${deck.upvote_count || 0}</span>
+                            ${deck.has_primer == 1 ? '<span class="primer-tag">📖 Primer</span>' : ''}
+                        </div>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.84rem; white-space: nowrap;">
+                        ${dateStr}
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <a href="/d/${deck.id}" target="_blank" class="btn-row-action" title="View Deck">
+                                👁️ View
+                            </a>
+                            <button class="btn-row-action btn-toggle-vis" onclick="changeDeckVisibility('${deck.id}', '${nextVis}')" title="Switch visibility to ${nextVis}">
+                                ${toggleIcon}
+                            </button>
+                            <button class="btn-row-action btn-delete-row" onclick="openDeleteModal('${deck.id}', '${escapeHtml(deck.name)}', '${escapeHtml(deck.author_name)}')">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- Pagination ---
+        function renderPagination(total, page, limit) {
+            currentPage = page;
+            const start = total === 0 ? 0 : (page - 1) * limit + 1;
+            const end = Math.min(total, page * limit);
+            document.getElementById('paginationInfo').textContent = `Showing ${start} to ${end} of ${total.toLocaleString()} decks`;
+            document.getElementById('pageNumbersSpan').textContent = `Page ${page} of ${totalPages}`;
+
+            document.getElementById('btnPrevPage').disabled = (page <= 1);
+            document.getElementById('btnNextPage').disabled = (page >= totalPages);
+        }
+
+        function changePage(delta) {
+            const target = currentPage + delta;
+            if (target >= 1 && target <= totalPages) {
+                currentPage = target;
+                loadDashboardData();
+            }
+        }
+
+        function onFilterChange() {
+            currentPage = 1;
+            loadDashboardData();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchQueryInput').value = '';
+            document.getElementById('btnClearSearch').style.display = 'none';
+            currentPage = 1;
+            loadDashboardData();
+        }
+
+        // --- Moderation Actions ---
+        async function changeDeckVisibility(deckId, newVis) {
+            try {
+                const res = await fetch(API_ADMIN, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Key': currentAdminKey
+                    },
+                    body: JSON.stringify({
+                        action: 'set_visibility',
+                        deck_id: deckId,
+                        visibility: newVis
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`Deck #${deckId} visibility changed to ${newVis}.`, 'success');
+                    loadDashboardData();
+                } else {
+                    showToast(data.error || 'Failed to change visibility', 'error');
+                }
+            } catch (err) {
+                showToast(`Network Error: ${err.message}`, 'error');
+            }
+        }
+
+        function openDeleteModal(deckId, title, author) {
+            pendingDeleteId = deckId;
+            document.getElementById('deleteModalDeckTitle').textContent = `"${title}"`;
+            document.getElementById('deleteModalDeckId').textContent = deckId;
+            document.getElementById('deleteModalDeckAuthor').textContent = author;
+            document.getElementById('deleteConfirmModal').classList.add('open');
+        }
+
+        function closeDeleteModal() {
+            pendingDeleteId = null;
+            document.getElementById('deleteConfirmModal').classList.remove('open');
+        }
+
+        async function executeDeleteDeck() {
+            if (!pendingDeleteId) return;
+
+            const btn = document.getElementById('btnConfirmDeleteAction');
+            btn.disabled = true;
+            btn.textContent = 'Deleting...';
+
+            try {
+                const res = await fetch(API_ADMIN, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Key': currentAdminKey
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        deck_id: pendingDeleteId
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || `Deck #${pendingDeleteId} permanently deleted.`, 'success');
+                    closeDeleteModal();
+                    loadDashboardData();
+                } else {
+                    showToast(data.error || 'Failed to delete deck', 'error');
+                }
+            } catch (err) {
+                showToast(`Deletion error: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Permanently Delete';
+            }
+        }
+
+        // --- Helpers ---
+        function copyDeckLink(deckId) {
+            const url = `https://galaxy-overlay.com/d/${deckId}`;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast(`Copied ${url} to clipboard!`, 'info');
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            toast.innerHTML = `<span>${icon}</span> <span>${escapeHtml(msg)}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 250);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>

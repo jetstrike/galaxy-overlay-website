@@ -7,3 +7,4 @@ $db_port = 4000;
 $db_user = '8H9QVXuqz8WDTEg.root';
 $db_pass = 'YOUR_TIDB_PASSWORD_HERE';
 $db_name = 'u834540789_Galaxy';
+$admin_secret = 'YOUR_ADMIN_SECRET_KEY';
