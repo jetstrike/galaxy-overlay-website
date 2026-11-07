@@ -73,6 +73,7 @@ try {
     // 1. Fetch multi-turn macro stats and slot aggregates from analytics_captain_turns
     $summary = [];
     $available_turns = [];
+    $record_run_ids = [];
     $total_matches_analyzed = 0;
 
     $stmt = $conn->prepare("
@@ -95,8 +96,13 @@ try {
         }
 
         $slots = [];
+        $max_run_id = null;
         if (!empty($row['slot_details_json'])) {
             $slots = json_decode($row['slot_details_json'], true) ?: [];
+            if (!empty($slots['max_run_id'])) {
+                $max_run_id = $slots['max_run_id'];
+                $record_run_ids[$max_run_id] = true;
+            }
         }
 
         $summary[$tNum] = [
@@ -108,6 +114,7 @@ try {
                 'p75_total_stats' => (float)$row['p75_board_stats'],
                 'p90_total_stats' => (float)$row['p90_board_stats'],
                 'max_total_stats' => (float)$row['max_board_stats'],
+                'max_run_id' => $max_run_id,
                 'avg_board_slot_buffs_total' => (float)$row['avg_slot_buffs']
             ],
             'slots' => $slots
@@ -180,24 +187,8 @@ try {
         return [$atk, $hp];
     }
 
-    // 3. Fetch recent sample matches from playfab_matches
-    $games = [];
-    $units_map = [];
-
-    $stmt = $conn->prepare("
-        SELECT run_id, player_name, placement, mmr, date, turns 
-        FROM playfab_matches USE INDEX (idx_playfab_captain)
-        WHERE captain_cid = ? AND turns IS NOT NULL 
-        ORDER BY date DESC 
-        LIMIT 60
-    ");
-    $stmt->bind_param("i", $target_cid);
-    $stmt->execute();
-    $res = $stmt->get_result();
-
-    while ($row = $res->fetch_assoc()) {
-        $turns_raw = json_decode($row['turns'], true);
-        if (!is_array($turns_raw)) continue;
+    function parse_match_turns($turns_raw, &$units_map, $cid_to_card) {
+        if (!is_array($turns_raw)) return [];
 
         $match_turns = [];
         $is_list = isset($turns_raw[0]);
@@ -287,8 +278,33 @@ try {
             ];
         }
 
+        return $match_turns;
+    }
+
+    // 3. Fetch recent sample matches from playfab_matches (up to 100)
+    $games = [];
+    $units_map = [];
+    $fetched_run_ids = [];
+
+    $stmt = $conn->prepare("
+        SELECT run_id, player_name, placement, mmr, date, turns 
+        FROM playfab_matches USE INDEX (idx_playfab_captain)
+        WHERE captain_cid = ? AND turns IS NOT NULL 
+        ORDER BY date DESC 
+        LIMIT 100
+    ");
+    $stmt->bind_param("i", $target_cid);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    while ($row = $res->fetch_assoc()) {
+        $run_id = $row['run_id'];
+        $fetched_run_ids[$run_id] = true;
+        $turns_raw = json_decode($row['turns'], true);
+        $match_turns = parse_match_turns($turns_raw, $units_map, $cid_to_card);
+
         $games[] = [
-            'run_id' => $row['run_id'],
+            'run_id' => $run_id,
             'player' => $row['player_name'] ?: 'Anonymous Player',
             'placement' => $row['placement'] !== null ? (int)$row['placement'] : null,
             'mmr' => $row['mmr'] !== null ? (int)$row['mmr'] : null,
@@ -297,6 +313,36 @@ try {
         ];
     }
     $stmt->close();
+
+    // 4. Fetch any record-holding matches not already included in recent games
+    $missing_record_runs = array_values(array_unique(array_filter(array_keys(array_diff_key($record_run_ids, $fetched_run_ids)))));
+    if (!empty($missing_record_runs)) {
+        $placeholders = implode(',', array_fill(0, count($missing_record_runs), '?'));
+        $types = str_repeat('s', count($missing_record_runs));
+        $r_stmt = $conn->prepare("SELECT run_id, player_name, placement, mmr, date, turns FROM playfab_matches WHERE run_id IN ($placeholders)");
+        if ($r_stmt) {
+            $r_stmt->bind_param($types, ...$missing_record_runs);
+            $r_stmt->execute();
+            $r_res = $r_stmt->get_result();
+            $record_games = [];
+            while ($row = $r_res->fetch_assoc()) {
+                $turns_raw = json_decode($row['turns'], true);
+                $match_turns = parse_match_turns($turns_raw, $units_map, $cid_to_card);
+                $record_games[] = [
+                    'run_id' => $row['run_id'],
+                    'player' => $row['player_name'] ?: 'Anonymous Player',
+                    'placement' => $row['placement'] !== null ? (int)$row['placement'] : null,
+                    'mmr' => $row['mmr'] !== null ? (int)$row['mmr'] : null,
+                    'date' => $row['date'],
+                    'turns' => $match_turns
+                ];
+            }
+            $r_stmt->close();
+            if (!empty($record_games)) {
+                $games = array_merge($record_games, $games);
+            }
+        }
+    }
 
     echo json_encode([
         'success' => true,

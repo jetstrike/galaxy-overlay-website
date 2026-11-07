@@ -571,6 +571,11 @@
       const sortBy = document.getElementById('sort-by').value;
 
       filteredGames = allGames.filter(g => {
+        // Filter out matches that did not reach the active turn
+        const displayTurn = cardTurnOverrides[g.run_id] || activeGlobalTurn;
+        const hasTurn = !!(g.turns && (g.turns[displayTurn] || g.turns[String(displayTurn)]));
+        if (!hasTurn) return false;
+
         if (placeFilter !== 'all') {
           if (placeFilter === 'top3' && (g.placement > 3 || !g.placement)) return false;
           if (placeFilter === '4+' && (g.placement <= 3 || !g.placement)) return false;
@@ -616,7 +621,7 @@
         return 0;
       });
 
-      document.getElementById('filtered-count').textContent = `Showing ${filteredGames.length} of ${allGames.length} matches`;
+      document.getElementById('filtered-count').textContent = `Showing ${filteredGames.length} of ${allGames.length} matches (Turn ${activeGlobalTurn})`;
       renderList();
     }
 
@@ -649,9 +654,13 @@
         const displayTurn = cardTurnOverrides[runId] || activeGlobalTurn;
         const tData = turnsDict[displayTurn] || turnsDict[String(displayTurn)] || null;
 
-        const totalStats = tData ? tData.total_stats : 'Eliminated';
-        const slotBuffsTotal = tData ? tData.slot_buffs : 0;
+        const totalStats = tData ? (typeof tData.total_stats === 'number' ? tData.total_stats.toLocaleString() : tData.total_stats) : 'Eliminated';
+        const slotBuffsTotal = tData ? (typeof tData.slot_buffs === 'number' ? tData.slot_buffs.toLocaleString() : tData.slot_buffs) : 0;
         const slots = tData ? tData.slots : [[0,1,0,0,0,0,0],[0,1,0,0,0,0,0],[0,1,0,0,0,0,0],[0,1,0,0,0,0,0],[0,1,0,0,0,0,0]];
+
+        const currentTurnSumm = summaryData[displayTurn] || {};
+        const currentBs = currentTurnSumm.board_stats || {};
+        const isTurnRecord = (tData && typeof tData.total_stats === 'number' && currentBs.max_total_stats && tData.total_stats === currentBs.max_total_stats) || (currentBs.max_run_id && runId === currentBs.max_run_id);
 
         let placeClass = 'place-other';
         if (place === 1) placeClass = 'place-1';
@@ -707,7 +716,7 @@
                 </div>
                 <div class="stat-row" style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 2px; margin-top: 2px;">
                   <span class="stat-row-lbl">Total:</span>
-                  <span style="color: #38bdf8; font-weight: 800;">${totalSlotStats}</span>
+                  <span style="color: #38bdf8; font-weight: 800;">${totalSlotStats.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -715,20 +724,21 @@
         });
 
         html += `
-          <div class="game-card">
+          <div class="game-card" ${isTurnRecord ? 'style="border-color: rgba(251, 191, 36, 0.6); box-shadow: 0 0 16px rgba(251, 191, 36, 0.15);"' : ''}>
             <div class="game-header">
               <div class="game-meta">
                 <span class="place-badge ${placeClass}">${placeText}</span>
                 <span class="player-name">${escapeHtml(player)}</span>
                 <span class="game-id">${escapeHtml(runId)}</span>
                 <span style="color: var(--text-muted); font-size: 11px;">• ${mmrText}</span>
+                ${isTurnRecord ? `<span class="record-badge" style="background: rgba(245, 158, 11, 0.18); border: 1px solid #fbbf24; color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🏆 Turn ${displayTurn} Record</span>` : ''}
               </div>
               <div class="game-stats-pill">
                 <div class="card-turn-scrubber" title="Switch turn for this match">
                   ${scrubberHtml}
                 </div>
                 <span class="slot-buff-tag">Slot Buffs: +${slotBuffsTotal}</span>
-                <span class="board-total-tag">Turn ${displayTurn} Total: ${totalStats}</span>
+                <span class="board-total-tag" ${isTurnRecord ? 'style="border-color: #fbbf24; color: #fbbf24;"' : ''}>Turn ${displayTurn} Total: ${totalStats}</span>
               </div>
             </div>
             <div class="slots-grid">
