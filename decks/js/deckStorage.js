@@ -171,6 +171,8 @@ class DeckStorage {
 
             if (collectionData.playfab_id) {
                 this.setPlayfabId(collectionData.playfab_id);
+                // Also asynchronously sync to cloud
+                this.syncCollectionToCloud(collectionData.playfab_id, collectionData).catch(() => {});
             }
 
             tx.oncomplete = () => resolve(true);
@@ -178,15 +180,67 @@ class DeckStorage {
         });
     }
 
+    static async syncCollectionToCloud(playfab_id, collectionData) {
+        if (!playfab_id) return false;
+        try {
+            const res = await fetch('/api/sync-collection.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    playfab_id,
+                    owned_cards: collectionData.owned_cards || {},
+                    infinity_captains: collectionData.infinity_captains || []
+                })
+            });
+            return await res.json();
+        } catch (e) {
+            console.warn('Failed to sync collection to cloud:', e);
+            return false;
+        }
+    }
+
     static async getUserCollection() {
         const db = await this.getDB();
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const tx = db.transaction('user_collection', 'readonly');
             const store = tx.objectStore('user_collection');
             const req = store.getAll();
-            req.onsuccess = () => {
+            req.onsuccess = async () => {
+                const rows = req.result || [];
+                if (rows.length === 0) {
+                    // Try fallback cloud fetch if PlayFab ID is known
+                    const pId = DeckStorage.getPlayfabId();
+                    if (pId) {
+                        try {
+                            const cloudRes = await fetch(`/api/sync-collection.php?playfab_id=${encodeURIComponent(pId)}`);
+                            const cloudData = await cloudRes.json();
+                            if (cloudData.success && cloudData.found) {
+                                await DeckStorage.saveUserCollection(cloudData);
+                                const map = {};
+                                for (const [cStr, cids] of Object.entries(cloudData.owned_cards || {})) {
+                                    const cap = parseInt(cStr, 10);
+                                    map[cap] = {
+                                        owned_cids: new Set(cids || []),
+                                        is_infinity: (cloudData.infinity_captains || []).includes(cap)
+                                    };
+                                }
+                                for (const infCap of (cloudData.infinity_captains || [])) {
+                                    if (!map[infCap]) {
+                                        map[infCap] = { owned_cids: new Set(), is_infinity: true };
+                                    } else {
+                                        map[infCap].is_infinity = true;
+                                    }
+                                }
+                                return resolve(map);
+                            }
+                        } catch (err) {
+                            console.warn('Cloud collection fallback error:', err);
+                        }
+                    }
+                }
+
                 const map = {};
-                for (const row of (req.result || [])) {
+                for (const row of rows) {
                     map[row.captain_cid] = {
                         owned_cids: new Set(row.owned_cids || []),
                         is_infinity: Boolean(row.is_infinity)
