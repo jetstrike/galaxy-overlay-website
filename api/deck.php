@@ -300,8 +300,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $author_name = trim($data['author_name'] ?? 'Anonymous');
         $summary = trim($data['summary'] ?? '');
         $card_cids = is_array($data['card_cids'] ?? null) ? array_map('intval', $data['card_cids']) : [];
-        $visibility = in_array($data['visibility'] ?? '', ['public', 'unlisted', 'private']) ? $data['visibility'] : 'public';
-        $primer = is_array($data['primer'] ?? null) ? $data['primer'] : null;
+        $primer = is_array($data['primer'] ?? null) ? $data['primer'] : [];
+        if (empty($primer['guide_markdown']) && !empty($data['primer_markdown'])) {
+            $primer['guide_markdown'] = trim($data['primer_markdown']);
+        }
         $has_primer = (!empty($primer) && !empty(trim($primer['guide_markdown'] ?? ''))) ? 1 : 0;
         $annotations = is_array($data['annotations'] ?? null) ? $data['annotations'] : [];
 
@@ -409,6 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode([
                 'success' => true,
                 'id' => $deck_id,
+                'deck_id' => $deck_id,
                 'share_url' => "https://galaxy-overlay.com/d/{$deck_id}",
                 'view_url' => "/decks/view.html?id={$deck_id}"
             ]);
