@@ -1102,7 +1102,8 @@
                 const res = await fetch('/api/cards.json');
                 const data = await res.json();
                 allCards = Object.values(data).filter(c => c && c.cid);
-                captainsList = allCards.filter(c => c.card_type === 'captain');
+                const EXCLUDED_CAPTAIN_IDS = new Set([3004, 3018, 3023, 3080, 3100, 4054]);
+                captainsList = allCards.filter(c => c.card_type === 'captain' && !EXCLUDED_CAPTAIN_IDS.has(Number(c.cid)));
                 
                 // Default captain
                 currentCaptain = captainsList.find(c => c.cid === 1001) || captainsList[0];

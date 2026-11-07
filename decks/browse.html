@@ -642,8 +642,9 @@
             const grid = document.getElementById('browseCaptainGrid');
             grid.innerHTML = '';
 
+            const EXCLUDED_CAPTAIN_IDS = new Set([3004, 3018, 3023, 3080, 3100, 4054]);
             const captains = Object.values(allCardsMap)
-                .filter(c => c && c.card_type === 'captain')
+                .filter(c => c && c.card_type === 'captain' && !EXCLUDED_CAPTAIN_IDS.has(Number(c.cid)))
                 .sort((a, b) => a.name.localeCompare(b.name));
 
             const filtered = query.trim() 
