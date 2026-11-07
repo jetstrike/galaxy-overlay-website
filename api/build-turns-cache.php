@@ -180,10 +180,21 @@ try {
         }
         $stmt->close();
 
+        // Get true total matches for this captain in playfab_matches
+        $cnt_q = $conn->query("SELECT COUNT(*) FROM playfab_matches WHERE captain_cid = $cid");
+        $real_captain_total = ($cnt_q && $r = $cnt_q->fetch_row()) ? (int)$r[0] : 0;
+        $max_sample_games = 0;
+        foreach ($turn_data as $games) {
+            if (count($games) > $max_sample_games) $max_sample_games = count($games);
+        }
+
         $insert_values = [];
         foreach ($turn_data as $tNum => $games) {
             $n_games = count($games);
             if ($n_games < 3) continue;
+            $scaled_total_games = ($real_captain_total > $max_sample_games && $max_sample_games > 0) 
+                ? (int)round(($n_games / $max_sample_games) * $real_captain_total) 
+                : $n_games;
 
             $totals = array_column($games, 'turn_total_stats');
             sort($totals, SORT_NUMERIC);
@@ -252,7 +263,7 @@ try {
             }
 
             $slot_json = $conn->real_escape_string(json_encode($slot_stats));
-            $insert_values[] = "($cid, $tNum, $n_games, $med_stats, $avg_stats, $p25_stats, $p75_stats, $p90_stats, $max_stats, $avg_buffs, '$slot_json')";
+            $insert_values[] = "($cid, $tNum, $scaled_total_games, $med_stats, $avg_stats, $p25_stats, $p75_stats, $p90_stats, $max_stats, $avg_buffs, '$slot_json')";
         }
 
         if (!empty($insert_values)) {

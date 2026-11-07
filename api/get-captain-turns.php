@@ -150,6 +150,21 @@ try {
         }
     }
 
+    // Harmonize turn total_games with $total_matches_analyzed so Turn 1 matches header badge exactly
+    $max_summary_games = 0;
+    foreach ($summary as $tNum => $tData) {
+        if ($tData['total_games'] > $max_summary_games) {
+            $max_summary_games = $tData['total_games'];
+        }
+    }
+    if ($total_matches_analyzed > $max_summary_games && $max_summary_games > 0) {
+        $scale_factor = $total_matches_analyzed / $max_summary_games;
+        foreach ($summary as $tNum => &$tData) {
+            $tData['total_games'] = (int)round($tData['total_games'] * $scale_factor);
+        }
+        unset($tData);
+    }
+
     // 2. Helper functions for parsing match turns
     function parse_buffs_php($buff_obj) {
         $atk = 0;
