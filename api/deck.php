@@ -300,6 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $author_name = trim($data['author_name'] ?? 'Anonymous');
         $summary = trim($data['summary'] ?? '');
         $card_cids = is_array($data['card_cids'] ?? null) ? array_map('intval', $data['card_cids']) : [];
+        $visibility = in_array($data['visibility'] ?? '', ['public', 'unlisted', 'private']) ? $data['visibility'] : 'public';
         $primer = is_array($data['primer'] ?? null) ? $data['primer'] : [];
         if (empty($primer['guide_markdown']) && !empty($data['primer_markdown'])) {
             $primer['guide_markdown'] = trim($data['primer_markdown']);
