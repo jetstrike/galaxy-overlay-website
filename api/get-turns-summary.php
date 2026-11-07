@@ -82,6 +82,44 @@ try {
         ];
     }
 
+    // Query true global total matches and per-captain pick counts from analytics_cache
+    $global_total_matches = 0;
+    $cache_stmt = $conn->prepare("SELECT total_matches, data_json FROM analytics_cache WHERE query_type = 'captains' AND season = 'all' AND min_mmr = 0 AND max_mmr = 99999 LIMIT 1");
+    if ($cache_stmt) {
+        $cache_stmt->execute();
+        $cache_res = $cache_stmt->get_result()->fetch_assoc();
+        if ($cache_res && !empty($cache_res['total_matches'])) {
+            $global_total_matches = (int)$cache_res['total_matches'];
+            if (!empty($cache_res['data_json'])) {
+                $cache_caps = json_decode($cache_res['data_json'], true);
+                if (is_array($cache_caps)) {
+                    foreach ($cache_caps as $cc) {
+                        $c_cid = (int)($cc['captain_cid'] ?? 0);
+                        $c_picks = (int)($cc['total_picks'] ?? 0);
+                        if ($c_cid > 0 && isset($captains_map[$c_cid])) {
+                            $captains_map[$c_cid]['total_matches'] = $c_picks;
+                        }
+                    }
+                }
+            }
+        }
+        $cache_stmt->close();
+    }
+
+    // Fallback: If cache total was not found, query analytics_matches or playfab_matches
+    if ($global_total_matches === 0) {
+        $cnt_res = $conn->query("SELECT COUNT(*) as total FROM analytics_matches");
+        if ($cnt_res && $row = $cnt_res->fetch_assoc()) {
+            $global_total_matches = (int)$row['total'];
+        }
+        if ($global_total_matches === 0) {
+            $cnt_res = $conn->query("SELECT COUNT(*) as total FROM playfab_matches");
+            if ($cnt_res && $row = $cnt_res->fetch_assoc()) {
+                $global_total_matches = (int)$row['total'];
+            }
+        }
+    }
+
     $sorted_turns = array_keys($all_turns);
     sort($sorted_turns, SORT_NUMERIC);
 
@@ -89,6 +127,7 @@ try {
 
     echo json_encode([
         'success' => true,
+        'global_total_matches' => $global_total_matches,
         'turns' => $sorted_turns,
         'total_captains' => count($captains_list),
         'captains' => $captains_list

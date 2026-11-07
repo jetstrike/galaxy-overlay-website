@@ -429,6 +429,7 @@
     let availableTurns = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
     let activeTurn = 9;
     let filteredCaptains = [];
+    let globalTotalMatches = 0;
 
     // Parse URL params for ?turn=N
     const urlParams = new URLSearchParams(window.location.search);
@@ -447,6 +448,9 @@
         
         if (data && data.success && Array.isArray(data.captains)) {
           allCaptains = data.captains;
+          if (data.global_total_matches) {
+            globalTotalMatches = data.global_total_matches;
+          }
           if (Array.isArray(data.turns) && data.turns.length > 0) {
             availableTurns = data.turns;
             if (!availableTurns.includes(activeTurn)) {
@@ -561,7 +565,8 @@
         }
       });
 
-      document.getElementById('metric-matches-count').textContent = totalMatches.toLocaleString() + '+';
+      const displayTotal = globalTotalMatches || totalMatches;
+      document.getElementById('metric-matches-count').textContent = displayTotal.toLocaleString() + '+';
       const avgBuffGalaxy = countWithBuffs > 0 ? '+' + Math.round(totalBuffs / countWithBuffs) : '+0';
       document.getElementById('metric-avg-buffs').textContent = avgBuffGalaxy;
     }

@@ -115,6 +115,41 @@ try {
     }
     $stmt->close();
 
+    // Fetch true total matches for this captain from analytics_cache or fallback
+    $c_stmt = $conn->prepare("SELECT data_json FROM analytics_cache WHERE query_type = 'captains' AND season = 'all' AND min_mmr = 0 AND max_mmr = 99999 LIMIT 1");
+    if ($c_stmt) {
+        $c_stmt->execute();
+        $c_row = $c_stmt->get_result()->fetch_assoc();
+        if ($c_row && !empty($c_row['data_json'])) {
+            $c_list = json_decode($c_row['data_json'], true);
+            if (is_array($c_list)) {
+                foreach ($c_list as $c_item) {
+                    if ((int)($c_item['captain_cid'] ?? 0) === $target_cid) {
+                        $real_picks = (int)($c_item['total_picks'] ?? 0);
+                        if ($real_picks > $total_matches_analyzed) {
+                            $total_matches_analyzed = $real_picks;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        $c_stmt->close();
+    }
+
+    if ($total_matches_analyzed <= 1500) {
+        $cnt_stmt = $conn->prepare("SELECT COUNT(*) FROM playfab_matches WHERE captain_cid = ?");
+        if ($cnt_stmt) {
+            $cnt_stmt->bind_param("i", $target_cid);
+            $cnt_stmt->execute();
+            $cnt_row = $cnt_stmt->get_result()->fetch_row();
+            if ($cnt_row && (int)$cnt_row[0] > $total_matches_analyzed) {
+                $total_matches_analyzed = (int)$cnt_row[0];
+            }
+            $cnt_stmt->close();
+        }
+    }
+
     // 2. Helper functions for parsing match turns
     function parse_buffs_php($buff_obj) {
         $atk = 0;
