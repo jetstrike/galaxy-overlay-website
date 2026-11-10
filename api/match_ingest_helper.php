@@ -112,6 +112,140 @@ function extract_match_card_metrics($player_run_id, $turns_input) {
 }
 
 /**
+ * Compacts a raw PlayFab/Overlay turns payload (~50% smaller JSON) while preserving 100% of fields
+ * used by turns.html (build-turns-cache.php, get-captain-turns.php), get-player-matches.php, and app turn viewers:
+ * - attrs.total_stats
+ * - crew[1..5]: cid, tier (if > 1), and pre-summed buffs [{attack, health}] (if non-zero)
+ * - crewslots[1..5]: pre-summed buffs [{attack, health}] (if non-zero)
+ * - hoard: [{cid, tier}] (if non-empty)
+ * Strips repeated per-turn throne cosmetic frames/skins and redundant bebop_* subfields.
+ */
+function sum_turn_buff_array($buff_obj) {
+    $atk = 0;
+    $hp = 0;
+    if (empty($buff_obj) || !is_array($buff_obj)) return [0, 0];
+    $buff_list = isset($buff_obj[0]) ? $buff_obj : array_values($buff_obj);
+    foreach ($buff_list as $b) {
+        if (is_array($b)) {
+            $atk += (int)($b['attack'] ?? 0);
+            $hp += (int)($b['health'] ?? 0);
+        }
+    }
+    return [$atk, $hp];
+}
+
+function compact_turns_payload($turns_input) {
+    if ($turns_input === null || $turns_input === '') return null;
+    $turns = is_string($turns_input) ? json_decode($turns_input, true) : $turns_input;
+    if (!is_array($turns) || empty($turns)) return null;
+
+    $is_list = isset($turns[0]) || isset($turns['0']);
+    $compacted = [];
+
+    foreach ($turns as $k => $t_obj) {
+        if (!is_array($t_obj)) continue;
+        $t_num = $is_list ? ((int)$k + 1) : (int)$k;
+        if ($t_num < 1) $t_num = 1;
+
+        $out_turn = [];
+
+        // 1. attrs (preserve total_stats for power curve)
+        if (isset($t_obj['attrs']) && is_array($t_obj['attrs'])) {
+            $ts = isset($t_obj['attrs']['total_stats']) ? (int)$t_obj['attrs']['total_stats'] : 0;
+            if ($ts > 0) {
+                $out_turn['attrs'] = ['total_stats' => $ts];
+            }
+        }
+
+        // 2. crew (normalize 1..5 keys, preserve cid, tier > 1, and summed attack/health buffs)
+        $crew = $t_obj['crew'] ?? [];
+        $crew_map = [];
+        if (is_array($crew)) {
+            if (isset($crew[0]) || isset($crew['0'])) {
+                foreach ($crew as $idx => $v) {
+                    $crew_map[(string)((int)$idx + 1)] = $v;
+                }
+            } else {
+                $crew_map = $crew;
+            }
+        }
+
+        $out_crew = [];
+        for ($s_idx = 1; $s_idx <= 5; $s_idx++) {
+            $s_key = (string)$s_idx;
+            $c_info = $crew_map[$s_key] ?? ($crew_map[$s_idx] ?? null);
+            if (is_array($c_info) && !empty($c_info['cid'])) {
+                $cid = (int)$c_info['cid'];
+                if ($cid > 0) {
+                    $u_obj = ['cid' => $cid];
+                    $tier = isset($c_info['tier']) ? (int)$c_info['tier'] : 1;
+                    if ($tier > 1) {
+                        $u_obj['tier'] = $tier;
+                    }
+                    list($u_atk, $u_hp) = sum_turn_buff_array($c_info['buffs'] ?? null);
+                    if ($u_atk !== 0 || $u_hp !== 0) {
+                        $u_obj['buffs'] = [['attack' => $u_atk, 'health' => $u_hp]];
+                    }
+                    $out_crew[$s_key] = $u_obj;
+                }
+            }
+        }
+        if (!empty($out_crew)) {
+            $out_turn['crew'] = $out_crew;
+        }
+
+        // 3. crewslots (preserve non-zero slot buffs for turns.html)
+        $crewslots = $t_obj['crewslots'] ?? [];
+        $slot_map = [];
+        if (is_array($crewslots)) {
+            if (isset($crewslots[0]) || isset($crewslots['0'])) {
+                foreach ($crewslots as $idx => $v) {
+                    $slot_map[(string)((int)$idx + 1)] = $v;
+                }
+            } else {
+                $slot_map = $crewslots;
+            }
+        }
+
+        $out_slots = [];
+        for ($s_idx = 1; $s_idx <= 5; $s_idx++) {
+            $s_key = (string)$s_idx;
+            $s_info = $slot_map[$s_key] ?? ($slot_map[$s_idx] ?? null);
+            if (is_array($s_info)) {
+                list($s_atk, $s_hp) = sum_turn_buff_array($s_info['buffs'] ?? null);
+                if ($s_atk !== 0 || $s_hp !== 0) {
+                    $out_slots[$s_key] = ['buffs' => [['attack' => $s_atk, 'health' => $s_hp]]];
+                }
+            }
+        }
+        if (!empty($out_slots)) {
+            $out_turn['crewslots'] = $out_slots;
+        }
+
+        // 4. hoard (preserve treasures)
+        if (!empty($t_obj['hoard']) && is_array($t_obj['hoard'])) {
+            $out_hoard = [];
+            foreach ($t_obj['hoard'] as $h) {
+                if (is_array($h) && !empty($h['cid'])) {
+                    $h_obj = ['cid' => (int)$h['cid']];
+                    if (isset($h['tier']) && (int)$h['tier'] > 1) {
+                        $h_obj['tier'] = (int)$h['tier'];
+                    }
+                    $out_hoard[] = $h_obj;
+                }
+            }
+            if (!empty($out_hoard)) {
+                $out_turn['hoard'] = $out_hoard;
+            }
+        }
+
+        $compacted[(string)$t_num] = $out_turn;
+    }
+
+    return !empty($compacted) ? json_encode($compacted, JSON_UNESCAPED_SLASHES) : null;
+}
+
+/**
  * Batched INSERT IGNORE helper
  */
 function bulk_insert_ignore($conn, $table, $columns, $rows, $chunk_size = 1000) {

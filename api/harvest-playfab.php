@@ -261,7 +261,7 @@ try {
         $rank_val = isset($r['rank']) ? (string)$r['rank'] : $r['_default_rank'];
 
         $turns_raw = $r['turns'] ?? null;
-        $turns_json = ($turns_raw !== null) ? (is_string($turns_raw) ? $turns_raw : json_encode($turns_raw)) : null;
+        $turns_json = compact_turns_payload($turns_raw);
 
         $metrics = extract_match_card_metrics($key, $turns_raw);
         foreach ($metrics['deck_rows'] as $drow) {
@@ -352,6 +352,15 @@ try {
         }
 
         $conn->commit();
+    }
+
+    // 5. Rolling 60-day retention for raw turns blobs (preserves match headers & analytics_match_decks forever)
+    if (!empty($card_sync_status['synced'])) {
+        try {
+            $conn->query("UPDATE `{$TARGET_TABLE}` SET turns = NULL WHERE date < NOW() - INTERVAL 60 DAY AND turns IS NOT NULL LIMIT 5000");
+        } catch (Throwable $prune_err) {
+            error_log('Turns 60-day prune error: ' . $prune_err->getMessage());
+        }
     }
 
     $conn->close();

@@ -115,7 +115,7 @@ try {
         $captain_options = isset($match['captain_options']) ? json_encode($match['captain_options']) : null;
         $deck_cids = isset($match['deck_cids']) ? json_encode($match['deck_cids']) : null;
         $turns_raw = $match['turns'] ?? null;
-        $turns = ($turns_raw !== null) ? (is_string($turns_raw) ? $turns_raw : json_encode($turns_raw)) : null;
+        $turns = compact_turns_payload($turns_raw);
 
         $stmt->bind_param("ssssssiiiiiiisssss", $run_id, $player_id, $player_name, $player_hash, $date, $rules_version, $source_tag, $placement, $mmr, $mmr_start, $mmr_end, $mmr_delta, $captain_cid, $captain, $captain_options, $rank, $deck_cids, $turns);
         $stmt->execute();
