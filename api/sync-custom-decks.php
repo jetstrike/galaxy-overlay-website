@@ -60,44 +60,6 @@ function resolve_card_details($cids, $catalog) {
 try {
     $conn = get_db_connection();
 
-    // Ensure custom_deck_history table exists
-    $conn->query("CREATE TABLE IF NOT EXISTS custom_deck_history (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        deck_id VARCHAR(64) NOT NULL,
-        playfab_id VARCHAR(32) NOT NULL,
-        player_name VARCHAR(64) DEFAULT NULL,
-        captain_cid INT NOT NULL,
-        captain_name VARCHAR(64) DEFAULT NULL,
-        slot_id VARCHAR(16) NOT NULL,
-        deck_name VARCHAR(100) NOT NULL,
-        deck_type VARCHAR(32) NOT NULL DEFAULT 'user',
-        card_cids JSON NOT NULL,
-        cards_hash VARCHAR(64) NOT NULL,
-        version INT NOT NULL DEFAULT 1,
-        cards_added JSON DEFAULT NULL,
-        cards_removed JSON DEFAULT NULL,
-        change_summary VARCHAR(255) DEFAULT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_deck_version (deck_id, version),
-        INDEX idx_playfab_captain (playfab_id, captain_cid),
-        INDEX idx_created (created_at)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-
-    // Ensure imported_hdtb_decks table exists
-    $conn->query("CREATE TABLE IF NOT EXISTS imported_hdtb_decks (
-        id VARCHAR(64) PRIMARY KEY,
-        playfab_id VARCHAR(32) NOT NULL,
-        captain_cid INT NOT NULL,
-        slot_id VARCHAR(16) NOT NULL,
-        deck_name VARCHAR(100) NOT NULL,
-        deck_type VARCHAR(32) NOT NULL DEFAULT 'custom',
-        card_cids JSON NOT NULL,
-        last_used BOOLEAN NOT NULL DEFAULT FALSE,
-        synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_playfab (playfab_id),
-        INDEX idx_captain (captain_cid)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-
     // =========================================================================
     // GET: Query Deck History or User Decks
     // =========================================================================
@@ -311,6 +273,21 @@ try {
 
         $catalog = get_cards_catalog();
 
+        // Pre-fetch existing imported_hdtb_decks for this player in 1 query to avoid N+1 reads and redundant writes
+        $existing_hdtb = [];
+        $preHdtbStmt = $conn->prepare("SELECT id, deck_name, deck_type, card_cids, last_used FROM imported_hdtb_decks WHERE playfab_id = ?");
+        $preHdtbStmt->bind_param("s", $playfab_id);
+        $preHdtbStmt->execute();
+        $preHdtbRes = $preHdtbStmt->get_result();
+        while ($erow = $preHdtbRes->fetch_assoc()) {
+            $ecards = json_decode($erow['card_cids'], true) ?: [];
+            $esorted = $ecards;
+            sort($esorted, SORT_NUMERIC);
+            $erow['cards_hash'] = hash('sha256', implode(',', $esorted));
+            $existing_hdtb[$erow['id']] = $erow;
+        }
+        $preHdtbStmt->close();
+
         $checkStmt = $conn->prepare("
             SELECT id, version, cards_hash, card_cids 
             FROM custom_deck_history 
@@ -387,7 +364,29 @@ try {
 
             $cards_json = json_encode($cards);
 
-            // Check previous version
+            // Fast-path: if imported_hdtb_decks already has the exact same cards_hash, skip both history SELECT and HDTB write if metadata matches
+            if (isset($existing_hdtb[$deck_id]) && $existing_hdtb[$deck_id]['cards_hash'] === $cards_hash) {
+                $unchanged_count++;
+                $synced_hdtb_count++;
+                $ex = $existing_hdtb[$deck_id];
+                if ($ex['deck_name'] !== $deck_name || $ex['deck_type'] !== $type || intval($ex['last_used']) !== $last_used) {
+                    $upsertHdtbStmt->bind_param(
+                        "ssissssi",
+                        $deck_id,
+                        $playfab_id,
+                        $cap,
+                        $slot,
+                        $deck_name,
+                        $type,
+                        $cards_json,
+                        $last_used
+                    );
+                    $upsertHdtbStmt->execute();
+                }
+                continue;
+            }
+
+            // Check previous version in history table
             $checkStmt->bind_param("s", $deck_id);
             $checkStmt->execute();
             $checkRes = $checkStmt->get_result();
@@ -459,7 +458,7 @@ try {
                 }
             }
 
-            // Sync to imported_hdtb_decks table
+            // Sync changed/new deck to imported_hdtb_decks table
             $upsertHdtbStmt->bind_param(
                 "ssissssi",
                 $deck_id,

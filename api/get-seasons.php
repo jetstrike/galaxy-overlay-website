@@ -10,23 +10,21 @@ mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
 try {
     $conn = get_db_connection();
     
-    // Pull seasons directly from analytics_matches to ensure all active months are present
-    $res = $conn->query("SELECT DISTINCT DATE_FORMAT(date, '%Y-%m') as s FROM analytics_matches WHERE date IS NOT NULL ORDER BY s DESC");
+    // Read distinct seasons from the tiny analytics_cache table (~30 rows) instead of scanning 550k+ rows in analytics_matches
     $seasons = ['all'];
-    while ($row = $res->fetch_assoc()) {
-        if (!empty($row['s'])) {
-            $seasons[] = $row['s'];
-        }
-    }
-    
-    // Also include any cached seasons if different
-    $cacheRes = $conn->query("SELECT DISTINCT season FROM analytics_cache WHERE season != 'all'");
+    $cacheRes = $conn->query("SELECT DISTINCT season FROM analytics_cache WHERE season IS NOT NULL AND season != 'all' ORDER BY season DESC");
     if ($cacheRes) {
         while ($crow = $cacheRes->fetch_assoc()) {
-            if (!in_array($crow['season'], $seasons)) {
+            if (!empty($crow['season']) && !in_array($crow['season'], $seasons, true)) {
                 $seasons[] = $crow['season'];
             }
         }
+    }
+
+    // Ensure current month is always included
+    $currentMonth = gmdate('Y-m');
+    if (!in_array($currentMonth, $seasons, true)) {
+        array_splice($seasons, 1, 0, [$currentMonth]);
     }
     
     echo json_encode($seasons);

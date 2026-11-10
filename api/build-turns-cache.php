@@ -80,7 +80,7 @@ try {
 
         $stmt = $conn->prepare("
             SELECT run_id, turns 
-            FROM playfab_matches USE INDEX (idx_playfab_captain)
+            FROM playfab_matches USE INDEX (idx_playfab_cap_date)
             WHERE captain_cid = ? AND turns IS NOT NULL 
             ORDER BY date DESC 
             LIMIT 1500

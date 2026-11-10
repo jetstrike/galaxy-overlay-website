@@ -12,6 +12,7 @@ ini_set('memory_limit', '256M');
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/card_sync_helper.php';
+require_once __DIR__ . '/match_ingest_helper.php';
 
 // Auto-refresh cards from https://guide.galaxy.fun/data/cards.json periodically (once every 6 hours)
 $card_sync_status = sync_cards_catalog(false);
@@ -162,51 +163,21 @@ $start_time = microtime(true);
 try {
     $token = get_playfab_token($TITLE_ID, $CUSTOM_ID, $token_cache_file);
     $conn = get_db_connection();
+    $captain_name_map = load_captain_name_map($conn);
 
-    // Ensure the dedicated comparison table exists
-    $table_sql = "CREATE TABLE IF NOT EXISTS `{$TARGET_TABLE}` (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        run_id VARCHAR(64) NOT NULL,
-        player_id VARCHAR(64) DEFAULT NULL,
-        player_name VARCHAR(64) DEFAULT NULL,
-        date DATETIME DEFAULT NULL,
-        rules_version VARCHAR(32) DEFAULT NULL,
-        source_tag VARCHAR(32) DEFAULT NULL,
-        placement INT DEFAULT NULL,
-        mmr INT DEFAULT NULL,
-        captain_cid INT DEFAULT NULL,
-        captain VARCHAR(64) DEFAULT NULL,
-        `rank` VARCHAR(32) DEFAULT NULL,
-        turns LONGTEXT DEFAULT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE KEY uq_harvest_run_place (run_id, placement),
-        KEY idx_harvest_date (date),
-        KEY idx_harvest_created (created_at),
-        KEY idx_harvest_player (player_name)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-    $conn->query($table_sql);
-
-    $sql = "INSERT INTO `{$TARGET_TABLE}` (
-                run_id, player_id, player_name, date, rules_version, source_tag,
-                placement, mmr, captain_cid, captain, `rank`, turns
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE 
-                rules_version = VALUES(rules_version),
-                source_tag = VALUES(source_tag),
-                captain = VALUES(captain),
-                `rank` = VALUES(`rank`)";
-
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        throw new Exception("Prepare failed: " . $conn->error);
+    // Check if analytics_match_decks has the new 4-column schema (first_turn, turns_on_board)
+    $has_turn_cols = false;
+    $colCheck = $conn->query("SHOW COLUMNS FROM `analytics_match_decks` LIKE 'first_turn'");
+    if ($colCheck && $colCheck->num_rows > 0) {
+        $has_turn_cols = true;
     }
 
     $total_inserted = 0;
+    $total_upgraded = 0;
     $total_scanned = 0;
-    $seen = [];
+    $candidates = [];
 
-    $conn->begin_transaction();
-
+    // 1. Fetch & deduplicate all PlayFab runs in memory first
     foreach ($ENDPOINTS as $ep) {
         $tag = ($ep === "GetRunDataRed") ? "playfab_red" : "playfab_blue";
 
@@ -218,59 +189,171 @@ try {
 
             foreach ($runs as $r) {
                 $rid = $r['run_id'] ?? null;
-                $place = $r['placement'] ?? null;
-                if (!$rid) continue;
+                $place = isset($r['placement']) ? (int)$r['placement'] : null;
+                if (!$rid || $place === null) continue;
 
                 $key = "{$rid}_{$place}";
-                if (isset($seen[$key])) continue;
-                $seen[$key] = true;
+                if (isset($candidates[$key])) continue;
                 $total_scanned++;
 
-                $player_id = $r['player_id'] ?? null;
-                $player_name = $r['player_name'] ?? null;
+                $r['_source_tag'] = $tag;
+                $r['_default_rank'] = (string)$rk;
+                $candidates[$key] = $r;
+            }
+        }
+    }
 
-                $raw_date = $r['date'] ?? null;
-                $date_str = null;
-                if ($raw_date) {
-                    $ts = strtotime($raw_date);
-                    if ($ts) $date_str = date('Y-m-d H:i:s', $ts);
-                }
-
-                $rv = $r['rules_version'] ?? $RULES_VERSION;
-                $mmr = isset($r['mmr']) ? (int)$r['mmr'] : null;
-                $captain_cid = isset($r['captain_cid']) ? (int)$r['captain_cid'] : null;
-                $captain = $r['captain'] ?? null;
-                $rank_val = isset($r['rank']) ? (string)$r['rank'] : (string)$rk;
-
-                $turns = isset($r['turns']) ? (is_string($r['turns']) ? $r['turns'] : json_encode($r['turns'])) : null;
-
-                $stmt->bind_param(
-                    "ssssssiiisss",
-                    $rid,
-                    $player_id,
-                    $player_name,
-                    $date_str,
-                    $rv,
-                    $tag,
-                    $place,
-                    $mmr,
-                    $captain_cid,
-                    $captain,
-                    $rank_val,
-                    $turns
-                );
-
-                if ($stmt->execute()) {
-                    if ($stmt->affected_rows === 1) {
-                        $total_inserted++;
-                    }
+    // 2. Pre-filter against playfab_matches in chunks of 500 run_ids so already-harvested matches do 0 writes
+    $existing_map = [];
+    if (!empty($candidates)) {
+        $unique_rids = [];
+        foreach ($candidates as $r) {
+            $unique_rids[$r['run_id']] = true;
+        }
+        $rid_chunks = array_chunk(array_keys($unique_rids), 500);
+        foreach ($rid_chunks as $chunk) {
+            $escaped_rids = array_map(function($id) use ($conn) {
+                return "'" . $conn->real_escape_string((string)$id) . "'";
+            }, $chunk);
+            $check_sql = "SELECT run_id, placement, source_tag FROM `{$TARGET_TABLE}` WHERE run_id IN (" . implode(',', $escaped_rids) . ")";
+            $check_res = $conn->query($check_sql);
+            if ($check_res) {
+                while ($erow = $check_res->fetch_assoc()) {
+                    $ekey = $erow['run_id'] . '_' . intval($erow['placement']);
+                    $existing_map[$ekey] = $erow['source_tag'] ?? '';
                 }
             }
         }
     }
 
-    $conn->commit();
-    $stmt->close();
+    // 3. Separate into brand-new runs vs overlay-seeded runs that need upgrading
+    $new_pf_rows = [];
+    $new_am_rows = [];
+    $new_deck_rows = [];
+    $upgrade_runs = [];
+
+    foreach ($candidates as $key => $r) {
+        $existing_source = $existing_map[$key] ?? null;
+
+        // Already harvested from PlayFab -> skip 100% (no DB writes, no JSON parsing)
+        if ($existing_source !== null && $existing_source !== 'overlay') {
+            continue;
+        }
+
+        $rid = (string)$r['run_id'];
+        $place = (int)$r['placement'];
+        $player_id = $r['player_id'] ?? null;
+        $player_name = $r['player_name'] ?? null;
+
+        $raw_date = $r['date'] ?? null;
+        $date_str = null;
+        if ($raw_date) {
+            $ts = strtotime($raw_date);
+            if ($ts) $date_str = date('Y-m-d H:i:s', $ts);
+        }
+        $analytics_date = $date_str ?: date('Y-m-d H:i:s');
+
+        $rv = $r['rules_version'] ?? $RULES_VERSION;
+        $tag = $r['_source_tag'];
+        $mmr = isset($r['mmr']) ? (int)$r['mmr'] : 0;
+        $captain = $r['captain'] ?? null;
+        $captain_cid = resolve_captain_cid($r['captain_cid'] ?? 0, $captain, $captain_name_map);
+        $rank_val = isset($r['rank']) ? (string)$r['rank'] : $r['_default_rank'];
+
+        $turns_raw = $r['turns'] ?? null;
+        $turns_json = ($turns_raw !== null) ? (is_string($turns_raw) ? $turns_raw : json_encode($turns_raw)) : null;
+
+        $metrics = extract_match_card_metrics($key, $turns_raw);
+        foreach ($metrics['deck_rows'] as $drow) {
+            $new_deck_rows[] = $drow;
+        }
+
+        if ($existing_source === 'overlay') {
+            // Match arrived first via overlay_matches -> upgrade playfab_matches with PlayFab's richer server-side turns JSON
+            $upgrade_runs[] = [
+                'run_id' => $rid,
+                'placement' => $place,
+                'turns' => $turns_json,
+                'source_tag' => $tag,
+                'rules_version' => $rv,
+                'captain_cid' => $captain_cid,
+                'final_turn' => $metrics['final_turn']
+            ];
+        } else {
+            $new_pf_rows[] = [
+                $rid,
+                $player_id,
+                $player_name,
+                $date_str,
+                $rv,
+                $tag,
+                $place,
+                $mmr,
+                $captain_cid > 0 ? $captain_cid : null,
+                $captain,
+                $rank_val,
+                $turns_json
+            ];
+            $new_am_rows[] = [
+                $key,
+                $analytics_date,
+                $mmr,
+                $place,
+                $captain_cid,
+                $rank_val,
+                'playfab',
+                $rv,
+                $metrics['final_turn']
+            ];
+        }
+    }
+
+    // 4. Execute batched writes only if there are new or upgraded runs
+    if (!empty($new_pf_rows) || !empty($upgrade_runs) || !empty($new_deck_rows)) {
+        $conn->begin_transaction();
+
+        if (!empty($new_pf_rows)) {
+            $total_inserted = bulk_insert_ignore(
+                $conn,
+                $TARGET_TABLE,
+                ['run_id', 'player_id', 'player_name', 'date', 'rules_version', 'source_tag', 'placement', 'mmr', 'captain_cid', 'captain', 'rank', 'turns'],
+                $new_pf_rows,
+                250
+            );
+        }
+
+        if (!empty($new_am_rows)) {
+            bulk_insert_ignore(
+                $conn,
+                'analytics_matches',
+                ['run_id', 'date', 'mmr', 'placement', 'captain_cid', 'rank', 'source', 'rules_version', 'final_turn'],
+                $new_am_rows,
+                500
+            );
+        }
+
+        if (!empty($upgrade_runs)) {
+            $up_pf = $conn->prepare("UPDATE `{$TARGET_TABLE}` SET turns = ?, source_tag = ?, rules_version = ?, captain_cid = COALESCE(NULLIF(?, 0), captain_cid) WHERE run_id = ? AND placement = ?");
+            $up_am = $conn->prepare("UPDATE `analytics_matches` SET source = 'playfab', final_turn = GREATEST(final_turn, ?), captain_cid = COALESCE(NULLIF(?, 0), captain_cid) WHERE run_id = ?");
+            foreach ($upgrade_runs as $u) {
+                $up_pf->bind_param("sssisi", $u['turns'], $u['source_tag'], $u['rules_version'], $u['captain_cid'], $u['run_id'], $u['placement']);
+                $up_pf->execute();
+                $p_run_id = $u['run_id'] . '_' . $u['placement'];
+                $up_am->bind_param("iis", $u['final_turn'], $u['captain_cid'], $p_run_id);
+                $up_am->execute();
+                $total_upgraded++;
+            }
+            $up_pf->close();
+            $up_am->close();
+        }
+
+        if (!empty($new_deck_rows)) {
+            bulk_upsert_match_decks($conn, $new_deck_rows, $has_turn_cols, 1500);
+        }
+
+        $conn->commit();
+    }
+
     $conn->close();
 
     // Auto-sync leaderboards if cache is older than 30 minutes
@@ -294,6 +377,7 @@ try {
         "status" => "success",
         "target_table" => $TARGET_TABLE,
         "inserted_new" => $total_inserted,
+        "upgraded_overlay" => $total_upgraded,
         "scanned_runs" => $total_scanned,
         "leaderboards_synced" => $lb_synced,
         "elapsed_seconds" => $elapsed,

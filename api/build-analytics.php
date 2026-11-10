@@ -19,7 +19,11 @@ function compute_and_cache_bracket($conn, $b_idx, $season, $brackets) {
     $mmr_cond = "m.mmr >= $min_mmr AND m.mmr < $max_mmr";
     
     $season_cond = "1=1";
-    if ($season !== 'all') {
+    if ($season !== 'all' && preg_match('/^\d{4}-\d{2}$/', $season)) {
+        $s_start = $season . '-01 00:00:00';
+        $s_end = date('Y-m-d H:i:s', strtotime($s_start . ' +1 month'));
+        $season_cond = "m.date >= '$s_start' AND m.date < '$s_end'";
+    } elseif ($season !== 'all') {
         $season_safe = $conn->real_escape_string($season);
         $season_cond = "DATE_FORMAT(m.date, '%Y-%m') = '$season_safe'";
     }
@@ -72,18 +76,13 @@ function compute_and_cache_bracket($conn, $b_idx, $season, $brackets) {
                         c.is_collectible,
                         COUNT(rc.run_id) as games_played,
                         AVG(rc.turns_on_board) as avg_turns_on_board,
-                        AVG(rc.first_appearance) as avg_first_appearance,
-                        SUM(CASE WHEN rc.placement = 1 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_1st,
-                        SUM(CASE WHEN rc.placement <= 3 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_top3
-                    FROM (
-                        SELECT t.run_id, t.card_cid, m.placement, MIN(t.turn_number) as first_appearance, COUNT(DISTINCT t.turn_number) as turns_on_board
-                        FROM analytics_match_turns t
-                        JOIN analytics_matches m ON t.run_id = m.run_id
-                        WHERE $mmr_cond AND $season_cond
-                        GROUP BY t.run_id, t.card_cid, m.placement
-                    ) rc
+                        AVG(rc.first_turn) as avg_first_appearance,
+                        SUM(CASE WHEN m.placement = 1 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_1st,
+                        SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(rc.run_id) * 100 as win_rate_top3
+                    FROM analytics_matches m
+                    JOIN analytics_match_decks rc ON rc.run_id = m.run_id
                     LEFT JOIN analytics_cards c ON rc.card_cid = c.cid
-                    WHERE (c.type IS NULL OR c.type != 'captain')
+                    WHERE $mmr_cond AND $season_cond AND (c.type IS NULL OR c.type != 'captain')
                     GROUP BY rc.card_cid, c.name, c.rarity, c.is_collectible
                     ORDER BY games_played DESC
                 ";

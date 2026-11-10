@@ -19,6 +19,7 @@ require_once __DIR__ . '/db.php';
 
 $player_id = isset($_GET['player_id']) ? trim($_GET['player_id']) : '';
 $player_name = isset($_GET['player_name']) ? trim($_GET['player_name']) : '';
+$since_date = isset($_GET['since_date']) ? trim($_GET['since_date']) : '';
 $limit = isset($_GET['limit']) ? min(5000, max(1, intval($_GET['limit']))) : 1000;
 
 if (empty($player_id) && empty($player_name)) {
@@ -42,26 +43,87 @@ try {
 }
 
 try {
-    $sql = "SELECT 
-                run_id, player_id, player_name, date, rules_version, source_tag, 
-                placement, mmr, captain_cid, captain, `rank`, turns, created_at
-            FROM playfab_matches 
-            WHERE (player_id = ? AND ? != '') 
-               OR (player_name = ? AND ? != '')
-            ORDER BY date DESC 
-            LIMIT ?";
-
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        throw new Exception($conn->error);
+    $since_ts = null;
+    if (!empty($since_date)) {
+        $parsed_ts = strtotime($since_date);
+        if ($parsed_ts !== false) {
+            $since_ts = gmdate('Y-m-d H:i:s', $parsed_ts);
+        }
     }
 
-    $stmt->bind_param('ssssi', $player_id, $player_id, $player_name, $player_name, $limit);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Use separate indexed queries instead of an OR clause so TiDB uses idx_pf_player_id_date & idx_pf_player_name_date
+    $raw_rows_by_key = [];
+
+    if (!empty($player_id)) {
+        if ($since_ts !== null) {
+            $sql_id = "SELECT run_id, player_id, player_name, date, rules_version, source_tag,
+                              placement, mmr, captain_cid, captain, `rank`, turns, created_at
+                       FROM playfab_matches
+                       WHERE player_id = ? AND date > ?
+                       ORDER BY date DESC
+                       LIMIT ?";
+            $stmt = $conn->prepare($sql_id);
+            $stmt->bind_param('ssi', $player_id, $since_ts, $limit);
+        } else {
+            $sql_id = "SELECT run_id, player_id, player_name, date, rules_version, source_tag,
+                              placement, mmr, captain_cid, captain, `rank`, turns, created_at
+                       FROM playfab_matches
+                       WHERE player_id = ?
+                       ORDER BY date DESC
+                       LIMIT ?";
+            $stmt = $conn->prepare($sql_id);
+            $stmt->bind_param('si', $player_id, $limit);
+        }
+        $stmt->execute();
+        $res = $stmt->get_result();
+        while ($r = $res->fetch_assoc()) {
+            $k = $r['run_id'] . '_' . ($r['placement'] ?? '');
+            $raw_rows_by_key[$k] = $r;
+        }
+        $stmt->close();
+    }
+
+    if (!empty($player_name)) {
+        if ($since_ts !== null) {
+            $sql_name = "SELECT run_id, player_id, player_name, date, rules_version, source_tag,
+                                placement, mmr, captain_cid, captain, `rank`, turns, created_at
+                         FROM playfab_matches
+                         WHERE player_name = ? AND date > ?
+                         ORDER BY date DESC
+                         LIMIT ?";
+            $stmt = $conn->prepare($sql_name);
+            $stmt->bind_param('ssi', $player_name, $since_ts, $limit);
+        } else {
+            $sql_name = "SELECT run_id, player_id, player_name, date, rules_version, source_tag,
+                                placement, mmr, captain_cid, captain, `rank`, turns, created_at
+                         FROM playfab_matches
+                         WHERE player_name = ?
+                         ORDER BY date DESC
+                         LIMIT ?";
+            $stmt = $conn->prepare($sql_name);
+            $stmt->bind_param('si', $player_name, $limit);
+        }
+        $stmt->execute();
+        $res = $stmt->get_result();
+        while ($r = $res->fetch_assoc()) {
+            $k = $r['run_id'] . '_' . ($r['placement'] ?? '');
+            if (!isset($raw_rows_by_key[$k])) {
+                $raw_rows_by_key[$k] = $r;
+            }
+        }
+        $stmt->close();
+    }
+
+    $raw_rows = array_values($raw_rows_by_key);
+    usort($raw_rows, function($a, $b) {
+        return strcmp($b['date'] ?? '', $a['date'] ?? '');
+    });
+    if (count($raw_rows) > $limit) {
+        $raw_rows = array_slice($raw_rows, 0, $limit);
+    }
 
     $matches = [];
-    while ($row = $result->fetch_assoc()) {
+    foreach ($raw_rows as $row) {
         $run_id = $row['run_id'];
         $turns = !empty($row['turns']) ? json_decode($row['turns'], true) : null;
         

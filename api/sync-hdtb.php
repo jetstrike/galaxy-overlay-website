@@ -86,28 +86,20 @@ try {
             exit;
         }
 
-        // Ensure custom_deck_history exists
-        $conn->query("CREATE TABLE IF NOT EXISTS custom_deck_history (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            deck_id VARCHAR(64) NOT NULL,
-            playfab_id VARCHAR(32) NOT NULL,
-            player_name VARCHAR(64) DEFAULT NULL,
-            captain_cid INT NOT NULL,
-            captain_name VARCHAR(64) DEFAULT NULL,
-            slot_id VARCHAR(16) NOT NULL,
-            deck_name VARCHAR(100) NOT NULL,
-            deck_type VARCHAR(32) NOT NULL DEFAULT 'user',
-            card_cids JSON NOT NULL,
-            cards_hash VARCHAR(64) NOT NULL,
-            version INT NOT NULL DEFAULT 1,
-            cards_added JSON DEFAULT NULL,
-            cards_removed JSON DEFAULT NULL,
-            change_summary VARCHAR(255) DEFAULT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_deck_version (deck_id, version),
-            INDEX idx_playfab_captain (playfab_id, captain_cid),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+        // Pre-fetch existing imported_hdtb_decks for this player in 1 query
+        $existing_hdtb = [];
+        $preHdtbStmt = $conn->prepare("SELECT id, deck_name, deck_type, card_cids, last_used FROM imported_hdtb_decks WHERE playfab_id = ?");
+        $preHdtbStmt->bind_param("s", $playfab_id);
+        $preHdtbStmt->execute();
+        $preHdtbRes = $preHdtbStmt->get_result();
+        while ($erow = $preHdtbRes->fetch_assoc()) {
+            $ecards = json_decode($erow['card_cids'], true) ?: [];
+            $esorted = $ecards;
+            sort($esorted, SORT_NUMERIC);
+            $erow['cards_hash'] = hash('sha256', implode(',', $esorted));
+            $existing_hdtb[$erow['id']] = $erow;
+        }
+        $preHdtbStmt->close();
 
         $checkHistStmt = $conn->prepare("
             SELECT id, version, cards_hash, card_cids 
@@ -179,6 +171,16 @@ try {
             $sorted_cards = $cards;
             sort($sorted_cards, SORT_NUMERIC);
             $cards_hash = hash('sha256', implode(',', $sorted_cards));
+
+            if (isset($existing_hdtb[$hash_id]) && $existing_hdtb[$hash_id]['cards_hash'] === $cards_hash) {
+                $count++;
+                $ex = $existing_hdtb[$hash_id];
+                if ($ex['deck_name'] !== $name || $ex['deck_type'] !== $type || intval($ex['last_used']) !== $last_used) {
+                    $stmt->bind_param("ssissssi", $hash_id, $playfab_id, $cap, $slot, $name, $type, $cards_json, $last_used);
+                    $stmt->execute();
+                }
+                continue;
+            }
 
             $checkHistStmt->bind_param("s", $hash_id);
             $checkHistStmt->execute();

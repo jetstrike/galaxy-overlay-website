@@ -34,17 +34,26 @@ try {
     }
     $stmt->close();
 
-    // Optional season filter
+    // Optional season filter using index-friendly date range
     $season_sql = "";
     $params = [$card_cid, $min_mmr, $max_mmr];
     $types = "iii";
     if ($season !== 'all' && $season !== '') {
-        $season_sql = " AND DATE_FORMAT(m.date, '%Y-%m') = ? ";
-        $params[] = $season;
-        $types .= "s";
+        if (preg_match('/^\d{4}-\d{2}$/', $season)) {
+            $s_start = $season . '-01 00:00:00';
+            $s_end = date('Y-m-d H:i:s', strtotime($s_start . ' +1 month'));
+            $season_sql = " AND m.date >= ? AND m.date < ? ";
+            $params[] = $s_start;
+            $params[] = $s_end;
+            $types .= "ss";
+        } else {
+            $season_sql = " AND DATE_FORMAT(m.date, '%Y-%m') = ? ";
+            $params[] = $season;
+            $types .= "s";
+        }
     }
 
-    // 2. Query Captain Performance for this Card
+    // 2. Query Captain Performance for this Card using deduplicated analytics_match_decks
     $q = "
         SELECT 
             m.captain_cid,
@@ -52,14 +61,10 @@ try {
             COUNT(m.run_id) as games_played,
             SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(m.run_id) * 100 as win_rate_top3,
             AVG(m.placement) as avg_placement
-        FROM (
-            SELECT DISTINCT run_id
-            FROM analytics_match_turns
-            WHERE card_cid = ?
-        ) rc
+        FROM analytics_match_decks rc
         JOIN analytics_matches m ON rc.run_id = m.run_id
         LEFT JOIN analytics_cards c ON m.captain_cid = c.cid
-        WHERE m.mmr >= ? AND m.mmr < ? AND m.captain_cid > 0 $season_sql
+        WHERE rc.card_cid = ? AND m.mmr >= ? AND m.mmr < ? AND m.captain_cid > 0 $season_sql
         GROUP BY m.captain_cid, c.name
         ORDER BY games_played DESC
     ";
@@ -70,33 +75,17 @@ try {
     $result = $stmt->get_result();
     
     $data = [];
+    $total_matches = 0;
     while ($row = $result->fetch_assoc()) {
         // Cast numeric values correctly for frontend
         $row['captain_cid'] = intval($row['captain_cid']);
         $row['games_played'] = intval($row['games_played']);
         $row['win_rate_top3'] = floatval($row['win_rate_top3']);
         $row['avg_placement'] = floatval($row['avg_placement']);
+        $total_matches += $row['games_played'];
         $data[] = $row;
     }
     $stmt->close();
-    
-    // Get total matches for this card in this MMR bracket
-    $q2 = "
-        SELECT COUNT(rc.run_id) as total 
-        FROM (
-            SELECT DISTINCT run_id 
-            FROM analytics_match_turns 
-            WHERE card_cid = ?
-        ) rc 
-        JOIN analytics_matches m ON rc.run_id = m.run_id 
-        WHERE m.mmr >= ? AND m.mmr < ? $season_sql
-    ";
-    $stmt2 = $conn->prepare($q2);
-    $stmt2->bind_param($types, ...$params);
-    $stmt2->execute();
-    $res2 = $stmt2->get_result();
-    $total_matches = intval($res2->fetch_assoc()['total']);
-    $stmt2->close();
     
     echo json_encode([
         'card_name' => $card_name,

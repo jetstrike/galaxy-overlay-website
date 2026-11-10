@@ -48,27 +48,36 @@ try {
         die(json_encode(['error' => 'Captain not found']));
     }
 
-    // Optional season filter
+    // Optional season filter using index-friendly date range
     $season_sql = "";
     $params = [$captain_cid, $min_mmr, $max_mmr];
     $types = "iii";
     if ($season !== 'all' && $season !== '') {
-        $season_sql = " AND DATE_FORMAT(m.date, '%Y-%m') = ? ";
-        $params[] = $season;
-        $types .= "s";
+        if (preg_match('/^\d{4}-\d{2}$/', $season)) {
+            $s_start = $season . '-01 00:00:00';
+            $s_end = date('Y-m-d H:i:s', strtotime($s_start . ' +1 month'));
+            $season_sql = " AND m.date >= ? AND m.date < ? ";
+            $params[] = $s_start;
+            $params[] = $s_end;
+            $types .= "ss";
+        } else {
+            $season_sql = " AND DATE_FORMAT(m.date, '%Y-%m') = ? ";
+            $params[] = $season;
+            $types .= "s";
+        }
     }
 
-    // 2. Query Card Performance for this Captain
+    // 2. Query Card Performance for this Captain using deduplicated analytics_match_decks
     $q = "
         SELECT
             rc.card_cid,
             c.name as card_name,
             c.rarity,
             c.is_collectible,
-            COUNT(DISTINCT m.run_id) as games_played,
-            COUNT(DISTINCT CASE WHEN m.placement <= 3 THEN m.run_id ELSE NULL END) / COUNT(DISTINCT m.run_id) * 100 as win_rate_top3
+            COUNT(m.run_id) as games_played,
+            SUM(CASE WHEN m.placement <= 3 THEN 1 ELSE 0 END) / COUNT(m.run_id) * 100 as win_rate_top3
         FROM analytics_matches m
-        JOIN analytics_match_turns rc ON rc.run_id = m.run_id
+        JOIN analytics_match_decks rc ON rc.run_id = m.run_id
         LEFT JOIN analytics_cards c ON rc.card_cid = c.cid
         WHERE m.captain_cid = ? AND m.mmr >= ? AND m.mmr < ? $season_sql AND (c.type IS NULL OR c.type != 'captain')
         GROUP BY rc.card_cid, c.name, c.rarity, c.is_collectible

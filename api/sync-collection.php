@@ -14,17 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 try {
     $conn = get_db_connection();
 
-    // Ensure user_collections table exists
-    $conn->query("CREATE TABLE IF NOT EXISTS user_collections (
-        playfab_id VARCHAR(32) PRIMARY KEY,
-        owned_cards_json MEDIUMTEXT NOT NULL,
-        infinity_captains_json TEXT NOT NULL,
-        total_cards INT NOT NULL DEFAULT 0,
-        total_captains INT NOT NULL DEFAULT 0,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_updated (updated_at)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-
     // =========================================================================
     // GET: Query User Collection by PlayFab ID
     // =========================================================================
@@ -93,9 +82,20 @@ try {
         }
         $total_cards = count($all_cids);
 
-        $stmt = $conn->prepare("REPLACE INTO user_collections (playfab_id, owned_cards_json, infinity_captains_json, total_cards, total_captains, updated_at) VALUES (?, ?, ?, ?, ?, NOW())");
-        $stmt->bind_param("sssii", $playfab_id, $owned_json, $inf_json, $total_cards, $total_captains);
-        $stmt->execute();
+        // Skip REPLACE write if collection payload is identical
+        $chk = $conn->prepare("SELECT owned_cards_json, infinity_captains_json FROM user_collections WHERE playfab_id = ? LIMIT 1");
+        $chk->bind_param("s", $playfab_id);
+        $chk->execute();
+        $chkRes = $chk->get_result();
+        $existing = $chkRes->fetch_assoc();
+        $chk->close();
+
+        if (!$existing || $existing['owned_cards_json'] !== $owned_json || $existing['infinity_captains_json'] !== $inf_json) {
+            $stmt = $conn->prepare("INSERT INTO user_collections (playfab_id, owned_cards_json, infinity_captains_json, total_cards, total_captains, updated_at) VALUES (?, ?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE owned_cards_json = VALUES(owned_cards_json), infinity_captains_json = VALUES(infinity_captains_json), total_cards = VALUES(total_cards), total_captains = VALUES(total_captains), updated_at = NOW()");
+            $stmt->bind_param("sssii", $playfab_id, $owned_json, $inf_json, $total_cards, $total_captains);
+            $stmt->execute();
+            $stmt->close();
+        }
 
         echo json_encode([
             'success' => true,

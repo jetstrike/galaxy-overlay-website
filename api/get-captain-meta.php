@@ -14,8 +14,38 @@ try {
     mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
     $conn = get_db_connection();
 
-    $stmt = $conn->prepare("SELECT turns, placement FROM playfab_matches WHERE captain = ? AND placement IS NOT NULL");
-    $stmt->bind_param("s", $captain_name);
+    // Resolve captain_cid so TiDB uses idx_playfab_cap_date instead of full table scan
+    $captain_cid = 0;
+    $mapFile = __DIR__ . '/captain_map.json';
+    if (file_exists($mapFile)) {
+        $capMap = json_decode(file_get_contents($mapFile), true);
+        if (is_array($capMap)) {
+            $normKey = strtolower(str_replace([' ', "'", ','], ['_', '', ''], $captain_name));
+            if (isset($capMap[$captain_name])) {
+                $captain_cid = intval($capMap[$captain_name]);
+            } elseif (isset($capMap[$normKey])) {
+                $captain_cid = intval($capMap[$normKey]);
+            }
+        }
+    }
+    if (!$captain_cid) {
+        $c_stmt = $conn->prepare("SELECT cid FROM analytics_cards WHERE name = ? LIMIT 1");
+        $c_stmt->bind_param("s", $captain_name);
+        $c_stmt->execute();
+        $c_res = $c_stmt->get_result();
+        if ($c_row = $c_res->fetch_assoc()) {
+            $captain_cid = intval($c_row['cid']);
+        }
+        $c_stmt->close();
+    }
+
+    if ($captain_cid > 0) {
+        $stmt = $conn->prepare("SELECT turns, placement FROM playfab_matches WHERE captain_cid = ? AND placement IS NOT NULL ORDER BY date DESC LIMIT 2000");
+        $stmt->bind_param("i", $captain_cid);
+    } else {
+        $stmt = $conn->prepare("SELECT turns, placement FROM playfab_matches WHERE captain = ? AND placement IS NOT NULL ORDER BY date DESC LIMIT 2000");
+        $stmt->bind_param("s", $captain_name);
+    }
     $stmt->execute();
     $result = $stmt->get_result();
 

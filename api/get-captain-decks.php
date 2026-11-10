@@ -20,35 +20,45 @@ if (!$captain && !$captain_cid) {
 try {
     $conn = get_db_connection();
 
-    // If captain name provided but no cid, resolve captain_cid from analytics_cards
+    // If captain name provided but no cid, resolve captain_cid from captain_map.json or analytics_cards
     if ($captain && !$captain_cid) {
-        $c_stmt = $conn->prepare("SELECT cid FROM analytics_cards WHERE name = ? LIMIT 1");
-        $c_stmt->bind_param("s", $captain);
-        $c_stmt->execute();
-        $c_res = $c_stmt->get_result();
-        if ($c_row = $c_res->fetch_assoc()) {
-            $captain_cid = intval($c_row['cid']);
+        $mapFile = __DIR__ . '/captain_map.json';
+        if (file_exists($mapFile)) {
+            $capMap = json_decode(file_get_contents($mapFile), true);
+            if (is_array($capMap)) {
+                $normKey = strtolower(str_replace([' ', "'", ','], ['_', '', ''], $captain));
+                if (isset($capMap[$captain])) {
+                    $captain_cid = intval($capMap[$captain]);
+                } elseif (isset($capMap[$normKey])) {
+                    $captain_cid = intval($capMap[$normKey]);
+                }
+            }
         }
-        $c_stmt->close();
+        if (!$captain_cid) {
+            $c_stmt = $conn->prepare("SELECT cid FROM analytics_cards WHERE name = ? LIMIT 1");
+            $c_stmt->bind_param("s", $captain);
+            $c_stmt->execute();
+            $c_res = $c_stmt->get_result();
+            if ($c_row = $c_res->fetch_assoc()) {
+                $captain_cid = intval($c_row['cid']);
+            }
+            $c_stmt->close();
+        }
     }
 
     $where = [];
     $params = [];
     $types = '';
 
-    if ($captain && $captain_cid) {
-        $where[] = "(captain = ? OR captain_cid = ?)";
-        $params[] = $captain;
-        $params[] = $captain_cid;
-        $types .= 'si';
-    } else if ($captain) {
-        $where[] = "captain = ?";
-        $params[] = $captain;
-        $types .= 's';
-    } else {
+    // Always prefer indexed captain_cid over unindexed captain string OR clause
+    if ($captain_cid > 0) {
         $where[] = "captain_cid = ?";
         $params[] = $captain_cid;
         $types .= 'i';
+    } else {
+        $where[] = "captain = ?";
+        $params[] = $captain;
+        $types .= 's';
     }
 
     $where[] = "mmr >= ?";
@@ -61,14 +71,17 @@ try {
         $types .= 'i';
     }
 
-    // Optional season filter (%Y-%m, e.g. '2026-10' or 'current')
+    // Optional season filter (%Y-%m, e.g. '2026-10' or 'current') using index-friendly date range
     if ($season === 'current') {
         $season = date('Y-m');
     }
     if ($season !== 'all' && preg_match('/^\d{4}-\d{2}$/', $season)) {
-        $where[] = "DATE_FORMAT(date, '%Y-%m') = ?";
-        $params[] = $season;
-        $types .= 's';
+        $season_start = $season . '-01 00:00:00';
+        $season_end = date('Y-m-d H:i:s', strtotime($season_start . ' +1 month'));
+        $where[] = "date >= ? AND date < ?";
+        $params[] = $season_start;
+        $params[] = $season_end;
+        $types .= 'ss';
     }
 
     $where_sql = implode(' AND ', $where);
